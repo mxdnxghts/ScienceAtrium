@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34004.107
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScienceAtrium.Domain", "src\ScienceAtrium\ScienceAtrium.Domain\ScienceAtrium.Domain.csproj", "{BC31FE2D-D003-4551-8DFD-234781D53EA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScienceAtrium.Domain", "src\Central\ScienceAtrium.Domain\ScienceAtrium.Domain.csproj", "{BC31FE2D-D003-4551-8DFD-234781D53EA9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScienceAtrium.Infrastructure", "src\ScienceAtrium\ScienceAtrium.Infrastructure\ScienceAtrium.Infrastructure.csproj", "{371D088A-BBE9-4145-9FB8-76BCEC2722EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScienceAtrium.Infrastructure", "src\Central\ScienceAtrium.Infrastructure\ScienceAtrium.Infrastructure.csproj", "{371D088A-BBE9-4145-9FB8-76BCEC2722EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScienceAtrium.Application", "src\ScienceAtrium\ScienceAtrium.Application\ScienceAtrium.Application.csproj", "{8B672A84-F4EE-4D36-BB4D-EA9691508664}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScienceAtrium.Application", "src\Central\ScienceAtrium.Application\ScienceAtrium.Application.csproj", "{8B672A84-F4EE-4D36-BB4D-EA9691508664}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScienceAtrium.Presentation", "src\ScienceAtrium\ScienceAtrium.Presentation\ScienceAtrium.Presentation.csproj", "{DC207D49-786F-4EF9-8666-4691A860F224}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScienceAtrium.Presentation", "src\Central\ScienceAtrium.Presentation\ScienceAtrium.Presentation.csproj", "{DC207D49-786F-4EF9-8666-4691A860F224}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
