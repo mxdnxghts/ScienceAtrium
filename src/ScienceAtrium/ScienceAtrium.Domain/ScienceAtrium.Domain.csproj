@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="WorkTemplateAggregate\" />
+    <Folder Include="UserAggregate\" />
+    <Folder Include="OrderAggregate\" />
+  </ItemGroup>
+
 </Project>
