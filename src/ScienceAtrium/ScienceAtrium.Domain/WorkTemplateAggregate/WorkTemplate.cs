@@ -15,3 +15,4 @@ public enum WorkType
     LaboratoryWork,
     CustomWork
 }
+
