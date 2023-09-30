@@ -1,13 +1,11 @@
-﻿using System;
-
-public class Order
+﻿public class Order
 {
     public Guid Id { get; set; }
-    public date OrderDate { get; set; }
+    public DateTime OrderDate { get; set; }
     public decimal TotalPrice { get; set; }
-    public Paymentmethod Paymentmethod { get; set; }
+    public Paymentmethod PaymentMethod { get; set; }
     public Status Status { get; set; }
-    public List<WorkTemplate> WorkTemplates { get; set; }
+    public List<WorkTemplate> WorkTemplates { get; set; } = new();
 }
 public enum Paymentmethod
 {
