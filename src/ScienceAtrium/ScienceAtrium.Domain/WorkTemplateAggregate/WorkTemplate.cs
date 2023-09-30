@@ -1,6 +1,10 @@
-﻿public class WorkTemplate
+﻿using ScienceAtrium.Domain.Entities;
+
+public class WorkTemplate : Entity
 {
-    public Guid Id { get; set; }
+    public WorkTemplate(Guid id) : base(id)
+    {
+    }
     public string Title { get; set; }
     public string Description { get; set; }
     public WorkType WorkType { get; set; }
