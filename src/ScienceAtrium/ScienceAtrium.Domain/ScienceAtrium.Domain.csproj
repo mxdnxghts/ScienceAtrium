@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="WorkTemplateAggregate\" />
-    <Folder Include="UserAggregate\" />
-    <Folder Include="OrderAggregate\" />
+    <EditorConfigFiles Remove="G:\ScienceAtrium\src\ScienceAtrium\ScienceAtrium.Domain\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="G:\ScienceAtrium\src\ScienceAtrium\ScienceAtrium.Domain\.editorconfig" />
   </ItemGroup>
 
 </Project>
