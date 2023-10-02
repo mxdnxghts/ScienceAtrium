@@ -5,11 +5,15 @@ VisualStudioVersion = 17.8.34004.107
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScienceAtrium.Domain", "src\ScienceAtrium\ScienceAtrium.Domain\ScienceAtrium.Domain.csproj", "{BC31FE2D-D003-4551-8DFD-234781D53EA9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScienceAtrium.Infrastructure", "src\ScienceAtrium\ScienceAtrium.Infrastructure\ScienceAtrium.Infrastructure.csproj", "{371D088A-BBE9-4145-9FB8-76BCEC2722EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScienceAtrium.Infrastructure", "src\ScienceAtrium\ScienceAtrium.Infrastructure\ScienceAtrium.Infrastructure.csproj", "{371D088A-BBE9-4145-9FB8-76BCEC2722EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScienceAtrium.Application", "src\ScienceAtrium\ScienceAtrium.Application\ScienceAtrium.Application.csproj", "{8B672A84-F4EE-4D36-BB4D-EA9691508664}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScienceAtrium.Application", "src\ScienceAtrium\ScienceAtrium.Application\ScienceAtrium.Application.csproj", "{8B672A84-F4EE-4D36-BB4D-EA9691508664}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScienceAtrium.Presentation", "src\ScienceAtrium\ScienceAtrium.Presentation\ScienceAtrium.Presentation.csproj", "{DC207D49-786F-4EF9-8666-4691A860F224}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScienceAtrium.Presentation", "src\ScienceAtrium\ScienceAtrium.Presentation\ScienceAtrium.Presentation.csproj", "{DC207D49-786F-4EF9-8666-4691A860F224}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.UnitTests", "tests\Domain.UnitTests\Domain.UnitTests.csproj", "{D1C6DC5F-0330-461A-BE18-6F166C746E89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.IntegrationTests", "tests\Infrastructure.IntegrationTests\Infrastructure.IntegrationTests.csproj", "{8723E2DC-0108-4C16-B75E-2ADDC03BB067}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{DC207D49-786F-4EF9-8666-4691A860F224}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC207D49-786F-4EF9-8666-4691A860F224}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC207D49-786F-4EF9-8666-4691A860F224}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1C6DC5F-0330-461A-BE18-6F166C746E89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1C6DC5F-0330-461A-BE18-6F166C746E89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1C6DC5F-0330-461A-BE18-6F166C746E89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1C6DC5F-0330-461A-BE18-6F166C746E89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8723E2DC-0108-4C16-B75E-2ADDC03BB067}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8723E2DC-0108-4C16-B75E-2ADDC03BB067}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8723E2DC-0108-4C16-B75E-2ADDC03BB067}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8723E2DC-0108-4C16-B75E-2ADDC03BB067}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

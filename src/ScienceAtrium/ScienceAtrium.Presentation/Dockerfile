@@ -11,10 +11,10 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Central/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj", "src/Central/ScienceAtrium.Presentation/"]
-RUN dotnet restore "src/Central/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj"
+COPY ["src/ScienceAtrium/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj", "src/ScienceAtrium/ScienceAtrium.Presentation/"]
+RUN dotnet restore "src/ScienceAtrium/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj"
 COPY . .
-WORKDIR "/src/src/Central/ScienceAtrium.Presentation"
+WORKDIR "/src/ScienceAtrium/ScienceAtrium.Presentation"
 RUN dotnet build "ScienceAtrium.Presentation.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
