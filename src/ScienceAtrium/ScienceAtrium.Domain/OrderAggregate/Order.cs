@@ -11,6 +11,10 @@ public class Order : Entity
     public decimal TotalPrice 
     {
         get => WorkTemplates.Sum(x => x.Price);
+        private set
+        {
+
+        }
     }
     public Paymentmethod PaymentMethod { get; init; } = Paymentmethod.YooMoney;
     public Status Status { get; set; }
