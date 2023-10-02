@@ -1,15 +1,11 @@
-﻿using System;
-namespace ScienceAtrium.Domain.WorkTemplateAggregate
-{
-	public class Subject
-	{
-		public Subject()
-		{
-		}
+﻿using ScienceAtrium.Domain.Entities;
+namespace ScienceAtrium.Domain.WorkTemplateAggregate;
 
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        
+public class Subject : Entity
+{
+    public Subject(Guid id) : base(id)
+    {
     }
+    public string Name { get; init; }
 }
 
