@@ -1,5 +1,6 @@
 ﻿using ScienceAtrium.Domain.Entities;
-using ScienceAtrium.Domain.WorkTemplateAggregate;
+
+namespace ScienceAtrium.Domain.WorkTemplateAggregate;
 
 public class WorkTemplate : Entity
 {
@@ -9,5 +10,5 @@ public class WorkTemplate : Entity
     public string Title { get; set; }
     public string Description { get; set; }
     public WorkType WorkType { get; init; }
-    public decimal Price { get; private set; }
+    public decimal Price { get; init; }
 }

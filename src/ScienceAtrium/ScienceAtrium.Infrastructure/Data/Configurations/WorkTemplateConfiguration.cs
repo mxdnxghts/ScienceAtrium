@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ScienceAtrium.Domain.Constants;
+using ScienceAtrium.Domain.WorkTemplateAggregate;
 
 namespace ScienceAtrium.Infrastructure.Data.Configurations;
 public class WorkTemplateConfiguration : IEntityTypeConfiguration<WorkTemplate>

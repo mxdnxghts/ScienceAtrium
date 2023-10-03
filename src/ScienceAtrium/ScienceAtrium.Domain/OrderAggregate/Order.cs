@@ -1,6 +1,8 @@
 ﻿using ScienceAtrium.Domain.Entities;
-using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.UserAggregate;
+using ScienceAtrium.Domain.WorkTemplateAggregate;
+
+namespace ScienceAtrium.Domain.OrderAggregate;
 
 public class Order : Entity
 {
@@ -8,12 +10,11 @@ public class Order : Entity
     {
     }
     public DateTime OrderDate { get; } = DateTime.UtcNow;
-    public decimal TotalPrice 
+    public decimal TotalPrice
     {
         get => WorkTemplates.Sum(x => x.Price);
         private set
         {
-
         }
     }
     public Paymentmethod PaymentMethod { get; init; } = Paymentmethod.YooMoney;
