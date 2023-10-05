@@ -20,9 +20,9 @@ public interface IReader<TEntity> where TEntity : Entity
     bool Exist(Expression<Func<TEntity, bool>> predicate);
 
     /// <summary>
-    /// checks if the passed item meets the conditions
+    /// checks if the passed entity meets the conditions
     /// </summary>
-    /// <param name="item">inherited model type</param>
+    /// <param name="entity">inherited model type</param>
     /// <returns></returns>
-    bool FitsConditions(TEntity? item);
+    bool FitsConditions(TEntity? entity);
 }

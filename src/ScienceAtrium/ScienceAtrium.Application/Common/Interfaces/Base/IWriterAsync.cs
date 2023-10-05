@@ -7,21 +7,21 @@ public interface IWriterAsync<in TEntity> where TEntity : Entity
     /// <summary>
     /// adds entity to database
     /// </summary>
-    /// <param name="item">inherited model type</param>
+    /// <param name="entity">inherited model type</param>
     /// <returns></returns>
-    Task<int> CreateAsync(TEntity item);
+    Task<int> CreateAsync(TEntity entity);
 
     /// <summary>
     /// updates entity in database
     /// </summary>
-    /// <param name="item">inherited model type</param>
+    /// <param name="entity">inherited model type</param>
     /// <returns></returns>
-    Task<int> UpdateAsync(TEntity item);
+    Task<int> UpdateAsync(TEntity entity);
 
     /// <summary>
     /// deletes entity in database
     /// </summary>
-    /// <param name="item">inherited model type</param>
+    /// <param name="entity">inherited model type</param>
     /// <returns></returns>
-    Task<int> DeleteAsync(TEntity item);
+    Task<int> DeleteAsync(TEntity entity);
 }
