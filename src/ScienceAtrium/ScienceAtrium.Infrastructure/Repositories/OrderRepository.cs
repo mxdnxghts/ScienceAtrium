@@ -44,7 +44,7 @@ public sealed class OrderRepository : IOrderRepository<Order>
         }
     }
 
-    public Task<int> CreateAsync(Order entity)
+    public async Task<int> CreateAsync(Order entity)
     {
         throw new NotImplementedException();
     }
@@ -54,44 +54,56 @@ public sealed class OrderRepository : IOrderRepository<Order>
         throw new NotImplementedException();
     }
 
-    public Task<int> DeleteAsync(Order entity)
+    public async Task<int> DeleteAsync(Order entity)
     {
         throw new NotImplementedException();
     }
 
     public void Dispose()
     {
-        throw new NotImplementedException();
+        _context?.Dispose();
     }
 
     public bool Exist(Expression<Func<Order, bool>> predicate)
     {
-        throw new NotImplementedException();
+        return _context.Orders.Any(predicate);
     }
 
-    public Task<bool> ExistAsync(Expression<Func<Order, bool>> predicate)
+    public async Task<bool> ExistAsync(Expression<Func<Order, bool>> predicate)
     {
-        throw new NotImplementedException();
+        return await _context.Orders.AnyAsync(predicate);
     }
 
     public bool FitsConditions(Order? entity)
     {
-        throw new NotImplementedException();
+        if (entity?.Customer is null || entity?.Executor is null)
+            throw new ArgumentNullException(nameof(entity));
+
+        if (!Exist(x => x.Id == entity.Id))
+            throw new InvalidOperationException();
+
+        return true;
     }
 
-    public Task<bool> FitsConditionsAsync(Order? entity)
+    public async Task<bool> FitsConditionsAsync(Order? entity)
     {
-        throw new NotImplementedException();
+        if (entity?.Customer is null || entity?.Executor is null)
+            throw new ArgumentNullException(nameof(entity));
+
+        if (!await ExistAsync(x => x.Id == entity.Id))
+            throw new InvalidOperationException();
+
+        return true;
     }
 
     public Order Get(Expression<Func<Order, bool>> predicate)
     {
-        throw new NotImplementedException();
+        return _context.Orders.FirstOrDefault(predicate);
     }
 
-    public Task<Order> GetAsync(Expression<Func<Order, bool>> predicate)
+    public async Task<Order> GetAsync(Expression<Func<Order, bool>> predicate)
     {
-        throw new NotImplementedException();
+        return await _context.Orders.FirstOrDefaultAsync(predicate);
     }
 
     public int Update(Order entity)
@@ -99,7 +111,7 @@ public sealed class OrderRepository : IOrderRepository<Order>
         throw new NotImplementedException();
     }
 
-    public Task<int> UpdateAsync(Order entity)
+    public async Task<int> UpdateAsync(Order entity)
     {
         throw new NotImplementedException();
     }
