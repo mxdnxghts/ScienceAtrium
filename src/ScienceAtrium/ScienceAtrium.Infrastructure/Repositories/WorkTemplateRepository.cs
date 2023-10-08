@@ -21,7 +21,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
 
     public int Create(WorkTemplate entity)
     {
-        if (entity?.Customer is null || entity?.Executor is null)
+        if (entity?.Subject is null)
             throw new ArgumentNullException(nameof(entity));
 
         if (Exist(x => x.Id == entity.Id))
@@ -62,7 +62,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
 
     public bool FitsConditions(WorkTemplate? entity)
     {
-        if (entity?.Customer is null || entity?.Executor is null)
+        if (entity?.Subject is null)
             throw new ArgumentNullException(nameof(entity));
 
         if (Exist(x => x.Id == entity.Id))
@@ -73,7 +73,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
 
     public async Task<bool> FitsConditionsAsync(WorkTemplate? entity, CancellationToken cancellationToken = default)
     {
-        if (entity?.Customer is null || entity?.Executor is null)
+        if (entity?.Subject is null)
             throw new ArgumentNullException(nameof(entity));
 
         if (!await ExistAsync(x => x.Id == entity.Id))
