@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Application.Common.Interfaces;
+using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using Serilog;
+using System;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace ScienceAtrium.Infrastructure.Repositories;
@@ -21,7 +24,13 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
 
     public int Create(WorkTemplate entity)
     {
-        throw new NotImplementedException();
+        if (entity?.Customer is null || entity?.Executor is null)
+            throw new ArgumentNullException(nameof(entity));
+
+        if (Exist(x => x.Id == entity.Id))
+            throw new InvalidOperationException();
+
+        return _context.SaveChanges();
     }
 
     public Task<int> CreateAsync(WorkTemplate entity)
@@ -56,22 +65,35 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
 
     public bool FitsConditions(WorkTemplate? entity)
     {
-        throw new NotImplementedException();
+        if (entity?.Customer is null || entity?.Executor is null)
+            throw new ArgumentNullException(nameof(entity));
+
+        if (Exist(x => x.Id == entity.Id))
+            throw new InvalidOperationException();
+
+        return true;
     }
 
-    public Task<bool> FitsConditionsAsync(WorkTemplate? entity)
+    public async Task<bool> FitsConditionsAsync(WorkTemplate? entity)
     {
-        throw new NotImplementedException();
+        if (entity?.Customer is null || entity?.Executor is null)
+            throw new ArgumentNullException(nameof(entity));
+
+        if (!await ExistAsync(x => x.Id == entity.Id))
+            throw new InvalidOperationException();
+
+        return true;
     }
+
 
     public WorkTemplate Get(Expression<Func<WorkTemplate, bool>> predicate)
     {
-        throw new NotImplementedException();
+        return _context.WorkTemplates.FirstOrDefault(predicate);
     }
 
-    public Task<WorkTemplate> GetAsync(Expression<Func<WorkTemplate, bool>> predicate)
+    public async Task<WorkTemplate> GetAsync(Expression<Func<WorkTemplate, bool>> predicate)
     {
-        throw new NotImplementedException();
+        return await _context.WorkTemplates.FirstOrDefaultAsync(predicate);
     }
 
     public int Update(WorkTemplate entity)
