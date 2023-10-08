@@ -19,7 +19,7 @@ public sealed class OrderRepository : IOrderRepository<Order>
         _logger = logger;
     }
 
-    public IQueryable<Order> All => _context.Orders;
+    public IQueryable<Order> All => _context.Orders.AsNoTracking();
 
     public int Create(Order entity)
     {
@@ -76,12 +76,12 @@ public sealed class OrderRepository : IOrderRepository<Order>
 
     public bool Exist(Expression<Func<Order, bool>> predicate)
     {
-        return _context.Orders.Any(predicate);
+        return All.Any(predicate);
     }
 
     public async Task<bool> ExistAsync(Expression<Func<Order, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        return await _context.Orders.AnyAsync(predicate, cancellationToken);
+        return await All.AnyAsync(predicate, cancellationToken);
     }
 
     public bool FitsConditions(Order? entity)
@@ -108,12 +108,12 @@ public sealed class OrderRepository : IOrderRepository<Order>
 
     public Order Get(Expression<Func<Order, bool>> predicate)
     {
-        return _context.Orders.FirstOrDefault(predicate);
+        return All.FirstOrDefault(predicate);
     }
 
     public async Task<Order> GetAsync(Expression<Func<Order, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        return await _context.Orders.FirstOrDefaultAsync(predicate, cancellationToken);
+        return await All.FirstOrDefaultAsync(predicate, cancellationToken);
     }
 
     public int Update(Order entity)
