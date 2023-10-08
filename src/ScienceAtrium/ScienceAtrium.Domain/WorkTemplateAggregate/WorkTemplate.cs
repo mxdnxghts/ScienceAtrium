@@ -11,4 +11,6 @@ public class WorkTemplate : Entity
     public string Description { get; set; }
     public WorkType WorkType { get; init; }
     public decimal Price { get; init; }
+    public Guid? SubjectId { get; set; }
+    public Subject? Subject { get; set; }
 }

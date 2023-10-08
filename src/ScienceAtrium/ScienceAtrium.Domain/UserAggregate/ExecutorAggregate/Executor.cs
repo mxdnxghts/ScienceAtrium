@@ -7,5 +7,5 @@ public class Executor : User
     public Executor(Guid id) : base(id)
     {
     }
-    public List<Order> DoneOrders { get; set; }
+    public List<Order> DoneOrders { get; private set; } = new();
 }

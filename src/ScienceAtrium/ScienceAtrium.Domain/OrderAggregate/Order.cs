@@ -1,5 +1,6 @@
 ﻿using ScienceAtrium.Domain.Entities;
-using ScienceAtrium.Domain.UserAggregate;
+using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
+using ScienceAtrium.Domain.UserAggregate.Executor;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 
 namespace ScienceAtrium.Domain.OrderAggregate;
@@ -18,10 +19,10 @@ public class Order : Entity
         }
     }
     public Paymentmethod PaymentMethod { get; init; } = Paymentmethod.YooMoney;
-    public Status Status { get; set; }
-    public User? Customer { get; init; }
+    public Status Status { get; set; } = Status.Pending;
+    public Customer? Customer { get; init; }
     public Guid? CustomerId { get; set; }
-    public User? Executor { get; init; }
+    public Executor? Executor { get; init; }
     public Guid? ExecutorId { get; set; }
     public List<WorkTemplate> WorkTemplates { get; private set; } = new();
 }
