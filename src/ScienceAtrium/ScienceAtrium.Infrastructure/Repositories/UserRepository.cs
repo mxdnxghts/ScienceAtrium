@@ -1,9 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ScienceAtrium.Application.Common.Interfaces;
+﻿using ScienceAtrium.Application.Common.Interfaces;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using Serilog;
-using System.Linq.Expressions;
 
 namespace ScienceAtrium.Infrastructure.Repositories;
 
@@ -24,7 +22,7 @@ public IQueryable<User> All => _context.Users;
         throw new NotImplementedException();
     }
 
-    public Task<int> CreateAsync(User entity)
+    public Task<int> CreateAsync(User entity, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -34,7 +32,7 @@ public IQueryable<User> All => _context.Users;
         throw new NotImplementedException();
     }
 
-    public Task<int> DeleteAsync(User entity)
+    public Task<int> DeleteAsync(User entity, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -49,7 +47,7 @@ public IQueryable<User> All => _context.Users;
         throw new NotImplementedException();
     }
 
-    public Task<bool> ExistAsync(System.Linq.Expressions.Expression<Func<User, bool>> predicate)
+    public Task<bool> ExistAsync(System.Linq.Expressions.Expression<Func<User, bool>> predicate, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -59,7 +57,7 @@ public IQueryable<User> All => _context.Users;
         throw new NotImplementedException();
     }
 
-    public Task<bool> FitsConditionsAsync(User? entity)
+    public Task<bool> FitsConditionsAsync(User? entity, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -69,7 +67,7 @@ public IQueryable<User> All => _context.Users;
         throw new NotImplementedException();
     }
 
-    public Task<User> GetAsync(System.Linq.Expressions.Expression<Func<User, bool>> predicate)
+    public Task<User> GetAsync(System.Linq.Expressions.Expression<Func<User, bool>> predicate, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -79,7 +77,7 @@ public IQueryable<User> All => _context.Users;
         throw new NotImplementedException();
     }
 
-    public Task<int> UpdateAsync(User entity)
+    public Task<int> UpdateAsync(User entity, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

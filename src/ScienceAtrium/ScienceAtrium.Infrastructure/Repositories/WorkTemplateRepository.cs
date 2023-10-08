@@ -1,11 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Application.Common.Interfaces;
-using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using Serilog;
-using System;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace ScienceAtrium.Infrastructure.Repositories;
@@ -33,7 +30,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
         return _context.SaveChanges();
     }
 
-    public Task<int> CreateAsync(WorkTemplate entity)
+    public Task<int> CreateAsync(WorkTemplate entity, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -43,7 +40,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
         throw new NotImplementedException();
     }
 
-    public Task<int> DeleteAsync(WorkTemplate entity)
+    public Task<int> DeleteAsync(WorkTemplate entity, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -58,7 +55,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
         throw new NotImplementedException();
     }
 
-    public Task<bool> ExistAsync(Expression<Func<WorkTemplate, bool>> predicate)
+    public Task<bool> ExistAsync(Expression<Func<WorkTemplate, bool>> predicate, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -74,7 +71,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
         return true;
     }
 
-    public async Task<bool> FitsConditionsAsync(WorkTemplate? entity)
+    public async Task<bool> FitsConditionsAsync(WorkTemplate? entity, CancellationToken cancellationToken = default)
     {
         if (entity?.Customer is null || entity?.Executor is null)
             throw new ArgumentNullException(nameof(entity));
@@ -91,7 +88,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
         return _context.WorkTemplates.FirstOrDefault(predicate);
     }
 
-    public async Task<WorkTemplate> GetAsync(Expression<Func<WorkTemplate, bool>> predicate)
+    public async Task<WorkTemplate> GetAsync(Expression<Func<WorkTemplate, bool>> predicate, CancellationToken cancellationToken = default)
     {
         return await _context.WorkTemplates.FirstOrDefaultAsync(predicate);
     }
@@ -101,7 +98,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
         throw new NotImplementedException();
     }
 
-    public Task<int> UpdateAsync(WorkTemplate entity)
+    public Task<int> UpdateAsync(WorkTemplate entity, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

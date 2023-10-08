@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ScienceAtrium.Application.Common.Exceptions;
 using ScienceAtrium.Application.Common.Interfaces;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Infrastructure.Data;
+using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
 
@@ -22,41 +24,49 @@ public sealed class OrderRepository : IOrderRepository<Order>
     public int Create(Order entity)
     {
         if (entity?.Customer is null || entity?.Executor is null)
-            throw new ArgumentNullException(nameof(entity));
+            throw new ArgumentNullException($"Argument {{{nameof(entity)}}} or its inner fields is null.");
 
         if (Exist(x => x.Id == entity.Id))
-            throw new InvalidOperationException();
-
-        using var transaction = _context.Database.CurrentTransaction
-            ?? _context.Database.BeginTransaction(System.Data.IsolationLevel.RepeatableRead);
-
+            throw new EntityNotFoundException();
+        
         _context.Orders.Add(entity);
 
-        try
-        {
-            transaction.Commit();
-            return _context.SaveChanges();
-        }
-        catch (Exception)
-        {
-            transaction.Rollback();
-            return -1;
-        }
+        return _context.TrySaveChanges(_logger);
     }
 
-    public async Task<int> CreateAsync(Order entity)
+    public async Task<int> CreateAsync(Order entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (entity?.Customer is null || entity?.Executor is null)
+            throw new ValidationException();
+
+        if (await ExistAsync(x => x.Id == entity.Id))
+            throw new EntityNotFoundException();
+        
+        _context.Orders.Add(entity);
+
+        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
     public int Delete(Order entity)
     {
-        throw new NotImplementedException();
+        if (!FitsConditions(entity))
+            throw new ValidationException();
+
+        _context.Orders.Remove(entity);
+        _context.Users.UpdateRange(entity.Customer, entity.Executor);
+
+        return _context.TrySaveChanges(_logger);
     }
 
-    public async Task<int> DeleteAsync(Order entity)
+    public async Task<int> DeleteAsync(Order entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (!await FitsConditionsAsync(entity))
+            throw new ValidationException();
+
+        _context.Orders.Remove(entity);
+        _context.Users.UpdateRange(entity.Customer, entity.Executor);
+
+        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
     public void Dispose()
@@ -69,29 +79,29 @@ public sealed class OrderRepository : IOrderRepository<Order>
         return _context.Orders.Any(predicate);
     }
 
-    public async Task<bool> ExistAsync(Expression<Func<Order, bool>> predicate)
+    public async Task<bool> ExistAsync(Expression<Func<Order, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        return await _context.Orders.AnyAsync(predicate);
+        return await _context.Orders.AnyAsync(predicate, cancellationToken);
     }
 
     public bool FitsConditions(Order? entity)
     {
         if (entity?.Customer is null || entity?.Executor is null)
-            throw new ArgumentNullException(nameof(entity));
+            return false;
 
         if (!Exist(x => x.Id == entity.Id))
-            throw new InvalidOperationException();
+            return false;
 
         return true;
     }
 
-    public async Task<bool> FitsConditionsAsync(Order? entity)
+    public async Task<bool> FitsConditionsAsync(Order? entity, CancellationToken cancellationToken = default)
     {
         if (entity?.Customer is null || entity?.Executor is null)
-            throw new ArgumentNullException(nameof(entity));
+            return false;
 
-        if (!await ExistAsync(x => x.Id == entity.Id))
-            throw new InvalidOperationException();
+        if (!await ExistAsync(x => x.Id == entity.Id, cancellationToken))
+            return false;
 
         return true;
     }
@@ -101,18 +111,30 @@ public sealed class OrderRepository : IOrderRepository<Order>
         return _context.Orders.FirstOrDefault(predicate);
     }
 
-    public async Task<Order> GetAsync(Expression<Func<Order, bool>> predicate)
+    public async Task<Order> GetAsync(Expression<Func<Order, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        return await _context.Orders.FirstOrDefaultAsync(predicate);
+        return await _context.Orders.FirstOrDefaultAsync(predicate, cancellationToken);
     }
 
     public int Update(Order entity)
     {
-        throw new NotImplementedException();
+        if (!FitsConditions(entity))
+            throw new ValidationException();
+
+        _context.Orders.Update(entity);
+        _context.Users.UpdateRange(entity.Customer, entity.Executor);
+
+        return _context.TrySaveChanges(_logger);
     }
 
-    public async Task<int> UpdateAsync(Order entity)
+    public async Task<int> UpdateAsync(Order entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (!await FitsConditionsAsync(entity))
+            throw new ValidationException();
+
+        _context.Orders.Update(entity);
+        _context.Users.UpdateRange(entity.Customer, entity.Executor);
+
+        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 }
