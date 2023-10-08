@@ -9,19 +9,19 @@ public interface IWriterAsync<in TEntity> where TEntity : Entity
     /// </summary>
     /// <param name="entity">inherited model type</param>
     /// <returns></returns>
-    Task<int> CreateAsync(TEntity entity);
+    Task<int> CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// updates entity in database
     /// </summary>
     /// <param name="entity">inherited model type</param>
     /// <returns></returns>
-    Task<int> UpdateAsync(TEntity entity);
+    Task<int> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// deletes entity in database
     /// </summary>
     /// <param name="entity">inherited model type</param>
     /// <returns></returns>
-    Task<int> DeleteAsync(TEntity entity);
+    Task<int> DeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
 }
