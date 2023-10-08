@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ScienceAtrium.Application.Common.Exceptions;
 using ScienceAtrium.Application.Common.Interfaces;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
+using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
 
@@ -30,34 +32,54 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
         return _context.SaveChanges();
     }
 
-    public Task<int> CreateAsync(WorkTemplate entity, CancellationToken cancellationToken = default)
+    public async Task<int> CreateAsync(WorkTemplate entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (entity?.Subject is null)
+            throw new ValidationException(nameof(entity));
+
+        if (Exist(x => x.Id == entity.Id))
+            throw new EntityNotFoundException();
+
+        _context.WorkTemplates.Add(entity);
+
+        return await _context.TrySaveChangesAsync(_logger, CancellationToken: cancellationToken);
     }
 
     public int Delete(WorkTemplate entity)
     {
-        throw new NotImplementedException();
+        if (!FitsConditions(entity))
+            throw new ValidationException();
+
+        _context.WorkTemplates.Remove(entity);
+        _context.Subjects.UpdateRange(entity.Subject);
+
+        return _context.TrySaveChanges(_logger);
     }
 
-    public Task<int> DeleteAsync(WorkTemplate entity, CancellationToken cancellationToken = default)
+    public async Task<int> DeleteAsync(WorkTemplate entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (!await FitsConditionsAsync(entity))
+            throw new ValidationException();
+
+        _context.WorkTemplates.Remove(entity);
+        _context.Subjects.UpdateRange(entity.Subject);
+
+        return await _context.TrySaveChangesAsync(_logger, CancellationToken: cancellationToken);
     }
 
     public void Dispose()
     {
-        throw new NotImplementedException();
+        _context?.Dispose();
     }
 
     public bool Exist(Expression<Func<WorkTemplate, bool>> predicate)
     {
-        throw new NotImplementedException();
+        return All.Any(predicate);
     }
 
     public Task<bool> ExistAsync(Expression<Func<WorkTemplate, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return All.AnyAsync(predicate, cancellationToken);
     }
 
     public bool FitsConditions(WorkTemplate? entity)
@@ -85,22 +107,34 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
 
     public WorkTemplate Get(Expression<Func<WorkTemplate, bool>> predicate)
     {
-        return _context.WorkTemplates.FirstOrDefault(predicate);
+        return All.FirstOrDefault(predicate);
     }
 
     public async Task<WorkTemplate> GetAsync(Expression<Func<WorkTemplate, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        return await _context.WorkTemplates.FirstOrDefaultAsync(predicate);
+        return await All.FirstOrDefaultAsync(predicate, cancellationToken);
     }
 
     public int Update(WorkTemplate entity)
     {
-        throw new NotImplementedException();
+        if (!FitsConditions(entity))
+            throw new ValidationException();
+
+        _context.WorkTemplates.Update(entity);
+        _context.Subjects.UpdateRange(entity.Subject);
+
+        return _context.TrySaveChanges(_logger);
     }
 
-    public Task<int> UpdateAsync(WorkTemplate entity, CancellationToken cancellationToken = default)
+    public async Task<int> UpdateAsync(WorkTemplate entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (!await FitsConditionsAsync(entity))
+            throw new ValidationException();
+
+        _context.WorkTemplates.Remove(entity);
+        _context.Subjects.UpdateRange(entity.Subject);
+
+        return await _context.TrySaveChangesAsync(_logger, CancellationToken: cancellationToken);
     }
 }
 

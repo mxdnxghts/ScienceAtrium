@@ -37,7 +37,8 @@ public static class DbContextExtension
         this DbContext context, 
         ILogger? logger, 
         IDbContextTransaction? transaction = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        CancellationToken CancellationToken = default)
     {
         try
         {

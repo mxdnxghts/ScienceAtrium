@@ -2,6 +2,7 @@
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
+using Serilog;
 using System.Reflection;
 
 namespace ScienceAtrium.Infrastructure.Data;
@@ -24,5 +25,10 @@ public class ApplicationContext : DbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
+    }
+
+    internal Task<Task<int>> TrySaveChanges(ILogger logger, CancellationToken CancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }
