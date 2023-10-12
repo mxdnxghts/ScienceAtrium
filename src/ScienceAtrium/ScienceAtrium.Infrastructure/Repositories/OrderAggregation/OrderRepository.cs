@@ -7,7 +7,7 @@ using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
 
-namespace ScienceAtrium.Infrastructure.Repositories;
+namespace ScienceAtrium.Infrastructure.Repositories.OrderAggregation;
 public sealed class OrderRepository : IOrderRepository<Order>
 {
     private readonly ApplicationContext _context;
@@ -24,12 +24,17 @@ public sealed class OrderRepository : IOrderRepository<Order>
     public int Create(Order entity)
     {
         if (entity?.Customer is null || entity?.Executor is null)
-            throw new ArgumentNullException($"Argument {{{nameof(entity)}}} or its inner fields is null.");
+            throw new ValidationException();
 
         if (Exist(x => x.Id == entity.Id))
             throw new EntityNotFoundException();
-        
+
+        //entity.Customer.UpdateDetails(entity);
+        //entity.Executor.UpdateDetails(entity);
+
         _context.Orders.Add(entity);
+        _context.Users.UpdateRange(entity.Customer, entity.Executor);
+        _context.WorkTemplates.UpdateRange(entity.WorkTemplates);
 
         return _context.TrySaveChanges(_logger);
     }
@@ -41,8 +46,10 @@ public sealed class OrderRepository : IOrderRepository<Order>
 
         if (await ExistAsync(x => x.Id == entity.Id))
             throw new EntityNotFoundException();
-        
+
         _context.Orders.Add(entity);
+        _context.Users.UpdateRange(entity.Customer, entity.Executor);
+        _context.WorkTemplates.UpdateRange(entity.WorkTemplates);
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
@@ -54,6 +61,7 @@ public sealed class OrderRepository : IOrderRepository<Order>
 
         _context.Orders.Remove(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
+        _context.WorkTemplates.UpdateRange(entity.WorkTemplates);
 
         return _context.TrySaveChanges(_logger);
     }
@@ -65,6 +73,7 @@ public sealed class OrderRepository : IOrderRepository<Order>
 
         _context.Orders.Remove(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
+        _context.WorkTemplates.UpdateRange(entity.WorkTemplates);
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
@@ -89,6 +98,9 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (entity?.Customer is null || entity?.Executor is null)
             return false;
 
+        if (entity.Equals(Order.Default))
+            return false;
+
         if (!Exist(x => x.Id == entity.Id))
             return false;
 
@@ -100,6 +112,9 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (entity?.Customer is null || entity?.Executor is null)
             return false;
 
+        if (entity.Equals(Order.Default))
+            return false;
+
         if (!await ExistAsync(x => x.Id == entity.Id, cancellationToken))
             return false;
 
@@ -108,12 +123,12 @@ public sealed class OrderRepository : IOrderRepository<Order>
 
     public Order Get(Expression<Func<Order, bool>> predicate)
     {
-        return All.FirstOrDefault(predicate);
+        return All.FirstOrDefault(predicate) ?? Order.Default;
     }
 
     public async Task<Order> GetAsync(Expression<Func<Order, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        return await All.FirstOrDefaultAsync(predicate, cancellationToken);
+        return await All.FirstOrDefaultAsync(predicate, cancellationToken) ?? Order.Default;
     }
 
     public int Update(Order entity)
@@ -123,6 +138,7 @@ public sealed class OrderRepository : IOrderRepository<Order>
 
         _context.Orders.Update(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
+        _context.WorkTemplates.UpdateRange(entity.WorkTemplates);
 
         return _context.TrySaveChanges(_logger);
     }
@@ -134,6 +150,7 @@ public sealed class OrderRepository : IOrderRepository<Order>
 
         _context.Orders.Update(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
+        _context.WorkTemplates.UpdateRange(entity.WorkTemplates);
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }

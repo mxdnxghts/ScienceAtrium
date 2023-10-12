@@ -1,11 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ScienceAtrium.Application.Common.Exceptions;
 using ScienceAtrium.Application.Common.Interfaces;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
+using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
 
-namespace ScienceAtrium.Infrastructure.Repositories;
+namespace ScienceAtrium.Infrastructure.Repositories.WorkTemplateAggregation;
 public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplate>
 {
     private readonly ApplicationContext _context;
@@ -25,9 +27,11 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
             throw new ArgumentNullException(nameof(entity));
 
         if (Exist(x => x.Id == entity.Id))
-            throw new InvalidOperationException();
+            throw new EntityNotFoundException();
 
-        return _context.SaveChanges();
+        _context.WorkTemplates.Add(entity);
+
+        return _context.TrySaveChanges(_logger);
     }
 
     public Task<int> CreateAsync(WorkTemplate entity, CancellationToken cancellationToken = default)
@@ -63,10 +67,10 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
     public bool FitsConditions(WorkTemplate? entity)
     {
         if (entity?.Subject is null)
-            throw new ArgumentNullException(nameof(entity));
+            return false;
 
         if (Exist(x => x.Id == entity.Id))
-            throw new InvalidOperationException();
+            return false;
 
         return true;
     }
@@ -74,10 +78,10 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
     public async Task<bool> FitsConditionsAsync(WorkTemplate? entity, CancellationToken cancellationToken = default)
     {
         if (entity?.Subject is null)
-            throw new ArgumentNullException(nameof(entity));
+            return false;
 
         if (!await ExistAsync(x => x.Id == entity.Id))
-            throw new InvalidOperationException();
+            return false;
 
         return true;
     }

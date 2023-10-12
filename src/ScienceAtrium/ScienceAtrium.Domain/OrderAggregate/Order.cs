@@ -2,11 +2,14 @@
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Domain.UserAggregate.Executor;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ScienceAtrium.Domain.OrderAggregate;
 
 public class Order : Entity
 {
+    [NotMapped]
+    public static readonly Order Default = new Order(Guid.Empty);
     public Order(Guid id) : base(id)
     {
     }

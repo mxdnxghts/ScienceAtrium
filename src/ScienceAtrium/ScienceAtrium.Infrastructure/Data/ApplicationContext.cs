@@ -11,9 +11,6 @@ public class ApplicationContext : DbContext
     public ApplicationContext(DbContextOptions options) : base(options)
     {
     }
-    public ApplicationContext()
-    {
-    }
 
     public DbSet<User> Users { get; set; }
     public DbSet<Order> Orders { get; set; }
