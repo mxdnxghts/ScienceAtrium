@@ -44,7 +44,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
 
         _context.WorkTemplates.Add(entity);
 
-        return await _context.TrySaveChangesAsync(_logger, CancellationToken: cancellationToken);
+        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
     public int Delete(WorkTemplate entity)
@@ -66,7 +66,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
         _context.WorkTemplates.Remove(entity);
         _context.Subjects.UpdateRange(entity.Subject);
 
-        return await _context.TrySaveChangesAsync(_logger, CancellationToken: cancellationToken);
+        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
     public void Dispose()
@@ -136,7 +136,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
         _context.WorkTemplates.Remove(entity);
         _context.Subjects.UpdateRange(entity.Subject);
 
-        return await _context.TrySaveChangesAsync(_logger, CancellationToken: cancellationToken);
+        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 }
 

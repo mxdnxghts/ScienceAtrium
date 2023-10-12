@@ -23,9 +23,4 @@ public class ApplicationContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
     }
-
-    internal Task<Task<int>> TrySaveChanges(ILogger logger, CancellationToken CancellationToken)
-    {
-        throw new NotImplementedException();
-    }
 }
