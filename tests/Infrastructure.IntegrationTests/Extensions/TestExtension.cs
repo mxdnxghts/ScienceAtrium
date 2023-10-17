@@ -1,4 +1,5 @@
 ﻿using ScienceAtrium.Domain.Entities;
+using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using System.Text;
@@ -28,13 +29,21 @@ public static class TestExtension
         return $"{GetRandomName(names)}{Random.Shared.Next(10_000, 1_000_000)}@gmail.com";
     }
 
-    public static void PrepareTests<TEntity>(ApplicationContext applicationContext, TEntity[] entities)
-        where TEntity : Entity
+    public static void PrepareTests<TTrackedEntity, TUntrackedEntity>(
+        ApplicationContext applicationContext,
+        TTrackedEntity[] trackedEntities,
+        TUntrackedEntity[]? untrackedEntities = null,
+        bool ensureDeleted = true)
+        where TTrackedEntity : Entity
+        where TUntrackedEntity : Entity
     {
-        applicationContext.Database.EnsureDeleted();
+        if (ensureDeleted)
+            applicationContext.Database.EnsureDeleted();
         applicationContext.Database.EnsureCreated();
 
-        applicationContext.Set<TEntity>().AddRange(entities);
+        applicationContext.Set<TTrackedEntity>().AddRange(trackedEntities);
+        if (untrackedEntities is not null)
+            applicationContext.Set<TUntrackedEntity>().AttachRange(untrackedEntities);
         applicationContext.TrySaveChanges(null);
     }
 }

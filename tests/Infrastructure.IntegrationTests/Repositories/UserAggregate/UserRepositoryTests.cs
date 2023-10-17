@@ -1,7 +1,7 @@
 ﻿using Infrastructure.IntegrationTests.Extensions;
 using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Application.Common.Interfaces;
-using ScienceAtrium.Domain.OrderAggregate;
+using ScienceAtrium.Domain.Entities;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Repositories.UserAggregation;
@@ -57,10 +57,10 @@ public class UserRepositoryTests
     [Test]
     public void DeleteUserTest()
     {
-        var order = _userRepository.All.ToList()[0];
+        var user = _userRepository.All.ToList()[0];
 
-        _userRepository.Delete(order);
-        Assert.That(_userRepository.Get(x => x.Id == order.Id),
+        _userRepository.Delete(user);
+        Assert.That(_userRepository.Get(x => x.Id == user.Id),
             Is.EqualTo(User.Default));
     }
 
@@ -80,27 +80,26 @@ public class UserRepositoryTests
     [Test]
     public void PrepareTests()
     {
-        TestExtension.PrepareTests(_applicationContext, GetUserEntities(100));
+        TestExtension.PrepareTests<User, Entity>(_applicationContext, GetUserEntities(100, UserType.Customer), ensureDeleted: false);
+        TestExtension.PrepareTests<User, Entity>(_applicationContext, GetUserEntities(100, UserType.Executor), ensureDeleted: false);
     }
 
-
-
-    private User GetUserEntity()
+    private User GetUserEntity(UserType? userType = null)
     {
         return new User(Guid.NewGuid())
         {
             Name = TestExtension.GetRandomName(_names),
             Email = TestExtension.GetRandomEmail(_names),
             PhoneNumber = TestExtension.GetRandomPhoneNumber(),
-            UserType = (UserType)Random.Shared.Next(0, 1)
+            UserType = userType ?? (UserType)Random.Shared.Next(0, 1)
         };
     }
 
-    private User[] GetUserEntities(int usersCount)
+    private User[] GetUserEntities(int usersCount, UserType? userType = null)
     {
         var users = new User[usersCount];
         for (int i = 0; i < usersCount; i++)
-            users[i] = GetUserEntity();
+            users[i] = GetUserEntity(userType);
         return users;
     }
 }
