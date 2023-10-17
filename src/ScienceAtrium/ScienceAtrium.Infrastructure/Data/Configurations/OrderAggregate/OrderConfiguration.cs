@@ -21,8 +21,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder
             .HasMany(x => x.WorkTemplates)
-            .WithOne()
-            .OnDelete(DeleteBehavior.NoAction);
+            .WithMany();
 
         builder
             .Property(x => x.TotalPrice).

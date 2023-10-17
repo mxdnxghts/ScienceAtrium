@@ -13,7 +13,7 @@ public class WorkTemplateConfiguration : IEntityTypeConfiguration<WorkTemplate>
             .HasOne(x => x.Subject)
             .WithOne()
             .HasForeignKey<WorkTemplate>(x => x.SubjectId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.ClientSetNull);
         builder
             .Property(x => x.Title)
             .HasMaxLength(EntityConfiguration.MaxLength)

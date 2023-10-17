@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Serilog;
+using Serilog.Core;
+using System.Threading;
 
 namespace ScienceAtrium.Infrastructure.Extensions;
 
@@ -10,8 +12,8 @@ namespace ScienceAtrium.Infrastructure.Extensions;
 public static class DbContextExtension
 {
     public static int TrySaveChanges(
-        this DbContext context, 
-        ILogger? logger, 
+        this DbContext context,
+        ILogger? logger,
         IDbContextTransaction? transaction = null)
     {
         try
@@ -34,25 +36,28 @@ public static class DbContextExtension
     }
 
     public static async Task<int> TrySaveChangesAsync(
-        this DbContext context, 
-        ILogger? logger, 
+        this DbContext context,
+        ILogger? logger,
         IDbContextTransaction? transaction = null,
         CancellationToken cancellationToken = default)
     {
         try
         {
             var changes = await context.SaveChangesAsync(cancellationToken);
-            transaction?.Commit();
+            if (transaction is not null)
+                await transaction.CommitAsync(cancellationToken);
             return changes;
         }
         catch (Exception e) when (e is DbUpdateConcurrencyException or DbUpdateException)
         {
             logger?.Error(e, e.Message);
-            await transaction?.RollbackAsync();
+            if (transaction is not null)
+             await transaction.RollbackAsync(cancellationToken);
         }
         catch (Exception e)
         {
-            await transaction?.RollbackAsync();
+            if (transaction is not null)
+                await transaction.RollbackAsync(cancellationToken);
             throw e;
         }
         return -1;

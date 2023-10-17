@@ -2,7 +2,6 @@
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
-using Serilog;
 using System.Reflection;
 
 namespace ScienceAtrium.Infrastructure.Data;

@@ -18,9 +18,9 @@ public class User : Entity
     public Order? CurrentOrder { get; set; }
     public Guid? CurrentOrderId { get; set; }
 
-    public void UpdateDetails(Order order)
+    public void UpdateDetails(Order? order)
     {
         CurrentOrder = order;
-        CurrentOrderId = order.Id;
+        CurrentOrderId = order?.Id;
     }
 }
