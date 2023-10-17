@@ -19,7 +19,10 @@ public sealed class OrderRepository : IOrderRepository<Order>
         _logger = logger;
     }
 
-    public IQueryable<Order> All => _context.Orders.AsNoTracking();
+    public IQueryable<Order> All => _context.Orders
+        .Include(x => x.Customer.FormerOrders)
+        .Include(x => x.Executor.DoneOrders)
+        .AsNoTracking();
 
     public int Create(Order entity)
     {
@@ -29,12 +32,11 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (Exist(x => x.Id == entity.Id))
             throw new EntityNotFoundException();
 
-        //entity.Customer.UpdateDetails(entity);
-        //entity.Executor.UpdateDetails(entity);
+        entity.Customer.UpdateDetails(entity);
+        entity.Executor.UpdateDetails(entity);
 
         _context.Orders.Add(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
-        _context.WorkTemplates.UpdateRange(entity.WorkTemplates);
 
         return _context.TrySaveChanges(_logger);
     }
@@ -44,13 +46,15 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (entity?.Customer is null || entity?.Executor is null)
             throw new ValidationException();
 
-        if (await ExistAsync(x => x.Id == entity.Id))
+        if (await ExistAsync(x => x.Id == entity.Id, cancellationToken))
             throw new EntityNotFoundException();
+
+        entity.Customer.UpdateDetails(entity);
+        entity.Executor.UpdateDetails(entity);
 
         _context.Orders.Add(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
-        _context.WorkTemplates.UpdateRange(entity.WorkTemplates);
-
+        
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
@@ -59,21 +63,25 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (!FitsConditions(entity))
             throw new ValidationException();
 
+        entity.Customer.UpdateDetails(null);
+        entity.Executor.UpdateDetails(null);
+
         _context.Orders.Remove(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
-        _context.WorkTemplates.UpdateRange(entity.WorkTemplates);
 
         return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> DeleteAsync(Order entity, CancellationToken cancellationToken = default)
     {
-        if (!await FitsConditionsAsync(entity))
+        if (!await FitsConditionsAsync(entity, cancellationToken))
             throw new ValidationException();
+
+        entity.Customer.UpdateDetails(null);
+        entity.Executor.UpdateDetails(null);
 
         _context.Orders.Remove(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
-        _context.WorkTemplates.UpdateRange(entity.WorkTemplates);
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
@@ -136,21 +144,25 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (!FitsConditions(entity))
             throw new ValidationException();
 
+        entity.Customer.UpdateDetails(entity);
+        entity.Executor.UpdateDetails(entity);
+
         _context.Orders.Update(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
-        _context.WorkTemplates.UpdateRange(entity.WorkTemplates);
 
         return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> UpdateAsync(Order entity, CancellationToken cancellationToken = default)
     {
-        if (!await FitsConditionsAsync(entity))
+        if (!await FitsConditionsAsync(entity, cancellationToken))
             throw new ValidationException();
+
+        entity.Customer.UpdateDetails(entity);
+        entity.Executor.UpdateDetails(entity);
 
         _context.Orders.Update(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
-        _context.WorkTemplates.UpdateRange(entity.WorkTemplates);
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
