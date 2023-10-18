@@ -157,7 +157,10 @@ public class OrderRepositoryTest
         TestExtension.PrepareTests<WorkTemplate, Entity>(_applicationContext,
             new WorkTemplate[] { workTemplate }, ensureDeleted: false);
 
-        TestExtension.PrepareTests<Order, Entity>(_applicationContext, GetOrderEntities(100), ensureDeleted: false);
+        TestExtension.PrepareTests<Order, Entity>(_applicationContext, 
+            GetOrderEntities(100), ensureDeleted: false);
+
+        Assert.Pass();
     }
 
     private Order MapOrder()
@@ -218,9 +221,7 @@ public class OrderRepositoryTest
     {
         var orders = new Order[ordersCount];
         for (int i = 0; i < ordersCount; i++)
-        {
             orders[i] = GetOrderEntity();
-        }
         return orders;
     }
 }

@@ -80,8 +80,12 @@ public class UserRepositoryTests
     [Test]
     public void PrepareTests()
     {
-        TestExtension.PrepareTests<User, Entity>(_applicationContext, GetUserEntities(100, UserType.Customer), ensureDeleted: false);
-        TestExtension.PrepareTests<User, Entity>(_applicationContext, GetUserEntities(100, UserType.Executor), ensureDeleted: false);
+        TestExtension.PrepareTests<User, Entity>(_applicationContext,
+            GetUserEntities(100, UserType.Customer), ensureDeleted: false);
+        TestExtension.PrepareTests<User, Entity>(_applicationContext,
+            GetUserEntities(100, UserType.Executor), ensureDeleted: false);
+
+        Assert.Pass();
     }
 
     private User GetUserEntity(UserType? userType = null)

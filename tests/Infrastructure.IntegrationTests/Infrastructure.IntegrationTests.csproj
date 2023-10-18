@@ -22,8 +22,4 @@
     <ProjectReference Include="..\..\src\ScienceAtrium\ScienceAtrium.Infrastructure\ScienceAtrium.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Repositories\WorkTemplateAggregate\" />
-  </ItemGroup>
-
 </Project>

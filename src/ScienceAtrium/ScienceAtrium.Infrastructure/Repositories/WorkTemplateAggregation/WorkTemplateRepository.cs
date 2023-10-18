@@ -19,17 +19,19 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
         _logger = logger;
     }
 
-    public IQueryable<WorkTemplate> All => _context.WorkTemplates;
+    public IQueryable<WorkTemplate> All => _context.WorkTemplates
+        .Include(x => x.Subject).AsNoTracking();
 
     public int Create(WorkTemplate entity)
     {
         if (entity?.Subject is null)
-            throw new ArgumentNullException(nameof(entity));
+            throw new ValidationException();
 
         if (Exist(x => x.Id == entity.Id))
             throw new EntityNotFoundException();
 
         _context.WorkTemplates.Add(entity);
+        
 
         return _context.TrySaveChanges(_logger);
     }
@@ -37,7 +39,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
     public async Task<int> CreateAsync(WorkTemplate entity, CancellationToken cancellationToken = default)
     {
         if (entity?.Subject is null)
-            throw new ValidationException(nameof(entity));
+            throw new ValidationException();
 
         if (Exist(x => x.Id == entity.Id))
             throw new EntityNotFoundException();
@@ -53,7 +55,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
             throw new ValidationException();
 
         _context.WorkTemplates.Remove(entity);
-        _context.Subjects.UpdateRange(entity.Subject);
+        _context.Subjects.Update(entity.Subject);
 
         return _context.TrySaveChanges(_logger);
     }
@@ -64,7 +66,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
             throw new ValidationException();
 
         _context.WorkTemplates.Remove(entity);
-        _context.Subjects.UpdateRange(entity.Subject);
+        _context.Subjects.Update(entity.Subject);
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
@@ -89,7 +91,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
         if (entity?.Subject is null)
             return false;
 
-        if (Exist(x => x.Id == entity.Id))
+        if (!Exist(x => x.Id == entity.Id))
             return false;
 
         return true;
@@ -100,7 +102,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
         if (entity?.Subject is null)
             return false;
 
-        if (!await ExistAsync(x => x.Id == entity.Id))
+        if (!await ExistAsync(x => x.Id == entity.Id, cancellationToken))
             return false;
 
         return true;
@@ -109,12 +111,12 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
 
     public WorkTemplate Get(Expression<Func<WorkTemplate, bool>> predicate)
     {
-        return All.FirstOrDefault(predicate);
+        return All.FirstOrDefault(predicate) ?? WorkTemplate.Default;
     }
 
     public async Task<WorkTemplate> GetAsync(Expression<Func<WorkTemplate, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        return await All.FirstOrDefaultAsync(predicate, cancellationToken);
+        return await All.FirstOrDefaultAsync(predicate, cancellationToken) ?? WorkTemplate.Default;
     }
 
     public int Update(WorkTemplate entity)
@@ -123,18 +125,18 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
             throw new ValidationException();
 
         _context.WorkTemplates.Update(entity);
-        _context.Subjects.UpdateRange(entity.Subject);
+        _context.Subjects.Update(entity.Subject);
 
         return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> UpdateAsync(WorkTemplate entity, CancellationToken cancellationToken = default)
     {
-        if (!await FitsConditionsAsync(entity))
+        if (!await FitsConditionsAsync(entity, cancellationToken))
             throw new ValidationException();
 
         _context.WorkTemplates.Remove(entity);
-        _context.Subjects.UpdateRange(entity.Subject);
+        _context.Subjects.Update(entity.Subject);
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }

@@ -1,5 +1,4 @@
 ﻿using ScienceAtrium.Domain.Entities;
-using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using System.Text;
@@ -27,6 +26,11 @@ public static class TestExtension
     public static string GetRandomEmail(List<string> names)
     {
         return $"{GetRandomName(names)}{Random.Shared.Next(10_000, 1_000_000)}@gmail.com";
+    }
+
+    public static string GetRandomSubject(List<string> subjects)
+    {
+        return subjects[Random.Shared.Next(0, subjects.Count - 1)];
     }
 
     public static void PrepareTests<TTrackedEntity, TUntrackedEntity>(
