@@ -9,7 +9,7 @@ namespace ScienceAtrium.Domain.OrderAggregate;
 public class Order : Entity
 {
     [NotMapped]
-    public static readonly Order Default = new Order(Guid.Empty);
+    public static readonly Order Default = new (Guid.Empty);
     public Order(Guid id) : base(id)
     {
     }

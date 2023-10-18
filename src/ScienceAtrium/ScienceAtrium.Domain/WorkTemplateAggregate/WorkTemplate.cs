@@ -4,6 +4,7 @@ namespace ScienceAtrium.Domain.WorkTemplateAggregate;
 
 public class WorkTemplate : Entity
 {
+    public static readonly WorkTemplate Default = new(Guid.Empty);
     public WorkTemplate(Guid id) : base(id)
     {
     }

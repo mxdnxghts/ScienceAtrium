@@ -11,8 +11,8 @@ public class WorkTemplateConfiguration : IEntityTypeConfiguration<WorkTemplate>
         builder.HasKey(x => x.Id);
         builder
             .HasOne(x => x.Subject)
-            .WithOne()
-            .HasForeignKey<WorkTemplate>(x => x.SubjectId)
+            .WithMany()
+            .HasForeignKey(x => x.SubjectId)
             .OnDelete(DeleteBehavior.ClientSetNull);
         builder
             .Property(x => x.Title)
