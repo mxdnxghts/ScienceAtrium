@@ -9,6 +9,11 @@ public class ValidationException : Exception
         Errors = new Dictionary<string, string[]>();
     }
 
+    public ValidationException(Guid entityId) : base($"Entity with Id {{{entityId}}} doesn't fit conditions.")
+    {
+        Errors = new Dictionary<string, string[]>();
+    }
+
     public ValidationException(IEnumerable<ValidationFailure> failures)
         : this()
     {
