@@ -7,8 +7,8 @@ using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
-using ScienceAtrium.Infrastructure.Repositories.OrderAggregation;
 using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
+using ScienceAtrium.Infrastructure.Repositories.OrderAggregate;
 
 namespace Infrastructure.IntegrationTests.Repositories.OrderAggregate;
 

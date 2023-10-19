@@ -6,9 +6,8 @@ using ScienceAtrium.Domain.Entities;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
-using ScienceAtrium.Infrastructure.Repositories.OrderAggregation;
-using ScienceAtrium.Infrastructure.Repositories.WorkTemplateAggregation;
 using System.Globalization;
+using ScienceAtrium.Infrastructure.Repositories.WorkTemplateAggregate;
 
 namespace Infrastructure.IntegrationTests.Repositories.WorkTemplateAggregate;
 

@@ -4,8 +4,8 @@ using ScienceAtrium.Domain.Entities;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Infrastructure.Data;
-using ScienceAtrium.Infrastructure.Repositories.UserAggregation;
 using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
+using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
 
 namespace Infrastructure.IntegrationTests.Repositories.UserAggregate;
 

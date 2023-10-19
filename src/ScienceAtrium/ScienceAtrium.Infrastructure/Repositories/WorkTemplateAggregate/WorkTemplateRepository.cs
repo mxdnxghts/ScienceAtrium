@@ -6,7 +6,7 @@ using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
 
-namespace ScienceAtrium.Infrastructure.Repositories.WorkTemplateAggregation;
+namespace ScienceAtrium.Infrastructure.Repositories.WorkTemplateAggregate;
 public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplate>
 {
     private readonly ApplicationContext _context;

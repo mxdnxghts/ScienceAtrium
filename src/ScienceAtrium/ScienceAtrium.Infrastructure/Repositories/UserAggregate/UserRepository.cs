@@ -6,7 +6,7 @@ using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
 
-namespace ScienceAtrium.Infrastructure.Repositories.UserAggregation;
+namespace ScienceAtrium.Infrastructure.Repositories.UserAggregate;
 public sealed class UserRepository<TUser> : IUserRepository<TUser>
     where TUser : User
 {

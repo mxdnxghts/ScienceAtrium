@@ -6,7 +6,7 @@ using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
 
-namespace ScienceAtrium.Infrastructure.Repositories.OrderAggregation;
+namespace ScienceAtrium.Infrastructure.Repositories.OrderAggregate;
 public sealed class OrderRepository : IOrderRepository<Order>
 {
     private readonly ApplicationContext _context;
