@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Application.Common.Interfaces;
 using ScienceAtrium.Domain.Entities;
 using ScienceAtrium.Domain.UserAggregate;
+using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
+using ScienceAtrium.Domain.UserAggregate.Executor;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Repositories.UserAggregation;
 
@@ -10,7 +12,7 @@ namespace Infrastructure.IntegrationTests.Repositories.UserAggregate;
 
 public class UserRepositoryTests
 {
-    private IUserRepository<User> _userRepository;
+    private IUserRepository<Customer> _userRepository;
     private ApplicationContext _applicationContext;
     private List<string> _names;
     [SetUp]
@@ -20,7 +22,7 @@ public class UserRepositoryTests
             new DbContextOptionsBuilder<ApplicationContext>()
             .UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true").Options);
 
-        _userRepository = new UserRepository<User>(_applicationContext, null);
+        _userRepository = new UserRepository<Customer>(_applicationContext, null);
 
         _names = new List<string>
         {
@@ -30,6 +32,8 @@ public class UserRepositoryTests
             "Alex",
             "Maxim",
         };
+
+        var s = _userRepository.All;
 
         _applicationContext.Database.EnsureCreated();
     }
@@ -47,7 +51,7 @@ public class UserRepositoryTests
     [Test]
     public void CreateUserTest()
     {
-        var user = GetUserEntity();
+        var user = GetUserEntity<Customer>();
 
         _userRepository.Create(user);
         Assert.That(_userRepository.Get(x => x.Id == user.Id),
@@ -61,7 +65,7 @@ public class UserRepositoryTests
 
         _userRepository.Delete(user);
         Assert.That(_userRepository.Get(x => x.Id == user.Id),
-            Is.EqualTo(User.Default));
+            Is.EqualTo(User.MapTo<Customer>(User.Default)));
     }
 
     [Test]
@@ -80,30 +84,32 @@ public class UserRepositoryTests
     [Test]
     public void PrepareTests()
     {
-        TestExtension.PrepareTests<User, Entity>(_applicationContext,
-            GetUserEntities(100, UserType.Customer), ensureDeleted: false);
-        TestExtension.PrepareTests<User, Entity>(_applicationContext,
-            GetUserEntities(100, UserType.Executor), ensureDeleted: false);
+        TestExtension.PrepareTests<Customer, Entity>(_applicationContext,
+            GetUserEntities<Customer>(100, UserType.Customer), ensureDeleted: false);
+        TestExtension.PrepareTests<Executor, Entity>(_applicationContext,
+            GetUserEntities<Executor>(100, UserType.Executor), ensureDeleted: false);
 
         Assert.Pass();
     }
 
-    private User GetUserEntity(UserType? userType = null)
+    private TUser GetUserEntity<TUser>(UserType? userType = null)
+        where TUser : User
     {
-        return new User(Guid.NewGuid())
+        return User.MapTo<TUser>(new User(Guid.NewGuid())
         {
             Name = TestExtension.GetRandomName(_names),
             Email = TestExtension.GetRandomEmail(_names),
             PhoneNumber = TestExtension.GetRandomPhoneNumber(),
             UserType = userType ?? (UserType)Random.Shared.Next(0, 1)
-        };
+        });
     }
 
-    private User[] GetUserEntities(int usersCount, UserType? userType = null)
+    private TUser[] GetUserEntities<TUser>(int usersCount, UserType? userType = null)
+        where TUser : User
     {
-        var users = new User[usersCount];
+        var users = new TUser[usersCount];
         for (int i = 0; i < usersCount; i++)
-            users[i] = GetUserEntity(userType);
+            users[i] = GetUserEntity<TUser>(userType);
         return users;
     }
 }
