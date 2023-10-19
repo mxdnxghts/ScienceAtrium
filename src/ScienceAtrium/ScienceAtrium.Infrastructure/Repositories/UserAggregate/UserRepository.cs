@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Application.Common.Exceptions;
-using ScienceAtrium.Application.Common.Interfaces;
 using ScienceAtrium.Domain.UserAggregate;
-using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;

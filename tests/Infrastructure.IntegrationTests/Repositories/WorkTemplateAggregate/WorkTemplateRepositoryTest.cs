@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
-using ScienceAtrium.Application.Common.Interfaces;
 using ScienceAtrium.Domain.Entities;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;

@@ -15,4 +15,8 @@
     <ProjectReference Include="..\ScienceAtrium.Domain\ScienceAtrium.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Common\Interfaces\Base\" />
+  </ItemGroup>
+
 </Project>

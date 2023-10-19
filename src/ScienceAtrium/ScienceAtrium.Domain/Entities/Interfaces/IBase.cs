@@ -1,6 +1,4 @@
-﻿using ScienceAtrium.Domain.Entities;
-
-namespace ScienceAtrium.Application.Common.Interfaces.Base;
+﻿namespace ScienceAtrium.Domain.Entities.Interfaces;
 public interface IBase<out TEntity> where TEntity : Entity
 {
     /// <summary>

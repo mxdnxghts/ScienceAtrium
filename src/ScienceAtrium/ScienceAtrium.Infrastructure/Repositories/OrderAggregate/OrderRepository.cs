@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Application.Common.Exceptions;
-using ScienceAtrium.Application.Common.Interfaces;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;

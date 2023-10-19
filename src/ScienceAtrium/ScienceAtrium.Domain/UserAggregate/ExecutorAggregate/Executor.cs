@@ -1,7 +1,7 @@
 ﻿
 using ScienceAtrium.Domain.OrderAggregate;
 
-namespace ScienceAtrium.Domain.UserAggregate.Executor;
+namespace ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
 public class Executor : User
 {
     public Executor(Guid id) : base(id)
