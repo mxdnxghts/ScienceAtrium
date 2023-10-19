@@ -1,4 +1,5 @@
-﻿using ScienceAtrium.Domain.Entities;
+﻿using AutoMapper;
+using ScienceAtrium.Domain.Entities;
 using ScienceAtrium.Domain.OrderAggregate;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -22,5 +23,12 @@ public class User : Entity
     {
         CurrentOrder = order;
         CurrentOrderId = order?.Id;
+    }
+
+    public static TUser MapTo<TUser>(User user) where TUser : User
+    {
+        return new MapperConfiguration(mc => mc.CreateMap<User, TUser>())
+            .CreateMapper()
+            .Map<TUser>(user);
     }
 }
