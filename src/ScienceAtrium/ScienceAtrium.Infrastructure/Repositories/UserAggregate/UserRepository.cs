@@ -7,6 +7,14 @@ using Serilog;
 using System.Linq.Expressions;
 
 namespace ScienceAtrium.Infrastructure.Repositories.UserAggregate;
+
+/// <summary>
+/// Represents implementation of interface <see cref="IUserRepository{TEntity}"/>
+/// </summary>
+/// <typeparam name="TUser">entity that  has a parent class <see cref="User"/></typeparam>
+/// <remarks>
+/// You have to use any type of <typeparamref name="TUser"/> that 's child of <see cref="User"/> but  not the <see cref="User"/>
+/// </remarks>
 public sealed class UserRepository<TUser> : IUserRepository<TUser>
     where TUser : User
 {
