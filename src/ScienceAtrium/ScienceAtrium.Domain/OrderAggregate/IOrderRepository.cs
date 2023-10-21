@@ -1,5 +1,5 @@
-﻿using ScienceAtrium.Domain.Entities;
-using ScienceAtrium.Domain.Entities.Interfaces;
+﻿using ScienceAtrium.Domain.RootAggregate;
+using ScienceAtrium.Domain.RootAggregate.Interfaces;
 
 namespace ScienceAtrium.Domain.OrderAggregate;
 

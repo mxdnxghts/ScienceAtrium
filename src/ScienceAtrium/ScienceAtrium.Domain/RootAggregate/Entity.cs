@@ -1,4 +1,6 @@
-﻿namespace ScienceAtrium.Domain.Entities;
+﻿using ScienceAtrium.Domain.RootAggregate;
+
+namespace ScienceAtrium.Domain.RootAggregate;
 
 public abstract class Entity : IEquatable<Entity>
 {

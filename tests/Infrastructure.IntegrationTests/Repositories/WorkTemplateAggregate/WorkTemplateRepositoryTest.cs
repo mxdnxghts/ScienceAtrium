@@ -2,12 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
-using ScienceAtrium.Domain.Entities;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using System.Globalization;
 using ScienceAtrium.Infrastructure.Repositories.WorkTemplateAggregate;
+using ScienceAtrium.Domain.RootAggregate;
 
 namespace Infrastructure.IntegrationTests.Repositories.WorkTemplateAggregate;
 

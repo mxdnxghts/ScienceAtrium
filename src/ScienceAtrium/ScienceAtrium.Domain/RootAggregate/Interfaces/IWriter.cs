@@ -1,6 +1,6 @@
-﻿using ScienceAtrium.Domain.Entities;
+﻿using ScienceAtrium.Domain.RootAggregate;
 
-namespace ScienceAtrium.Domain.Entities.Interfaces;
+namespace ScienceAtrium.Domain.RootAggregate.Interfaces;
 
 public interface IWriter<in TEntity> where TEntity : Entity
 {

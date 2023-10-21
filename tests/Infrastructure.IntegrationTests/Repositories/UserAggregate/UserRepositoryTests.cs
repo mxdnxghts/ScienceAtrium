@@ -1,11 +1,11 @@
 ﻿using Infrastructure.IntegrationTests.Extensions;
 using Microsoft.EntityFrameworkCore;
-using ScienceAtrium.Domain.Entities;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
 using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
+using ScienceAtrium.Domain.RootAggregate;
 
 namespace Infrastructure.IntegrationTests.Repositories.UserAggregate;
 

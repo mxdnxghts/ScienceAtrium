@@ -1,7 +1,7 @@
-﻿using ScienceAtrium.Domain.Entities;
-using ScienceAtrium.Infrastructure.Data;
+﻿using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using System.Text;
+using ScienceAtrium.Domain.RootAggregate;
 
 namespace Infrastructure.IntegrationTests.Extensions;
 
