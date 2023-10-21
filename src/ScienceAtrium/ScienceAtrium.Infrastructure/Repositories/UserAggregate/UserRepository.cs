@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ScienceAtrium.Application.Common.Exceptions;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
+using ScienceAtrium.Domain.Exceptions;
 
 namespace ScienceAtrium.Infrastructure.Repositories.UserAggregate;
 

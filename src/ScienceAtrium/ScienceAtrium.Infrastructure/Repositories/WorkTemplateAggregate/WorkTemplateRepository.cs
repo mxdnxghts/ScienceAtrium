@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ScienceAtrium.Application.Common.Exceptions;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
+using ScienceAtrium.Domain.Exceptions;
 
 namespace ScienceAtrium.Infrastructure.Repositories.WorkTemplateAggregate;
 public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplate>
