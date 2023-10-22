@@ -1,14 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ScienceAtrium.Application.Common.Exceptions;
-using ScienceAtrium.Application.Common.Interfaces;
 using ScienceAtrium.Domain.UserAggregate;
-using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
+using ScienceAtrium.Domain.Exceptions;
 
-namespace ScienceAtrium.Infrastructure.Repositories.UserAggregation;
+namespace ScienceAtrium.Infrastructure.Repositories.UserAggregate;
+
+/// <summary>
+/// Represents implementation of interface <see cref="IUserRepository{TEntity}"/>
+/// </summary>
+/// <typeparam name="TUser">entity that  has a parent class <see cref="User"/></typeparam>
+/// <remarks>
+/// You have to use any type of <typeparamref name="TUser"/> that 's child of <see cref="User"/> but  not the <see cref="User"/>
+/// </remarks>
 public sealed class UserRepository<TUser> : IUserRepository<TUser>
     where TUser : User
 {

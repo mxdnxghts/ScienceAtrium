@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ScienceAtrium.Application.Common.Exceptions;
-using ScienceAtrium.Application.Common.Interfaces;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
+using ScienceAtrium.Domain.Exceptions;
 
-namespace ScienceAtrium.Infrastructure.Repositories.OrderAggregation;
+namespace ScienceAtrium.Infrastructure.Repositories.OrderAggregate;
 public sealed class OrderRepository : IOrderRepository<Order>
 {
     private readonly ApplicationContext _context;

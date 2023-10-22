@@ -1,7 +1,7 @@
-﻿using ScienceAtrium.Domain.Entities;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using ScienceAtrium.Domain.RootAggregate;
 
-namespace ScienceAtrium.Application.Common.Interfaces.Base;
+namespace ScienceAtrium.Domain.RootAggregate.Interfaces;
 
 public interface IReaderAsync<TEntity> where TEntity : Entity
 {

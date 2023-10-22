@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ScienceAtrium.Domain.UserAggregate.Executor;
+using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
 
 namespace ScienceAtrium.Infrastructure.Data.Configurations.UserAggregate;
 public class ExecutorConfiguration : IEntityTypeConfiguration<Executor>

@@ -1,4 +1,4 @@
-﻿namespace ScienceAtrium.Application.Common.Exceptions;
+﻿namespace ScienceAtrium.Domain.Exceptions;
 public class EntityNotFoundException : Exception
 {
     public EntityNotFoundException()

@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ScienceAtrium.Application\ScienceAtrium.Application.csproj" />
     <ProjectReference Include="..\ScienceAtrium.Domain\ScienceAtrium.Domain.csproj" />
   </ItemGroup>
 

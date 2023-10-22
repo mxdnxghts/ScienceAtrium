@@ -1,4 +1,4 @@
-﻿using ScienceAtrium.Domain.Entities;
+﻿using ScienceAtrium.Domain.RootAggregate;
 
 namespace ScienceAtrium.Domain.WorkTemplateAggregate;
 

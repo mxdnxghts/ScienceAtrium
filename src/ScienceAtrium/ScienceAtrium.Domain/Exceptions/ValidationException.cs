@@ -1,6 +1,7 @@
 ﻿using FluentValidation.Results;
+using ScienceAtrium.Domain.Exceptions;
 
-namespace ScienceAtrium.Application.Common.Exceptions;
+namespace ScienceAtrium.Domain.Exceptions;
 public class ValidationException : Exception
 {
     public ValidationException()

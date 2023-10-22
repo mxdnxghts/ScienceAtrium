@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using ScienceAtrium.Domain.Entities;
 using ScienceAtrium.Domain.OrderAggregate;
 using System.ComponentModel.DataAnnotations.Schema;
+using ScienceAtrium.Domain.RootAggregate;
 
 namespace ScienceAtrium.Domain.UserAggregate;
 
