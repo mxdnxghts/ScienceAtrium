@@ -105,7 +105,7 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (entity?.Customer is null || entity?.Executor is null)
             return false;
 
-        if (entity.IsEmpty(entity.Id))
+        if (entity.IsEmpty())
             return false;
 
         if (!Exist(x => x.Id == entity.Id))
@@ -119,7 +119,7 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (entity?.Customer is null || entity?.Executor is null)
             return false;
 
-        if (entity.IsEmpty(entity.Id))
+        if (entity.IsEmpty())
             return false;
 
         if (!await ExistAsync(x => x.Id == entity.Id, cancellationToken))

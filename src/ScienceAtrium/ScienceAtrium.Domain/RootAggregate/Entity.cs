@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace ScienceAtrium.Domain.RootAggregate;
 
-public abstract class Entity : IEquatable<Entity>, IEntityValidation<Entity>
+public abstract class Entity : IEquatable<Entity>, IEntityValidation
 {
     protected Entity(Guid id)
     {
@@ -42,28 +42,26 @@ public abstract class Entity : IEquatable<Entity>, IEntityValidation<Entity>
         return Id.GetHashCode() * 12;
     }
 
-    public bool IsExist(IReader<Entity> reader, Expression<Func<Entity, bool>> func)
+    public bool IsEmpty()
+    {
+        return Id == Guid.Empty;
+    }
+
+    public bool IsExist<TReaderEntity>(IReader<TReaderEntity> reader, Expression<Func<TReaderEntity, bool>> func)
+        where TReaderEntity : Entity
     {
         return reader.Exist(func);
     }
 
-    public bool IsEmpty(Guid id)
+    public bool IsValid<TReaderEntity>(IReader<TReaderEntity> reader)
+        where TReaderEntity : Entity
     {
-        return id == Guid.Empty;
+        return IsValid(reader, x => x.Id == Id);
     }
 
-    public bool IsNull(Entity entity)
+    public bool IsValid<TReaderEntity>(IReader<TReaderEntity> reader, Expression<Func<TReaderEntity, bool>> func)
+        where TReaderEntity : Entity
     {
-        return entity is null;
-    }
-
-    public bool IsValid(IReader<Entity> reader, Entity entity)
-    {
-        return IsValid(reader, x => x.Id == entity.Id, entity);
-    }
-
-    public bool IsValid(IReader<Entity> reader, Expression<Func<Entity, bool>> func, Entity entity)
-    {
-        return !IsNull(entity) && !IsEmpty(entity.Id) && IsExist(reader, func);
+        return !IsEmpty() && IsExist(reader, func);
     }
 }
