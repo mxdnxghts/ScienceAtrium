@@ -1,8 +1,9 @@
-﻿using ScienceAtrium.Domain.RootAggregate;
+﻿using ScienceAtrium.Domain.RootAggregate.Interfaces;
+using System.Linq.Expressions;
 
 namespace ScienceAtrium.Domain.RootAggregate;
 
-public abstract class Entity : IEquatable<Entity>
+public abstract class Entity : IEquatable<Entity>, IEntityValidation<Entity>
 {
     protected Entity(Guid id)
     {
@@ -39,5 +40,30 @@ public abstract class Entity : IEquatable<Entity>
     public override int GetHashCode()
     {
         return Id.GetHashCode() * 12;
+    }
+
+    public bool IsExist(IReader<Entity> reader, Expression<Func<Entity, bool>> func)
+    {
+        return reader.Exist(func);
+    }
+
+    public bool IsEmpty(Guid id)
+    {
+        return id == Guid.Empty;
+    }
+
+    public bool IsNull(Entity entity)
+    {
+        return entity is null;
+    }
+
+    public bool IsValid(IReader<Entity> reader, Entity entity)
+    {
+        return IsValid(reader, x => x.Id == entity.Id, entity);
+    }
+
+    public bool IsValid(IReader<Entity> reader, Expression<Func<Entity, bool>> func, Entity entity)
+    {
+        return !IsNull(entity) && !IsEmpty(entity.Id) && IsExist(reader, func);
     }
 }
