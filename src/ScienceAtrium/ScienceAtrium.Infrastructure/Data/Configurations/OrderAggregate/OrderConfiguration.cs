@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ScienceAtrium.Domain.OrderAggregate;
 
-namespace ScienceAtrium.Infrastructure.Data.Configurations;
+namespace ScienceAtrium.Infrastructure.Data.Configurations.OrderAggregate;
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
     public void Configure(EntityTypeBuilder<Order> builder)
@@ -10,19 +10,18 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasKey(x => x.Id);
         builder
             .HasOne(x => x.Customer)
-            .WithOne()
+            .WithOne(x => x.CurrentOrder)
             .HasForeignKey<Order>(x => x.CustomerId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.ClientSetNull);
         builder
             .HasOne(x => x.Executor)
-            .WithOne()
+            .WithOne(x => x.CurrentOrder)
             .HasForeignKey<Order>(x => x.ExecutorId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.ClientSetNull);
 
         builder
             .HasMany(x => x.WorkTemplates)
-            .WithOne()
-            .OnDelete(DeleteBehavior.NoAction);
+            .WithMany();
 
         builder
             .Property(x => x.TotalPrice).

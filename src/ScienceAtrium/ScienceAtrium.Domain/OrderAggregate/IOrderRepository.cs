@@ -1,6 +1,8 @@
-﻿namespace ScienceAtrium.Domain.OrderAggregate;
+﻿using ScienceAtrium.Domain.RootAggregate;
+using ScienceAtrium.Domain.RootAggregate.Interfaces;
 
-public interface IOrderRepository
+namespace ScienceAtrium.Domain.OrderAggregate;
+
+public interface IOrderRepository<TEntity> : IRepository<TEntity>, IRepositoryAsync<TEntity> where TEntity : Entity
 {
-    
 }

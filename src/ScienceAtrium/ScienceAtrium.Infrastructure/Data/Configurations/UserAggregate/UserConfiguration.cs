@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ScienceAtrium.Domain.Constants;
 using ScienceAtrium.Domain.UserAggregate;
 
-namespace ScienceAtrium.Infrastructure.Data.Configurations;
+namespace ScienceAtrium.Infrastructure.Data.Configurations.UserAggregate;
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
