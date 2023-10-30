@@ -25,10 +25,10 @@ public class User : Entity
         CurrentOrderId = order?.Id;
     }
 
-    public static TUser MapTo<TUser>(User user) where TUser : User
+    public TUser MapTo<TUser>() where TUser : User
     {
         return new MapperConfiguration(mc => mc.CreateMap<User, TUser>())
             .CreateMapper()
-            .Map<TUser>(user);
+            .Map<TUser>(this);
     }
 }
