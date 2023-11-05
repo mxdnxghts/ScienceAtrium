@@ -1,4 +1,5 @@
-﻿using ScienceAtrium.Domain.RootAggregate;
+﻿using ScienceAtrium.Domain.Constants;
+using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Domain.RootAggregate.Interfaces;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
@@ -11,7 +12,7 @@ public class Order : Entity
 {
     public static readonly Order Default = new(Guid.Empty);
 
-    private List<WorkTemplate> _workTemplates;
+    private readonly List<WorkTemplate> _workTemplates;
     private Status _status;
     private Paymentmethod _paymentMethod;
     private decimal _totalCost;
@@ -21,6 +22,13 @@ public class Order : Entity
         _workTemplates = new();
         _status = Status.Pending;
         _paymentMethod = Paymentmethod.YooMoney;
+    }
+
+    public Order(Guid id, Status status, Paymentmethod paymentMethod) : base(id)
+    {
+        _workTemplates = new();
+        _status = status;
+        _paymentMethod = paymentMethod;
     }
     public DateTime OrderDate { get; } = DateTime.UtcNow;
     public decimal TotalCost => _totalCost;
@@ -32,50 +40,60 @@ public class Order : Entity
     public Guid? ExecutorId { get; private set; }
     public IReadOnlyCollection<WorkTemplate> WorkTemplates => _workTemplates;
 
-    public void AddWorkTemplate(WorkTemplate workTemplate)
+    public Order AddWorkTemplate(WorkTemplate workTemplate)
     {
         if (workTemplate is null || workTemplate.IsEmpty())
         {
-            Debug.Fail($"Passed instance of {{{nameof(WorkTemplate)}}} has incorrect value.");
-            return;
+            Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(WorkTemplate)));
+            return this;
         }
 
         var existingWorkTemplate = _workTemplates.FirstOrDefault(x => x.Id == workTemplate.Id);
         if (existingWorkTemplate?.IsEmpty() == true)
         {
             Debug.Fail($"Work template with the same Key {{{existingWorkTemplate.Id}}} already exists.");
-            return;
+            return this;
         }
         _workTemplates.Add(workTemplate);
         _totalCost = _workTemplates.Sum(x => x.Price);
+        return this;
     }
 
-    public void UpdateStatus(Status status)
+    public Order UpdateStatus(Status status)
     {
         _status = status;
+        return this;
     }
 
-    public void UpdateCustomer(IReader<Customer> reader, Customer customer)
+    public Order UpdatePaymentMethod(Paymentmethod paymentMethod)
+    {
+        _paymentMethod = paymentMethod;
+        return this;
+    }
+
+    public Order UpdateCustomer(IReader<Customer> reader, Customer customer)
     {
         if (!customer.IsValid(reader))
         {
-            Debug.Fail($"Passed instance of {{{nameof(Customer)}}} has incorrect value.");
-            return;
+            Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(Customer)));
+            return this;
         }
 
         Customer = customer;
         CustomerId = customer.Id;
+        return this;
     }
 
-    public void UpdateExecutor(IReader<Executor> reader, Executor executor)
+    public Order UpdateExecutor(IReader<Executor> reader, Executor executor)
     {
         if (!executor.IsValid(reader))
         {
-            Debug.Fail($"Passed instance of {{{nameof(Customer)}}} has incorrect value.");
-            return;
+            Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(Customer)));
+            return this;
         }
 
         Executor = executor;
         ExecutorId = executor.Id;
+        return this;
     }
 }

@@ -16,13 +16,14 @@ public class User : Entity
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
     public UserType UserType { get; set; }
-    public Order? CurrentOrder { get; set; }
-    public Guid? CurrentOrderId { get; set; }
+    public Order? CurrentOrder { get; private set; }
+    public Guid? CurrentOrderId { get; private set; }
 
-    public void UpdateDetails(Order? order)
+    public User UpdateCurrentOrder(Order? currentOrder)
     {
-        CurrentOrder = order;
-        CurrentOrderId = order?.Id;
+        CurrentOrder = currentOrder;
+        CurrentOrderId = currentOrder?.Id;
+        return this;
     }
 
     public TUser MapTo<TUser>() where TUser : User
