@@ -33,11 +33,7 @@ public class ApplicationContextTests
             UserType = UserType.Executor,
         };
 
-        var order = new Order(Guid.NewGuid())
-        {
-            Customer = customer,
-            Executor = executor,
-        };
+        var order = new Order(Guid.NewGuid());
 
         var subject = new Subject(Guid.NewGuid())
         {
@@ -49,10 +45,7 @@ public class ApplicationContextTests
 
         executor.CurrentOrder = order;
         executor.CurrentOrderId = order.Id;
-
-        order.CustomerId = order.Customer.Id;
-        order.ExecutorId = order.Executor.Id;
-        order.WorkTemplates.Add(new WorkTemplate(Guid.NewGuid())
+        order.AddWorkTemplate(new WorkTemplate(Guid.NewGuid())
         {
             Title = "title",
             Description = "description",
@@ -64,4 +57,5 @@ public class ApplicationContextTests
         context.Orders.Add(order);
         Assert.That(context.SaveChanges(), Is.AtLeast(1));
     }
+
 }
