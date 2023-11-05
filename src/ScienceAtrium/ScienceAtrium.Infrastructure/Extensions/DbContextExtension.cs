@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Serilog;
-using Serilog.Core;
-using System.Threading;
 
 namespace ScienceAtrium.Infrastructure.Extensions;
 
