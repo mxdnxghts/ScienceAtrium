@@ -1,0 +1,15 @@
+﻿using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
+
+namespace ScienceAtrium.Domain.Constants;
+public static class DebugExceptions
+{
+    public static string NullOrWhiteSpace(string instance)
+    {
+        return $"Passed {instance} is null, empty or consists only of white-space characters";
+    }
+
+    public static string HasIncorrectValue(string instance)
+    {
+        return $"Passed instance of {{{instance}}} has incorrect value.";
+    }
+}
