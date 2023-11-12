@@ -109,9 +109,9 @@ public class WorkTemplateRepositoryTest
     [Test]
     public void UpdateWorkTemplateTest()
     {
-        var wt = _workTemplateRepository.Get(x => x.Price != 0);
+        var wt = _workTemplateRepository.Get(x => x.Price != 0).UpdateDescription("new description");
         var oldWt = _workTemplateRepository.Get(x => x.Price != 0);
-        wt.Description = "new";
+        
 
         _workTemplateRepository.Update(wt);
 
@@ -124,7 +124,7 @@ public class WorkTemplateRepositoryTest
     {
         var wt = await _workTemplateRepository.GetAsync(x => x.Price != 0);
         var oldWt = _workTemplateRepository.Get(x => x.Price != 0);
-        wt.Description = "new";
+        wt.UpdateDescription("new description");
 
         await _workTemplateRepository.UpdateAsync(wt);
 
@@ -175,14 +175,12 @@ public class WorkTemplateRepositoryTest
     {
         var subject = _applicationContext.Subjects.SingleOrDefault(x => x.Name == TestExtension.GetRandomSubject(_subjects));
 
-        return new WorkTemplate(Guid.NewGuid())
-        {
-            Title = $"{TestExtension.GetRandomEmail(_names)}-title",
-            Description = $"{TestExtension.GetRandomEmail(_names)}-description",
-            WorkType = WorkType.CourseWork,
-            Price = Random.Shared.Next(1000, 10_000),
-            Subject = subject,
-            SubjectId = subject.Id,
-        };
+        return new WorkTemplate(
+            id: Guid.NewGuid(),
+            title: $"{TestExtension.GetRandomEmail(_names)}-title",
+            description: $"{TestExtension.GetRandomEmail(_names)}-description",
+            workType: WorkType.CourseWork,
+            price: Random.Shared.Next(1000, 10_000)
+        ).UpdateSubject(subject);
     }
 }

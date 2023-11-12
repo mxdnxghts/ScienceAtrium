@@ -154,15 +154,13 @@ public class OrderRepositoryTest
             Name = "Math"
         };
         var workTemplate = new WorkTemplate(
-            new Guid("{40405132-7516-4731-86E3-B6D4A6D956E7}"))
-        {
-            Title = $"{TestExtension.GetRandomEmail(_names)}-title",
-            Description = $"{TestExtension.GetRandomEmail(_names)}-description",
-            WorkType = WorkType.CourseWork,
-            Price = Random.Shared.Next(1000, 10_000),
-            Subject = subject,
-            SubjectId = subject.Id,
-        };
+            id: new Guid("{40405132-7516-4731-86E3-B6D4A6D956E7}"),
+            title: $"{TestExtension.GetRandomEmail(_names)}-title",
+            description: $"{TestExtension.GetRandomEmail(_names)}-description",
+            workType: WorkType.CourseWork,
+            price: Random.Shared.Next(1000, 10_000)
+        ).UpdateSubject(subject);
+
         TestExtension.PrepareTests<Subject, Entity>(
             _applicationContext,
                 new Subject[] { subject },
@@ -207,22 +205,14 @@ public class OrderRepositoryTest
         executor ??= _executorBase.All.Where(_expression).ToList()[position]
             .MapTo<Executor>();
 
-        var order = new Order(Guid.NewGuid());
+        var order = new Order(Guid.NewGuid())
+            .UpdateCustomer(_customerReader, customer)
+            .UpdateExecutor(_executorReader, executor)
+            .AddWorkTemplate(_applicationContext.WorkTemplates
+                .SingleOrDefault(x => x.WorkType == WorkType.CourseWork));
 
-        // due to we create new customer and executor which don't exist in db yet
-        // method IsValid returns false
-        // supposed solution is to get real users from db
-        order.UpdateCustomer(_customerReader, customer);
-        order.UpdateExecutor(_executorReader, executor);
-
-        customer.CurrentOrder = order;
-        customer.CurrentOrderId = order.Id;
-
-        executor.CurrentOrder = order;
-        executor.CurrentOrderId = order.Id;
-
-        order.AddWorkTemplate(_applicationContext.WorkTemplates
-            .SingleOrDefault(x => x.WorkType == WorkType.CourseWork));
+        customer.UpdateCurrentOrder(order);
+        executor.UpdateCurrentOrder(order);
 
         return order;
     }
@@ -237,19 +227,17 @@ public class OrderRepositoryTest
 
     private (Customer, Executor) GetNewCustomerExecutor()
     {
-        return new(new Customer(Guid.NewGuid())
-        {
-            Name = TestExtension.GetRandomName(_names),
-            Email = TestExtension.GetRandomEmail(_names),
-            PhoneNumber = TestExtension.GetRandomPhoneNumber(),
-            UserType = UserType.Customer,
-        },
-        new Executor(Guid.NewGuid())
-        {
-            Name = TestExtension.GetRandomName(_names),
-            Email = TestExtension.GetRandomEmail(_names),
-            PhoneNumber = TestExtension.GetRandomPhoneNumber(),
-            UserType = UserType.Executor,
-        });
+        return new(new User(
+            id: Guid.NewGuid(),
+            name: TestExtension.GetRandomName(_names),
+            email: TestExtension.GetRandomEmail(_names),
+            phoneNumber: TestExtension.GetRandomPhoneNumber(),
+            userType: UserType.Customer).MapTo<Customer>(),
+        new User(
+            id: Guid.NewGuid(),
+            name: TestExtension.GetRandomName(_names),
+            email: TestExtension.GetRandomEmail(_names),
+            phoneNumber: TestExtension.GetRandomPhoneNumber(),
+            userType: UserType.Executor).MapTo<Executor>());
     }
 }
