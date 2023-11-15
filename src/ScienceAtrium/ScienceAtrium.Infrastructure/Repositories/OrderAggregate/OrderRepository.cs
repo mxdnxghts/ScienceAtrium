@@ -19,7 +19,7 @@ public sealed class OrderRepository : IOrderRepository<Order>
     }
 
     public IQueryable<Order> All => _context.Orders
-        .Include(x => x.Customer.FormerOrders)
+        .Include(x => x.Customer.FormedOrders)
         .Include(x => x.Executor.DoneOrders)
         .Include(x => x.WorkTemplates).ThenInclude(x => x.Subject)
         .AsNoTracking();

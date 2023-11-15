@@ -15,6 +15,8 @@ public class User : Entity
     private string _email;
     private string _phoneNumber;
     private UserType _userType;
+    private readonly List<Order> _orders;
+    private readonly List<Order> _emptyOrderList;
 
     public User(Guid id, string name, string email, string phoneNumber, UserType userType) : base(id)
     {
@@ -22,10 +24,14 @@ public class User : Entity
         _email = email;
         _phoneNumber = phoneNumber;
         _userType = userType;
+        _orders = new();
+        _emptyOrderList = Enumerable.Empty<Order>().ToList();
     }
 
     public User(Guid id) : base(id)
     {
+        _orders = new();
+        _emptyOrderList = Enumerable.Empty<Order>().ToList();
     }
     public string Name => _name;
     public string Email => _email;
@@ -88,5 +94,50 @@ public class User : Entity
         return new MapperConfiguration(mc => mc.CreateMap<User, TUser>())
             .CreateMapper()
             .Map<TUser>(this);
+    }
+
+    protected List<Order> AddOrder(Order order)
+    {
+        if (order?.IsEmpty() != false)
+        {
+            Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(Order)));
+            return _emptyOrderList;
+        }
+
+        var existOrder = _orders.Find(x => x.Id == order.Id);
+        if (existOrder?.IsEmpty() == true)
+        {
+            Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(Order), existOrder.Id));
+            return _emptyOrderList;
+        }
+        _orders.Add(order);
+        return _orders;
+    }
+
+    protected List<Order> RemoveOrder(Func<Order, bool> funcGetOrder)
+    {
+        var order = _orders.FirstOrDefault(funcGetOrder);
+        if (order?.IsEmpty() != false)
+        {
+            Debug.Fail(DebugExceptions.HasNullValue(nameof(Order)));
+            return _emptyOrderList;
+        }
+
+        _orders.Remove(order);
+        return _orders;
+    }
+
+    protected List<Order> UpdateOrder(Func<Order, bool> funcGetOrder, Order newOrder)
+    {
+        var order = _orders.FirstOrDefault(funcGetOrder);
+        if (order?.IsEmpty() != false)
+        {
+            Debug.Fail(DebugExceptions.HasNullValue(nameof(Order)));
+            return _emptyOrderList;
+        }
+
+        _orders.Remove(order);
+        _orders.Add(newOrder);
+        return _orders;
     }
 }

@@ -48,10 +48,10 @@ public class Order : Entity
             return this;
         }
 
-        var existingWorkTemplate = _workTemplates.FirstOrDefault(x => x.Id == workTemplate.Id);
+        var existingWorkTemplate = _workTemplates.Find(x => x.Id == workTemplate.Id);
         if (existingWorkTemplate?.IsEmpty() == true)
         {
-            Debug.Fail($"Work template with the same Key {{{existingWorkTemplate.Id}}} already exists.");
+            Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(WorkTemplate), existingWorkTemplate.Id));
             return this;
         }
         _workTemplates.Add(workTemplate);

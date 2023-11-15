@@ -8,7 +8,7 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
     public void Configure(EntityTypeBuilder<Customer> builder)
     {
         builder
-            .HasMany(x => x.FormerOrders)
+            .HasMany(x => x.FormedOrders)
             .WithOne()
             .OnDelete(DeleteBehavior.NoAction);
     }
