@@ -33,7 +33,7 @@ public class WorkTemplate : Entity
     {
         if (subject?.IsEmpty() == true)
         {
-            Debug.Fail($"Passed instance of subject with Key {{{subject.Id}}} is null or empty.");
+            Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(subject)));
             return this;
         }
 

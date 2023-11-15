@@ -42,19 +42,26 @@ public class Order : Entity
 
     public Order AddWorkTemplate(WorkTemplate workTemplate)
     {
-        if (workTemplate is null || workTemplate.IsEmpty())
-        {
-            Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(WorkTemplate)));
-            return this;
-        }
-
-        var existingWorkTemplate = _workTemplates.Find(x => x.Id == workTemplate.Id);
-        if (existingWorkTemplate?.IsEmpty() == true)
-        {
-            Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(WorkTemplate), existingWorkTemplate.Id));
-            return this;
-        }
+        ThrowIfHasIncorrectValue(workTemplate);
         _workTemplates.Add(workTemplate);
+        _totalCost = _workTemplates.Sum(x => x.Price);
+        return this;
+    }
+
+    public Order UpdateWorkTemplate(WorkTemplate workTemplate)
+    {
+        ThrowIfHasIncorrectValue(workTemplate);
+        _workTemplates.Remove(workTemplate);
+        _workTemplates.Add(workTemplate);
+        _totalCost = _workTemplates.Sum(x => x.Price);
+        return this;
+    }
+
+    public Order RemoveWorkTemplate(Func<WorkTemplate, bool> funcGetWorkTemplate)
+    {
+        var workTemplate = _workTemplates.FirstOrDefault(funcGetWorkTemplate);
+        ThrowIfHasIncorrectValue(workTemplate);
+        _workTemplates.Remove(workTemplate);
         _totalCost = _workTemplates.Sum(x => x.Price);
         return this;
     }
@@ -95,5 +102,15 @@ public class Order : Entity
         Executor = executor;
         ExecutorId = executor.Id;
         return this;
+    }
+
+    private void ThrowIfHasIncorrectValue(WorkTemplate workTemplate)
+    {
+        if (workTemplate is null || workTemplate.IsEmpty())
+            Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(WorkTemplate)));
+
+        var existingWorkTemplate = _workTemplates.Find(x => x.Id == workTemplate.Id);
+        if (existingWorkTemplate?.IsEmpty() == true)
+            Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(WorkTemplate),  existingWorkTemplate.Id));
     }
 }
