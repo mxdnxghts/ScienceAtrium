@@ -19,8 +19,9 @@ public sealed class OrderRepository : IOrderRepository<Order>
     }
 
     public IQueryable<Order> All => _context.Orders
-        .Include(x => x.Customer.FormerOrders)
+        .Include(x => x.Customer.FormedOrders)
         .Include(x => x.Executor.DoneOrders)
+        .Include(x => x.WorkTemplates).ThenInclude(x => x.Subject)
         .AsNoTracking();
 
     public int Create(Order entity)
@@ -31,8 +32,8 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (Exist(x => x.Id == entity.Id))
             throw new EntityNotFoundException();
 
-        entity.Customer.UpdateDetails(entity);
-        entity.Executor.UpdateDetails(entity);
+        entity.Customer.UpdateCurrentOrder(entity);
+        entity.Executor.UpdateCurrentOrder(entity);
 
         _context.Orders.Add(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
@@ -48,8 +49,8 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (await ExistAsync(x => x.Id == entity.Id, cancellationToken))
             throw new EntityNotFoundException();
 
-        entity.Customer.UpdateDetails(entity);
-        entity.Executor.UpdateDetails(entity);
+        entity.Customer.UpdateCurrentOrder(entity);
+        entity.Executor.UpdateCurrentOrder(entity);
 
         _context.Orders.Add(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
@@ -62,8 +63,8 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (!FitsConditions(entity))
             throw new ValidationException();
 
-        entity.Customer.UpdateDetails(null);
-        entity.Executor.UpdateDetails(null);
+        entity.Customer.UpdateCurrentOrder(null);
+        entity.Executor.UpdateCurrentOrder(null);
 
         _context.Orders.Remove(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
@@ -76,8 +77,8 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (!await FitsConditionsAsync(entity, cancellationToken))
             throw new ValidationException();
 
-        entity.Customer.UpdateDetails(null);
-        entity.Executor.UpdateDetails(null);
+        entity.Customer.UpdateCurrentOrder(null);
+        entity.Executor.UpdateCurrentOrder(null);
 
         _context.Orders.Remove(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
@@ -105,7 +106,7 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (entity?.Customer is null || entity?.Executor is null)
             return false;
 
-        if (entity.IsEmpty(entity.Id))
+        if (entity.IsEmpty())
             return false;
 
         if (!Exist(x => x.Id == entity.Id))
@@ -119,7 +120,7 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (entity?.Customer is null || entity?.Executor is null)
             return false;
 
-        if (entity.IsEmpty(entity.Id))
+        if (entity.IsEmpty())
             return false;
 
         if (!await ExistAsync(x => x.Id == entity.Id, cancellationToken))
@@ -143,8 +144,8 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (!FitsConditions(entity))
             throw new ValidationException();
 
-        entity.Customer.UpdateDetails(entity);
-        entity.Executor.UpdateDetails(entity);
+        entity.Customer.UpdateCurrentOrder(entity);
+        entity.Executor.UpdateCurrentOrder(entity);
 
         _context.Orders.Update(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);
@@ -157,8 +158,8 @@ public sealed class OrderRepository : IOrderRepository<Order>
         if (!await FitsConditionsAsync(entity, cancellationToken))
             throw new ValidationException();
 
-        entity.Customer.UpdateDetails(entity);
-        entity.Executor.UpdateDetails(entity);
+        entity.Customer.UpdateCurrentOrder(entity);
+        entity.Executor.UpdateCurrentOrder(entity);
 
         _context.Orders.Update(entity);
         _context.Users.UpdateRange(entity.Customer, entity.Executor);

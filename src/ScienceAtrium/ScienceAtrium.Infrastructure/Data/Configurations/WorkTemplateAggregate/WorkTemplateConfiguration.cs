@@ -17,19 +17,23 @@ public class WorkTemplateConfiguration : IEntityTypeConfiguration<WorkTemplate>
         builder
             .Property(x => x.Title)
             .HasMaxLength(EntityConfiguration.MaxLength)
+            .HasField("_title")
             .IsRequired();
 
         builder
             .Property(x => x.Description)
+            .HasField("_description")
             .HasMaxLength(EntityConfiguration.MaxLength);
 
         builder
             .Property(x => x.WorkType)
+            .HasField("_workType")
             .IsRequired();
 
         builder
             .Property(x => x.Price)
             .HasPrecision(12, 2)
+            .HasField("_price")
             .IsRequired();
     }
 }

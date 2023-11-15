@@ -2,21 +2,13 @@
 using System.Linq.Expressions;
 
 namespace ScienceAtrium.Domain.RootAggregate;
-public interface IEntityValidation<TEntity> where TEntity : Entity
+public interface IEntityValidation
 {
-    /// <summary>
-    /// check  entity on null
-    /// </summary>
-    /// <param name="entity"></param>
-    /// <returns></returns>
-    bool IsNull(TEntity entity);
-
     /// <summary>
     /// check entity on default value
     /// </summary>
-    /// <param name="id"></param>
     /// <returns></returns>
-    bool IsEmpty(Guid id);
+    bool IsEmpty();
 
     /// <summary>
     /// check entity on existing in the database
@@ -24,22 +16,23 @@ public interface IEntityValidation<TEntity> where TEntity : Entity
     /// <param name="reader"></param>
     /// <param name="func"></param>
     /// <returns></returns>
-    bool IsExist(IReader<TEntity> reader, Expression<Func<TEntity, bool>> func);
+    bool IsExist<TReaderEntity>(IReader<TReaderEntity> reader, Expression<Func<TReaderEntity, bool>> func)
+        where TReaderEntity : Entity;
 
     /// <summary>
     /// combine all checks in one
     /// </summary>
     /// <param name="reader"></param>
-    /// <param name="entity"></param>
     /// <returns></returns>
-    bool IsValid(IReader<TEntity> reader,  TEntity entity);
+    bool IsValid<TReaderEntity>(IReader<TReaderEntity> reader)
+        where TReaderEntity : Entity;
 
     /// <summary>
     /// combine all checks in one
     /// </summary>
     /// <param name="reader"></param>
     /// <param name="func"></param>
-    /// <param name="entity"></param>
     /// <returns></returns>
-    bool IsValid(IReader<TEntity> reader, Expression<Func<TEntity, bool>> func, TEntity entity);
+    bool IsValid<TReaderEntity>(IReader<TReaderEntity> reader, Expression<Func<TReaderEntity, bool>> func) 
+        where TReaderEntity : Entity;
 }

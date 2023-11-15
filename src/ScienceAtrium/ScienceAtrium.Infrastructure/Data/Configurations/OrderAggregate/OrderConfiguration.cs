@@ -23,18 +23,20 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasMany(x => x.WorkTemplates)
             .WithMany();
 
-        builder
-            .Property(x => x.TotalPrice).
-            IsRequired();
+        builder.Property(x => x.TotalCost)
+            .HasPrecision(12, 2)
+            .HasField("_totalCost")
+            .IsRequired();
         builder
             .Property(x => x.OrderDate)
-            .HasPrecision(12, 2)
             .IsRequired();
         builder
             .Property(x => x.PaymentMethod)
+            .HasField("_paymentMethod")
             .IsRequired();
         builder
             .Property(x => x.Status)
+            .HasField("_status")
             .IsRequired();
     }
 }

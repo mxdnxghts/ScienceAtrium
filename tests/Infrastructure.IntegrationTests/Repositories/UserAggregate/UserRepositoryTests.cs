@@ -31,19 +31,15 @@ public class UserRepositoryTests
             "Alex",
             "Maxim",
         };
-
-        var s = _userRepository.All;
-
-        _applicationContext.Database.EnsureCreated();
     }
 
     [Test]
     public void GetUserTest()
     {
-        var order = _userRepository.Get(x =>
+        var user = _userRepository.Get(x =>
             x.Id != Guid.Empty);
 
-        Assert.That(order,
+        Assert.That(user,
             Is.Not.EqualTo(User.Default));
     }
 
@@ -64,7 +60,7 @@ public class UserRepositoryTests
 
         _userRepository.Delete(user);
         Assert.That(_userRepository.Get(x => x.Id == user.Id),
-            Is.EqualTo(User.MapTo<Customer>(User.Default)));
+            Is.EqualTo(User.Default.MapTo<Customer>()));
     }
 
     [Test]
@@ -72,7 +68,7 @@ public class UserRepositoryTests
     {
         var user = _userRepository.All.ToList()[0];
         var oldUser = _userRepository.All.ToList()[0];
-        user.Name = "New name";
+        user.UpdateName("New name");
 
         _userRepository.Update(user);
 
@@ -84,9 +80,9 @@ public class UserRepositoryTests
     public void PrepareTests()
     {
         TestExtension.PrepareTests<Customer, Entity>(_applicationContext,
-            GetUserEntities<Customer>(100, UserType.Customer), ensureDeleted: false);
+            GetUserEntities<Customer>(200, UserType.Customer), ensureDeleted: true);
         TestExtension.PrepareTests<Executor, Entity>(_applicationContext,
-            GetUserEntities<Executor>(100, UserType.Executor), ensureDeleted: false);
+            GetUserEntities<Executor>(200, UserType.Executor), ensureDeleted: false);
 
         Assert.Pass();
     }
@@ -94,13 +90,12 @@ public class UserRepositoryTests
     private TUser GetUserEntity<TUser>(UserType? userType = null)
         where TUser : User
     {
-        return User.MapTo<TUser>(new User(Guid.NewGuid())
-        {
-            Name = TestExtension.GetRandomName(_names),
-            Email = TestExtension.GetRandomEmail(_names),
-            PhoneNumber = TestExtension.GetRandomPhoneNumber(),
-            UserType = userType ?? (UserType)Random.Shared.Next(0, 1)
-        });
+        return new User(
+            id: Guid.NewGuid(),
+            name: TestExtension.GetRandomName(_names),
+            email: TestExtension.GetRandomEmail(_names),
+            phoneNumber: TestExtension.GetRandomPhoneNumber(),
+            userType: userType ?? (UserType)Random.Shared.Next(0, 1)).MapTo<TUser>();
     }
 
     private TUser[] GetUserEntities<TUser>(int usersCount, UserType? userType = null)

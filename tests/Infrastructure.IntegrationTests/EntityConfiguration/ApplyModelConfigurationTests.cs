@@ -14,7 +14,7 @@ public class ApplyModelConfigurationTests
     public void ApplyConfigurationsTest()
     {
         var context = new ApplicationContext(new DbContextOptionsBuilder<ApplicationContext>()
-            .UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=").Options);
+            .UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true").Options);
 
         context.Database.EnsureDeleted();
 

@@ -9,15 +9,24 @@ using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
 using ScienceAtrium.Infrastructure.Repositories.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
+using ScienceAtrium.Domain.RootAggregate.Interfaces;
+using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
+using System.Linq.Expressions;
 
 namespace Infrastructure.IntegrationTests.Repositories.OrderAggregate;
 
 public class OrderRepositoryTest
 {
     private IOrderRepository<Order> _orderRepository;
+    private IBase<Customer> _customerBase;
+    private IReader<Customer> _customerReader;
+    private IBase<Executor> _executorBase;
+    private IReader<Executor> _executorReader;
     private ApplicationContext _applicationContext;
     private IMapper _mapper;
     private List<string> _names;
+    private Expression<Func<User, bool>> _expression;
+
     [SetUp]
     public void Setup()
     {
@@ -26,11 +35,18 @@ public class OrderRepositoryTest
             .UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true").Options);
 
         _orderRepository = new OrderRepository(_applicationContext, null);
+
+        _customerBase = new UserRepository<Customer>(_applicationContext, null);
+        _customerReader = new UserRepository<Customer>(_applicationContext, null);
+        _executorBase = new UserRepository<Executor>(_applicationContext, null);
+        _executorReader = new UserRepository<Executor>(_applicationContext, null);
         _mapper = new MapperConfiguration(mc =>
         {
             mc.CreateMap<User, Customer>();
             mc.CreateMap<User, Executor>();
         }).CreateMapper();
+
+        _expression = x => x.Id != Guid.Empty && x.CurrentOrderId == null;
 
         _names = new List<string>
         {
@@ -109,7 +125,7 @@ public class OrderRepositoryTest
     {
         var order = _orderRepository.All
             .FirstOrDefault(x => x.CustomerId != null && x.ExecutorId != null);
-        order.Status = Status.Expired;
+        order.UpdateStatus(Status.Expired);
 
         _orderRepository.Update(order);
 
@@ -122,7 +138,7 @@ public class OrderRepositoryTest
     {
         var order = _orderRepository.All
             .FirstOrDefault(x => x.CustomerId != null && x.ExecutorId != null);
-        order.Status = Status.Expired;
+        order.UpdateStatus(Status.Expired);
 
         await _orderRepository.UpdateAsync(order);
 
@@ -138,26 +154,29 @@ public class OrderRepositoryTest
             Name = "Math"
         };
         var workTemplate = new WorkTemplate(
-            new Guid("{40405132-7516-4731-86E3-B6D4A6D956E7}"))
-        {
-            Title = $"{TestExtension.GetRandomEmail(_names)}-title",
-            Description = $"{TestExtension.GetRandomEmail(_names)}-description",
-            WorkType = WorkType.CourseWork,
-            Price = Random.Shared.Next(1000, 10_000),
-            Subject = subject,
-            SubjectId = subject.Id,
-        };
+            id: new Guid("{40405132-7516-4731-86E3-B6D4A6D956E7}"),
+            title: $"{TestExtension.GetRandomEmail(_names)}-title",
+            description: $"{TestExtension.GetRandomEmail(_names)}-description",
+            workType: WorkType.CourseWork,
+            price: Random.Shared.Next(1000, 10_000)
+        ).UpdateSubject(subject);
+
         TestExtension.PrepareTests<Subject, Entity>(
             _applicationContext,
-                new Subject[] { subject }
-            );
+                new Subject[] { subject },
+            ensureDeleted: false);
 
         subject = _applicationContext.Subjects.FirstOrDefault(x => x.Id == subject.Id);
         TestExtension.PrepareTests<WorkTemplate, Entity>(_applicationContext,
             new WorkTemplate[] { workTemplate }, ensureDeleted: false);
 
-        TestExtension.PrepareTests<Order, Entity>(_applicationContext, 
-            GetOrderEntities(100), ensureDeleted: false);
+        var orders = GetOrderEntities(100);
+
+        _applicationContext.AttachRange(orders.Select(x => x.Customer));
+        _applicationContext.AttachRange(orders.Select(x => x.Executor));
+
+        TestExtension.PrepareTests<Order, Entity>(_applicationContext,
+            orders, ensureDeleted: false);
 
         Assert.Pass();
     }
@@ -165,12 +184,12 @@ public class OrderRepositoryTest
     private Order MapOrder()
     {
         var customer = _applicationContext
-            .Users.AsNoTracking().AsEnumerable()
-            .FirstOrDefault(x => x.UserType == UserType.Customer && x.CurrentOrderId == null);
+            .Set<Customer>().Include(x => x.CurrentOrder).AsNoTracking().AsEnumerable()
+            .FirstOrDefault(x => x.UserType == UserType.Customer && x.CurrentOrder?.Id == null);
 
         var executor = _applicationContext
-            .Users.AsNoTracking().AsEnumerable()
-            .FirstOrDefault(x => x.UserType == UserType.Executor && x.CurrentOrderId == null);
+            .Set<Executor>().Include(x => x.CurrentOrder).AsNoTracking().AsEnumerable()
+            .FirstOrDefault(x => x.UserType == UserType.Executor && x.CurrentOrder?.Id == null);
         return GetOrderEntity(
             _mapper.Map<Customer>(customer),
             _mapper.Map<Executor>(executor));
@@ -178,40 +197,22 @@ public class OrderRepositoryTest
 
     private Order GetOrderEntity(
         Customer? customer = null,
-        Executor? executor = null)
+        Executor? executor = null,
+        int position = default)
     {
-        customer ??= new Customer(Guid.NewGuid())
-        {
-            Name = TestExtension.GetRandomName(_names),
-            Email = TestExtension.GetRandomEmail(_names),
-            PhoneNumber = TestExtension.GetRandomPhoneNumber(),
-            UserType = UserType.Customer,
-        };
-        executor ??= new Executor(Guid.NewGuid())
-        {
-            Name = TestExtension.GetRandomName(_names),
-            Email = TestExtension.GetRandomEmail(_names),
-            PhoneNumber = TestExtension.GetRandomPhoneNumber(),
-            UserType = UserType.Executor,
-        };
+        customer ??= _customerBase.All.Where(_expression).ToList()[position]
+            .MapTo<Customer>();
+        executor ??= _executorBase.All.Where(_expression).ToList()[position]
+            .MapTo<Executor>();
 
         var order = new Order(Guid.NewGuid())
-        {
-            Customer = customer,
-            Executor = executor,
-        };
+            .UpdateCustomer(_customerReader, customer)
+            .UpdateExecutor(_executorReader, executor)
+            .AddWorkTemplate(_applicationContext.WorkTemplates
+                .SingleOrDefault(x => x.WorkType == WorkType.CourseWork));
 
-        customer.CurrentOrder = order;
-        customer.CurrentOrderId = order.Id;
-
-        executor.CurrentOrder = order;
-        executor.CurrentOrderId = order.Id;
-
-        order.CustomerId = order.Customer.Id;
-        order.ExecutorId = order.Executor.Id;
-
-        order.WorkTemplates.Add(_applicationContext.WorkTemplates
-            .SingleOrDefault(x => x.WorkType == WorkType.CourseWork));
+        customer.UpdateCurrentOrder(order);
+        executor.UpdateCurrentOrder(order);
 
         return order;
     }
@@ -220,7 +221,23 @@ public class OrderRepositoryTest
     {
         var orders = new Order[ordersCount];
         for (int i = 0; i < ordersCount; i++)
-            orders[i] = GetOrderEntity();
+            orders[i] = GetOrderEntity(position: i);
         return orders;
+    }
+
+    private (Customer, Executor) GetNewCustomerExecutor()
+    {
+        return new(new User(
+            id: Guid.NewGuid(),
+            name: TestExtension.GetRandomName(_names),
+            email: TestExtension.GetRandomEmail(_names),
+            phoneNumber: TestExtension.GetRandomPhoneNumber(),
+            userType: UserType.Customer).MapTo<Customer>(),
+        new User(
+            id: Guid.NewGuid(),
+            name: TestExtension.GetRandomName(_names),
+            email: TestExtension.GetRandomEmail(_names),
+            phoneNumber: TestExtension.GetRandomPhoneNumber(),
+            userType: UserType.Executor).MapTo<Executor>());
     }
 }

@@ -74,7 +74,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         Users.Remove(entity);
         if (entity.CurrentOrder is not null)
             _context.Orders.Update(entity.CurrentOrder);
-        entity.UpdateDetails(null);
+        entity.UpdateCurrentOrder(null);
 
         return _context.TrySaveChanges(_logger);
     }
@@ -87,7 +87,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         Users.Remove(entity);
         if (entity.CurrentOrder is not null)
             _context.Orders.Update(entity.CurrentOrder);
-        entity.UpdateDetails(null);
+        entity.UpdateCurrentOrder(null);
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
@@ -131,12 +131,12 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
 
     public TUser Get(Expression<Func<TUser, bool>> predicate)
     {
-        return All.FirstOrDefault(predicate) ?? User.MapTo<TUser>(User.Default);
+        return All.FirstOrDefault(predicate) ?? User.Default.MapTo<TUser>();
     }
 
     public async Task<TUser> GetAsync(Expression<Func<TUser, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        return await All.FirstOrDefaultAsync(predicate, cancellationToken) ?? User.MapTo<TUser>(User.Default);
+        return await All.FirstOrDefaultAsync(predicate, cancellationToken) ?? User.Default.MapTo<TUser>();
     }
 
     public int Update(TUser entity)
