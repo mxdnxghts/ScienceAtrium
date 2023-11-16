@@ -18,6 +18,6 @@ public class ApplyModelConfigurationTests
 
         context.Database.EnsureDeleted();
 
-        Assert.IsTrue(context.Database.EnsureCreated());
+        Assert.That(context.Database.EnsureCreated(), Is.True);
     }
 }

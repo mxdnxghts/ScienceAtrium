@@ -10,7 +10,7 @@ using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
 
 namespace Infrastructure.IntegrationTests.DbContext;
-
+#pragma warning disable NUnit1032 // An IDisposable field/property should be Disposed in a TearDown method
 public class ApplicationContextTests
 {
     private List<string> _names;

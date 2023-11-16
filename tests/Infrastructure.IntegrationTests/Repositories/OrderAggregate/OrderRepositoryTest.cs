@@ -14,7 +14,7 @@ using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
 using System.Linq.Expressions;
 
 namespace Infrastructure.IntegrationTests.Repositories.OrderAggregate;
-
+#pragma warning disable NUnit1032 // An IDisposable field/property should be Disposed in a TearDown method
 public class OrderRepositoryTest
 {
     private IOrderRepository<Order> _orderRepository;
