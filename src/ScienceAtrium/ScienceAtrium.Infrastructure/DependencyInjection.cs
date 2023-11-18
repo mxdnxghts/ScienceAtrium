@@ -28,12 +28,12 @@ public static class DependencyInjection
         serviceCollection.AddScoped<IUserRepository<Executor>, UserRepository<Executor>>();
         serviceCollection.AddScoped<IWorkTemplateRepository<WorkTemplate>, WorkTemplateRepository>();
 
-        serviceCollection.AddIReaders();
+        serviceCollection.AddReaders();
 
         return serviceCollection;
     }
 
-    private static void AddIReaders(this IServiceCollection serviceCollection)
+    private static void AddReaders(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddScoped<IReader<Customer>, UserRepository<Customer>>();
         serviceCollection.AddScoped<IReaderAsync<Customer>, UserRepository<Customer>>();

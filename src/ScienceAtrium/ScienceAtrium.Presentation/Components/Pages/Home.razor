@@ -1,0 +1,23 @@
+﻿@page "/"
+@inject IMediator _mediator;
+
+<section>
+	<div class="rectangle">
+		@foreach (var workTemplate in _workTemplates)
+		{
+			<div class="def-cont rec">
+				<span class="subject-name">@workTemplate.Title</span>
+				<span class="price">@workTemplate.Price</span>
+				<button type="submit" class="button-order" name="ord1">Заказать</button>
+			</div>
+		}
+	</div>
+</section>
+
+@code{
+	private readonly List<WorkTemplate> _workTemplates = [];
+	protected override async Task OnInitializedAsync()
+	{
+		_workTemplates.AddRange(await _mediator.Send(new GetWorkTemplateListQuery()));
+	}
+}
