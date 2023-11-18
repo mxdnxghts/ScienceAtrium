@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ScienceAtrium.Domain.OrderAggregate;
+using ScienceAtrium.Domain.RootAggregate.Interfaces;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
@@ -27,6 +28,17 @@ public static class DependencyInjection
         serviceCollection.AddScoped<IUserRepository<Executor>, UserRepository<Executor>>();
         serviceCollection.AddScoped<IWorkTemplateRepository<WorkTemplate>, WorkTemplateRepository>();
 
+        serviceCollection.AddIReaders();
+
         return serviceCollection;
+    }
+
+    private static void AddIReaders(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddScoped<IReader<Customer>, UserRepository<Customer>>();
+        serviceCollection.AddScoped<IReaderAsync<Customer>, UserRepository<Customer>>();
+
+        serviceCollection.AddScoped<IReader<Executor>, UserRepository<Executor>>();
+        serviceCollection.AddScoped<IReaderAsync<Executor>, UserRepository<Executor>>();
     }
 }

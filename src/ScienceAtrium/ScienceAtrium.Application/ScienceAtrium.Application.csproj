@@ -14,8 +14,4 @@
     <ProjectReference Include="..\ScienceAtrium.Domain\ScienceAtrium.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="OrderAggregate\Commands\" />
-  </ItemGroup>
-
 </Project>
