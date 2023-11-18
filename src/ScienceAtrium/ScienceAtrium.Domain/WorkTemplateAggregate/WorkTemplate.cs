@@ -14,6 +14,8 @@ public class WorkTemplate : Entity
 
     public WorkTemplate(Guid id) : base(id)
     {
+        _title = string.Empty;
+        _description = string.Empty;
     }
     public WorkTemplate(Guid id, string title, string description, WorkType workType, decimal price) : base(id)
     {

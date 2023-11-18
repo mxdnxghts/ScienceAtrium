@@ -1,16 +1,12 @@
 ﻿using Infrastructure.IntegrationTests.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
-using ScienceAtrium.Domain.OrderAggregate;
+using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
-using System.Globalization;
 using ScienceAtrium.Infrastructure.Repositories.WorkTemplateAggregate;
-using ScienceAtrium.Domain.RootAggregate;
 
 namespace Infrastructure.IntegrationTests.Repositories.WorkTemplateAggregate;
-
+#pragma warning disable NUnit1032 // An IDisposable field/property should be Disposed in a TearDown method
 public class WorkTemplateRepositoryTest
 {
     private IWorkTemplateRepository<WorkTemplate> _workTemplateRepository;

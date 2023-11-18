@@ -42,7 +42,8 @@ public class Order : Entity
 
     public Order AddWorkTemplate(WorkTemplate workTemplate)
     {
-        ThrowIfHasIncorrectValue(workTemplate);
+        if (!ThrowIfHasIncorrectValue(workTemplate))
+            return this;
         _workTemplates.Add(workTemplate);
         _totalCost = _workTemplates.Sum(x => x.Price);
         return this;
@@ -50,7 +51,8 @@ public class Order : Entity
 
     public Order UpdateWorkTemplate(WorkTemplate workTemplate)
     {
-        ThrowIfHasIncorrectValue(workTemplate);
+        if (!ThrowIfHasIncorrectValue(workTemplate))
+            return this;
         _workTemplates.Remove(workTemplate);
         _workTemplates.Add(workTemplate);
         _totalCost = _workTemplates.Sum(x => x.Price);
@@ -60,7 +62,8 @@ public class Order : Entity
     public Order RemoveWorkTemplate(Func<WorkTemplate, bool> funcGetWorkTemplate)
     {
         var workTemplate = _workTemplates.FirstOrDefault(funcGetWorkTemplate);
-        ThrowIfHasIncorrectValue(workTemplate);
+        if (!ThrowIfHasIncorrectValue(workTemplate))
+            return this;
         _workTemplates.Remove(workTemplate);
         _totalCost = _workTemplates.Sum(x => x.Price);
         return this;
@@ -104,13 +107,20 @@ public class Order : Entity
         return this;
     }
 
-    private void ThrowIfHasIncorrectValue(WorkTemplate workTemplate)
+    private bool ThrowIfHasIncorrectValue(WorkTemplate workTemplate)
     {
         if (workTemplate is null || workTemplate.IsEmpty())
+        {
             Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(WorkTemplate)));
+            return false;
+        }
 
         var existingWorkTemplate = _workTemplates.Find(x => x.Id == workTemplate.Id);
         if (existingWorkTemplate?.IsEmpty() == true)
-            Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(WorkTemplate),  existingWorkTemplate.Id));
+        {
+            Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(WorkTemplate), existingWorkTemplate.Id));
+            return false;
+        }
+        return true;
     }
 }

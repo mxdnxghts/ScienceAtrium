@@ -8,7 +8,7 @@ using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
 using ScienceAtrium.Domain.RootAggregate;
 
 namespace Infrastructure.IntegrationTests.Repositories.UserAggregate;
-
+#pragma warning disable NUnit1032 // An IDisposable field/property should be Disposed in a TearDown method
 public class UserRepositoryTests
 {
     private IUserRepository<Customer> _userRepository;

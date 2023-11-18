@@ -1,0 +1,41 @@
+﻿@inherits LayoutComponentBase
+
+@{
+    const string M1d2B = "M1d2B";
+    const string Deemure = "Deemure";
+    const string Ferquerro = "Ferquerro";
+}
+
+<body>
+    <header>
+        <h1>ScienceAtrium</h1>
+        <div class="container">
+            <div class="search">
+                <form name="from-search">
+                    <input type="text" placeholder="Поиск по странице">
+                    <button name="btn-search"><img src="img/search.png"></button>
+                </form>
+
+                <div class="def-btn">
+                    <button3 name="filter"><img src="img/filter.png"></button3>
+                </div>
+            </div>
+
+            <div class="def-btn">
+                <button2 name="profile"><img src="img/profile.png"></button2>
+            </div>
+
+        </div>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @Body
+        </main>
+    </div>
+
+    <footer id="footer" class="footer">
+        <div class="footerweb">
+            <div>@DateTime.Now.Year Команда ХС: @M1d2B, @Deemure, @Ferquerro. </div>
+        </div>
+    </footer>
+</body>
