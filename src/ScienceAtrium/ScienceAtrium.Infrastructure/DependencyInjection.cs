@@ -30,6 +30,12 @@ public static class DependencyInjection
 
         serviceCollection.AddReaders();
 
+        serviceCollection.AddStackExchangeRedisCache(options =>
+        {
+            options.InstanceName = "ScienceAtriumCache_";
+            options.Configuration = configuration.GetConnectionString("ScienceAtriumRedisCache");
+        });
+
         return serviceCollection;
     }
 
