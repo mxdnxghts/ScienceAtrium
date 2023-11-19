@@ -61,20 +61,6 @@ input {
     margin-top: 0px;
 }
 
-button {
-    height: 41px;
-    width: 41px;
-    position: absolute;
-    left: 559px;
-    cursor: pointer;
-}
-
-    button:before {
-        color: #FF8F00;
-        font-size: 20px;
-        font-weight: bold;
-    }
-
 .container {
     display: flex;
     justify-content: space-between;
@@ -139,9 +125,10 @@ button {
 .price {
     font-size: 18px;
     text-align: left;
+    width: auto;
     display: flex;
-    margin-top: 120px;
-    margin-left: 20px;
+    margin-top: 80px;
+    margin-left: 30px;
 }
 
 .button-order {
@@ -151,7 +138,12 @@ button {
     border-radius: 10px;
     background-color: #DBD7D7;
     cursor: pointer;
-    margin-top: -35px;
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+.button-order:active {
+    background-color: red;
 }
 
 .footerweb {

@@ -1,23 +1,34 @@
 ﻿@page "/"
 @inject IMediator _mediator;
+@inject Serilog.ILogger _logger;
 
 <section>
 	<div class="rectangle">
-		@foreach (var workTemplate in _workTemplates)
+		<form>
+
+		</form>
+		@foreach (var workTemplate in workTemplates)
 		{
 			<div class="def-cont rec">
 				<span class="subject-name">@workTemplate.Title</span>
-				<span class="price">@workTemplate.Price</span>
-				<button type="submit" class="button-order" name="ord1">Заказать</button>
+				<span class="price">@workTemplate.Price + @count</span>
+				<button @onclick="() => SubmitWorkTemplate()" class="button-order" name="ord1">Заказать</button>
 			</div>
 		}
 	</div>
 </section>
 
 @code{
-	private readonly List<WorkTemplate> _workTemplates = [];
+	private int count = 0;
+	private readonly List<WorkTemplate> workTemplates = [];
 	protected override async Task OnInitializedAsync()
 	{
-		_workTemplates.AddRange(await _mediator.Send(new GetWorkTemplateListQuery()));
+		var list = await _mediator.Send(new GetWorkTemplateListQuery());
+		workTemplates.AddRange(list);
+	}
+
+	private void SubmitWorkTemplate()
+	{
+		count++;
 	}
 }
