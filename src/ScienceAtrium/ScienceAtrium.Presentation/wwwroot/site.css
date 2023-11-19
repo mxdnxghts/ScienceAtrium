@@ -142,9 +142,9 @@ input {
     margin-left: 10px;
 }
 
-.button-order:active {
-    background-color: red;
-}
+    .button-order:active {
+        background-color: red;
+    }
 
 .footerweb {
     color: #98938E;

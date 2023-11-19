@@ -1,34 +1,48 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 @inject IMediator _mediator;
 @inject Serilog.ILogger _logger;
+@inject NavigationManager _navigationManager;
+@inject IReader<Customer> _customerReader;
+@inject IMapper _mapper;
 
 <section>
 	<div class="rectangle">
 		<form>
-
 		</form>
 		@foreach (var workTemplate in workTemplates)
 		{
 			<div class="def-cont rec">
 				<span class="subject-name">@workTemplate.Title</span>
-				<span class="price">@workTemplate.Price + @count</span>
-				<button @onclick="() => SubmitWorkTemplate()" class="button-order" name="ord1">Заказать</button>
+				<span class="price">@workTemplate.Price</span>
+				<button @onclick="async () => await SubmitWorkTemplateAsync(workTemplate)" class="button-order">Заказать</button>
 			</div>
 		}
 	</div>
 </section>
 
-@code{
-	private int count = 0;
+@code {
 	private readonly List<WorkTemplate> workTemplates = [];
+	private Customer _currentUser;
 	protected override async Task OnInitializedAsync()
 	{
+		await _mediator.Send(new SetCachedCustomerCommand(await GetCustomer()));
 		var list = await _mediator.Send(new GetWorkTemplateListQuery());
-		workTemplates.AddRange(list);
+		workTemplates.AddRange(list.Skip(1));
+		_currentUser = await _mediator.Send(new GetCachedCustomerQuery());
 	}
 
-	private void SubmitWorkTemplate()
+	private async Task SubmitWorkTemplateAsync(WorkTemplate workTemplate)
 	{
-		count++;
+		var order = new Order(Guid.NewGuid()).AddWorkTemplate(workTemplate).UpdateCustomer(_customerReader, _currentUser);
+		await _mediator.Send(new CreateOrderCommand(order));
+		_navigationManager.NavigateTo("/counter");
+	}
+
+	private async Task<Customer> GetCustomer()
+	{
+		var results = await _mediator.Send(new GetCustomerListQuery());
+		var s = results.Find(x => x.Id != Guid.Empty && x.CurrentOrder?.Id == null) ?? _mapper.Map<Customer>(User.Default);
+		return results.Find(x => x.Id != Guid.Empty && x.CurrentOrder?.Id == null) ?? _mapper.Map<Customer>(User.Default);
 	}
 }
