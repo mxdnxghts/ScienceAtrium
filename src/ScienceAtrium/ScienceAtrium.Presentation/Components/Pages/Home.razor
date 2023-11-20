@@ -36,7 +36,7 @@
 	{
 		var order = new Order(Guid.NewGuid()).AddWorkTemplate(workTemplate).UpdateCustomer(_customerReader, _currentUser);
 		await _mediator.Send(new CreateOrderCommand(order));
-		_navigationManager.NavigateTo("/");
+		_navigationManager.NavigateTo("/basket");
 	}
 
 	private async Task<Customer> GetCustomer()
