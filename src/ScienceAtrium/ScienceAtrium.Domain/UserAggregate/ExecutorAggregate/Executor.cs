@@ -8,8 +8,23 @@ public class Executor : User
     {
         _doneOrders = new();
     }
+
+    public Executor(Guid id, string name, string email, string phoneNumber, UserType userType)
+        : base(id, name, email, phoneNumber, userType)
+    {
+        _doneOrders = new();
+    }
+
     public IReadOnlyCollection<Order> DoneOrders => _doneOrders;
-    public Executor AddDoneOrder(Order order)
+
+	public override User UpdateCurrentOrder(Order? currentOrder)
+	{
+		base.UpdateCurrentOrder(currentOrder);
+        AddDoneOrder(currentOrder);
+		return this;
+	}
+
+	public Executor AddDoneOrder(Order order)
     {
         _doneOrders = AddOrder(order);
         return this;

@@ -8,9 +8,23 @@ public class Customer : User
     {
         _formedOrders = new();
     }
+
+    public Customer(Guid id, string name, string email, string phoneNumber, UserType userType)
+        : base(id, name, email, phoneNumber, userType)
+    {
+        _formedOrders = new();
+    }
+
     public IReadOnlyCollection<Order> FormedOrders => _formedOrders;
 
-    public Customer AddFormedOrder(Order order)
+	public override User UpdateCurrentOrder(Order? currentOrder)
+	{
+		base.UpdateCurrentOrder(currentOrder);
+        AddFormedOrder(currentOrder);
+        return this;
+	}
+
+	public Customer AddFormedOrder(Order order)
     {
         _formedOrders = AddOrder(order);
         return this;

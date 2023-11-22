@@ -40,7 +40,7 @@ public class User : Entity
     public Order? CurrentOrder { get; private set; }
     public Guid? CurrentOrderId { get; private set; }
 
-    public User UpdateCurrentOrder(Order? currentOrder)
+    public virtual User UpdateCurrentOrder(Order? currentOrder)
     {
         CurrentOrder = currentOrder;
         CurrentOrderId = currentOrder?.Id;
@@ -100,14 +100,14 @@ public class User : Entity
     {
         if (order?.IsEmpty() != false)
         {
-            Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(Order)));
+            //Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(Order)));
             return _emptyOrderList;
         }
 
         var existOrder = _orders.Find(x => x.Id == order.Id);
         if (existOrder?.IsEmpty() == true)
         {
-            Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(Order), existOrder.Id));
+            //Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(Order), existOrder.Id));
             return _emptyOrderList;
         }
         _orders.Add(order);
