@@ -9,12 +9,6 @@ public class Executor : User
         _doneOrders = new();
     }
 
-    public Executor(Guid id, string name, string email, string phoneNumber, UserType userType)
-        : base(id, name, email, phoneNumber, userType)
-    {
-        _doneOrders = new();
-    }
-
     public IReadOnlyCollection<Order> DoneOrders => _doneOrders;
 
 	public override User UpdateCurrentOrder(Order? currentOrder)

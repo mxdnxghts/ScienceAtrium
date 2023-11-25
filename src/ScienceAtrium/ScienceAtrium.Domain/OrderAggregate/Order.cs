@@ -42,16 +42,24 @@ public class Order : Entity
 
     public Order AddWorkTemplate(WorkTemplate workTemplate)
     {
-        if (!ThrowIfHasIncorrectValue(workTemplate))
+        if (ThrowIfHasIncorrectValue(workTemplate))
             return this;
         _workTemplates.Add(workTemplate);
         _totalCost = _workTemplates.Sum(x => x.Price);
         return this;
     }
 
+    public Order AddWorkTemplates(params WorkTemplate[] workTemplates)
+    {
+        foreach (var workTemplate in workTemplates)
+            AddWorkTemplate(workTemplate);
+
+        return this;
+    }
+
     public Order UpdateWorkTemplate(WorkTemplate workTemplate)
     {
-        if (!ThrowIfHasIncorrectValue(workTemplate))
+        if (ThrowIfHasIncorrectValue(workTemplate))
             return this;
         _workTemplates.Remove(workTemplate);
         _workTemplates.Add(workTemplate);
@@ -62,7 +70,7 @@ public class Order : Entity
     public Order RemoveWorkTemplate(Func<WorkTemplate, bool> funcGetWorkTemplate)
     {
         var workTemplate = _workTemplates.FirstOrDefault(funcGetWorkTemplate);
-        if (!ThrowIfHasIncorrectValue(workTemplate))
+        if (ThrowIfHasIncorrectValue(workTemplate))
             return this;
         _workTemplates.Remove(workTemplate);
         _totalCost = _workTemplates.Sum(x => x.Price);
@@ -96,11 +104,8 @@ public class Order : Entity
 
     public Order UpdateExecutor(IReader<Executor> reader, Executor executor)
     {
-        if (!executor.IsValid(reader))
-        {
-            Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(Customer)));
+        if (executor?.IsValid(reader) != true)
             return this;
-        }
 
         Executor = executor;
         ExecutorId = executor.Id;
@@ -112,15 +117,15 @@ public class Order : Entity
         if (workTemplate is null || workTemplate.IsEmpty())
         {
             Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(WorkTemplate)));
-            return false;
+            return true;
         }
 
         var existingWorkTemplate = _workTemplates.Find(x => x.Id == workTemplate.Id);
         if (existingWorkTemplate?.IsEmpty() == true)
         {
             Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(WorkTemplate), existingWorkTemplate.Id));
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 }

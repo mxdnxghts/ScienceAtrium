@@ -13,6 +13,6 @@ public class SetCachedCustomerHandler(IDistributedCache _cache, IReader<Customer
         if (!request.Customer.IsValid(_customerReader))
             return;
 
-        await _cache.SetRecordAsync("CachedCustomer", request.Customer, cancellationToken: cancellationToken);
+        await _cache.SetRecordAsync("CachedCustomer", request.Customer, TimeSpan.FromMinutes(10), cancellationToken: cancellationToken);
     }
 }

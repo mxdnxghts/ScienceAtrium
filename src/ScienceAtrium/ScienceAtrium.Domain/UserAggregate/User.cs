@@ -2,21 +2,18 @@
 using ScienceAtrium.Domain.Constants;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 
 namespace ScienceAtrium.Domain.UserAggregate;
 
 public class User : Entity
 {
-    [NotMapped]
     public static readonly User Default = new User(Guid.Empty);
     private string _name;
     private string _email;
     private string _phoneNumber;
     private UserType _userType;
     private readonly List<Order> _orders;
-    private readonly List<Order> _emptyOrderList;
 
     public User(Guid id, string name, string email, string phoneNumber, UserType userType) : base(id)
     {
@@ -25,13 +22,11 @@ public class User : Entity
         _phoneNumber = phoneNumber;
         _userType = userType;
         _orders = new();
-        _emptyOrderList = Enumerable.Empty<Order>().ToList();
     }
 
     public User(Guid id) : base(id)
     {
         _orders = new();
-        _emptyOrderList = Enumerable.Empty<Order>().ToList();
     }
     public string Name => _name;
     public string Email => _email;
@@ -101,14 +96,14 @@ public class User : Entity
         if (order?.IsEmpty() != false)
         {
             //Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(Order)));
-            return _emptyOrderList;
+            return _orders;
         }
 
         var existOrder = _orders.Find(x => x.Id == order.Id);
         if (existOrder?.IsEmpty() == true)
         {
             //Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(Order), existOrder.Id));
-            return _emptyOrderList;
+            return _orders;
         }
         _orders.Add(order);
         return _orders;
@@ -120,7 +115,7 @@ public class User : Entity
         if (order?.IsEmpty() != false)
         {
             Debug.Fail(DebugExceptions.HasNullValue(nameof(Order)));
-            return _emptyOrderList;
+            return _orders;
         }
 
         _orders.Remove(order);
@@ -133,7 +128,7 @@ public class User : Entity
         if (order?.IsEmpty() != false)
         {
             Debug.Fail(DebugExceptions.HasNullValue(nameof(Order)));
-            return _emptyOrderList;
+            return _orders;
         }
 
         _orders.Remove(order);

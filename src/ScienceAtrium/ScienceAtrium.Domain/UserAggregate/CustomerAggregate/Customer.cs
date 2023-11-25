@@ -1,16 +1,12 @@
 ﻿using ScienceAtrium.Domain.OrderAggregate;
 
 namespace ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
+
 public class Customer : User
 {
     private List<Order> _formedOrders;
+    
     public Customer(Guid id) : base(id)
-    {
-        _formedOrders = new();
-    }
-
-    public Customer(Guid id, string name, string email, string phoneNumber, UserType userType)
-        : base(id, name, email, phoneNumber, userType)
     {
         _formedOrders = new();
     }

@@ -50,6 +50,8 @@ public abstract class Entity : IEquatable<Entity>, IEntityValidation
     public bool IsExist<TReaderEntity>(IReader<TReaderEntity> reader, Expression<Func<TReaderEntity, bool>> func)
         where TReaderEntity : Entity
     {
+        if (reader is null)
+            return true;
         return reader.Exist(func);
     }
 

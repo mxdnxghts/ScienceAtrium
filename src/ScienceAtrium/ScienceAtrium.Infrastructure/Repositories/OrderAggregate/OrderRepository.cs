@@ -1,13 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ScienceAtrium.Domain.Exceptions;
 using ScienceAtrium.Domain.OrderAggregate;
+using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
-using ScienceAtrium.Domain.Exceptions;
-using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
-using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
-using ScienceAtrium.Domain.RootAggregate;
 
 namespace ScienceAtrium.Infrastructure.Repositories.OrderAggregate;
 public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdate<Order>
@@ -38,11 +36,9 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
         entity.Customer.UpdateCurrentOrder(entity);
         entity.Executor?.UpdateCurrentOrder(entity);
 
-        _context.Orders.Add(entity);
-        _context.WorkTemplates.AttachRange(entity.WorkTemplates);
-        _context.Users.UpdateRange(entity.Customer, entity.Executor);
+		UpdateState(entity, EntityState.Added);
 
-        return _context.TrySaveChanges(_logger);
+		return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> CreateAsync(Order entity, CancellationToken cancellationToken = default)
@@ -66,11 +62,9 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
         entity.Customer.UpdateCurrentOrder(null);
         entity.Executor?.UpdateCurrentOrder(null);
 
-        _context.Orders.Remove(entity);
-		_context.WorkTemplates.AttachRange(entity.WorkTemplates);
-		_context.Users.UpdateRange(entity.Customer, entity.Executor);
+		UpdateState(entity, EntityState.Deleted);
 
-        return _context.TrySaveChanges(_logger);
+		return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> DeleteAsync(Order entity, CancellationToken cancellationToken = default)
@@ -81,11 +75,9 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
         entity.Customer.UpdateCurrentOrder(null);
         entity.Executor?.UpdateCurrentOrder(null);
 
-        _context.Orders.Remove(entity);
-		_context.WorkTemplates.AttachRange(entity.WorkTemplates);
-		_context.Users.UpdateRange(entity.Customer, entity.Executor);
+		UpdateState(entity, EntityState.Deleted);
 
-        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
+		return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
     public void Dispose()
@@ -149,11 +141,9 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
         entity.Customer.UpdateCurrentOrder(entity);
         entity.Executor?.UpdateCurrentOrder(entity);
 
-        _context.Orders.Update(entity);
-		_context.WorkTemplates.AttachRange(entity.WorkTemplates);
-		_context.Users.UpdateRange(entity.Customer, entity.Executor);
+		UpdateState(entity, EntityState.Modified);
 
-        return _context.TrySaveChanges(_logger);
+		return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> UpdateAsync(Order entity, CancellationToken cancellationToken = default)
@@ -164,11 +154,9 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
         entity.Customer.UpdateCurrentOrder(entity);
         entity.Executor?.UpdateCurrentOrder(entity);
 
-        
-		_context.WorkTemplates.AttachRange(entity.WorkTemplates);
-		_context.Users.UpdateRange(entity.Customer, entity.Executor);
+		UpdateState(entity, EntityState.Modified);
 
-        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
+		return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
 	public Order UpdateEntity(Order entity, EntityState entityState)
@@ -201,9 +189,8 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
         if (entity.Executor is not null)
             _context.Users.Update(entity.Executor);
 
-		_context.Subjects.AttachRange(entity.WorkTemplates.Select(x => x.Subject));
-
-		var state = _context.Entry(entity.WorkTemplates.ToList()[0].Subject);
+		_context.Subjects.AttachRange(entity.WorkTemplates?.Select(x => x.Subject));
+        
         return entity;
 	}
 }

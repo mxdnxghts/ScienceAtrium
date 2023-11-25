@@ -17,13 +17,13 @@ public class WorkTemplate : Entity
         _title = string.Empty;
         _description = string.Empty;
     }
-    public WorkTemplate(Guid id, string title, string description, WorkType workType, decimal price) : base(id)
-    {
-        _title = title;
-        _description = description;
-        _workType = workType;
-        _price = price;
-    }
+    //public WorkTemplate(Guid id, string title, string description, WorkType workType, decimal price) : base(id)
+    //{
+    //    _title = title;
+    //    _description = description;
+    //    _workType = workType;
+    //    _price = price;
+    //}
     public string Title => _title ?? string.Empty;
     public string Description => _description ?? string.Empty;
     public WorkType WorkType => _workType;

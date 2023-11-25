@@ -31,6 +31,7 @@ public static class DistributedCacheExtensions
     public static async Task<TData> GetRecordAsync<TData>(
         this IDistributedCache cache,
         string key,
+        JsonSerializerSettings? jsonSerializerSettings = null,
         CancellationToken cancellationToken = default)
     {
         var data = await cache.GetStringAsync(key, cancellationToken);
