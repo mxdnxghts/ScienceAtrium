@@ -64,13 +64,14 @@ public class ApplicationContextTests
             Name = "Math"
         };
 
-        order.AddWorkTemplate(new WorkTemplate(
-            id: new Guid("{40405132-7516-4731-86E3-B6D4A6D956E7}"),
-            title: $"{TestExtension.GetRandomEmail(_names)}-title",
-            description: $"{TestExtension.GetRandomEmail(_names)}-description",
-            workType: WorkType.CourseWork,
-            price: Random.Shared.Next(1000, 10_000)
-        )
+        //order.AddWorkTemplate(new WorkTemplate(
+        //    id: new Guid("{40405132-7516-4731-86E3-B6D4A6D956E7}"),
+        //    title: $"{TestExtension.GetRandomEmail(_names)}-title",
+        //    description: $"{TestExtension.GetRandomEmail(_names)}-description",
+        //    workType: WorkType.CourseWork,
+        //    price: Random.Shared.Next(1000, 10_000)
+        //)
+        order.AddWorkTemplate(new WorkTemplate(Guid.NewGuid())
             .UpdateSubject(subject))
             .UpdateCustomer(_customerReader, customer)
             .UpdateExecutor(_executorReader, executor);

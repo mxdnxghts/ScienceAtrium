@@ -12,6 +12,7 @@ using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Domain.RootAggregate.Interfaces;
 using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
 using System.Linq.Expressions;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.IntegrationTests.Repositories.OrderAggregate;
 #pragma warning disable NUnit1032 // An IDisposable field/property should be Disposed in a TearDown method
@@ -42,8 +43,7 @@ public class OrderRepositoryTest
         _executorReader = new UserRepository<Executor>(_applicationContext, null);
         _mapper = new MapperConfiguration(mc =>
         {
-            mc.CreateMap<User, Customer>();
-            mc.CreateMap<User, Executor>();
+			AddUserMapper(mc);
         }).CreateMapper();
 
         _expression = x => x.Id != Guid.Empty && x.CurrentOrderId == null;
@@ -56,9 +56,20 @@ public class OrderRepositoryTest
             "Alex",
             "Maxim",
         };
-
-        _applicationContext.Database.EnsureCreated();
     }
+
+    [Test]
+    public void CreateOrderWithSameCustomerTest()
+    {
+		var order = MapOrder(_customerReader
+            .Get(x => x.Id == new Guid("01311c99-5aaa-406e-b592-7aa02a9ae9d4")));
+		_orderRepository.Create(order);
+        var newOrder = MapOrder(_customerReader
+			.Get(x => x.Id == new Guid("01311c99-5aaa-406e-b592-7aa02a9ae9d4")));
+		_orderRepository.Create(newOrder);
+		Assert.That(_orderRepository.Get(x => x.Id == order.Id),
+			Is.Not.EqualTo(Order.Default));
+	}
 
     [Test]
     public void GetOrderTest()
@@ -153,13 +164,13 @@ public class OrderRepositoryTest
         {
             Name = "Math"
         };
-        var workTemplate = new WorkTemplate(
-            id: new Guid("{40405132-7516-4731-86E3-B6D4A6D956E7}"),
-            title: $"{TestExtension.GetRandomEmail(_names)}-title",
-            description: $"{TestExtension.GetRandomEmail(_names)}-description",
-            workType: WorkType.CourseWork,
-            price: Random.Shared.Next(1000, 10_000)
-        ).UpdateSubject(subject);
+        //var workTemplate = new WorkTemplate(
+        //    id: new Guid("{40405132-7516-4731-86E3-B6D4A6D956E7}"),
+        //    title: $"{TestExtension.GetRandomEmail(_names)}-title",
+        //    description: $"{TestExtension.GetRandomEmail(_names)}-description",
+        //    workType: WorkType.CourseWork,
+        //    price: Random.Shared.Next(1000, 10_000)
+        var workTemplate = new WorkTemplate(Guid.NewGuid()).UpdateSubject(subject);
 
         TestExtension.PrepareTests<Subject, Entity>(
             _applicationContext,
@@ -181,18 +192,17 @@ public class OrderRepositoryTest
         Assert.Pass();
     }
 
-    private Order MapOrder()
+    private Order MapOrder(Customer? customer = null)
     {
-        var customer = _applicationContext
+        customer ??= _applicationContext
             .Set<Customer>().Include(x => x.CurrentOrder).AsNoTracking().AsEnumerable()
             .FirstOrDefault(x => x.UserType == UserType.Customer && x.CurrentOrder?.Id == null);
 
         var executor = _applicationContext
             .Set<Executor>().Include(x => x.CurrentOrder).AsNoTracking().AsEnumerable()
             .FirstOrDefault(x => x.UserType == UserType.Executor && x.CurrentOrder?.Id == null);
-        return GetOrderEntity(
-            _mapper.Map<Customer>(customer),
-            _mapper.Map<Executor>(executor));
+
+		return GetOrderEntity(customer, executor);
     }
 
     private Order GetOrderEntity(
@@ -200,18 +210,23 @@ public class OrderRepositoryTest
         Executor? executor = null,
         int position = default)
     {
-        customer ??= _customerBase.All.Where(_expression).ToList()[position]
+        customer ??= _customerBase.All.AsEnumerable()
+            .Where(x => x.UserType == UserType.Customer && x.CurrentOrder?.Id == null)
+            .ToList()[position]
             .MapTo<Customer>();
-        executor ??= _executorBase.All.Where(_expression).ToList()[position]
+
+		executor ??= _executorBase.All.AsEnumerable()
+            .Where(x => x.UserType == UserType.Executor && x.CurrentOrder?.Id == null)
+            .ToList()[position]
             .MapTo<Executor>();
 
-        var order = new Order(Guid.NewGuid())
+		var order = new Order(Guid.NewGuid())
             .UpdateCustomer(_customerReader, customer)
             .UpdateExecutor(_executorReader, executor)
-            .AddWorkTemplate(_applicationContext.WorkTemplates
-                .SingleOrDefault(x => x.WorkType == WorkType.CourseWork));
+            .AddWorkTemplate(_applicationContext.WorkTemplates.Include(x => x.Subject).AsNoTracking()
+                .FirstOrDefault(x => x.WorkType == WorkType.LaboratoryWork));
 
-        customer.UpdateCurrentOrder(order);
+		customer.UpdateCurrentOrder(order);
         executor.UpdateCurrentOrder(order);
 
         return order;
@@ -240,4 +255,25 @@ public class OrderRepositoryTest
             phoneNumber: TestExtension.GetRandomPhoneNumber(),
             userType: UserType.Executor).MapTo<Executor>());
     }
+
+	private IMapperConfigurationExpression AddUserMapper(IMapperConfigurationExpression mapperConfiguration)
+	{
+#pragma warning disable CS8603 // Possible null reference return.
+		mapperConfiguration.CreateMap<User, Customer>().ConstructUsing(user =>
+			new Customer(user.Id)
+			.UpdateName(user.Name)
+			.UpdateEmail(user.Email)
+			.UpdatePhoneNumber(user.PhoneNumber)
+			.UpdateCurrentOrder(user.CurrentOrder)
+			.UpdateUserType(user.UserType) as Customer);
+		mapperConfiguration.CreateMap<User, Executor>().ConstructUsing(user =>
+			new Executor(user.Id)
+			.UpdateName(user.Name)
+			.UpdateEmail(user.Email)
+			.UpdatePhoneNumber(user.PhoneNumber)
+			.UpdateCurrentOrder(user.CurrentOrder)
+			.UpdateUserType(user.UserType) as Executor);
+#pragma warning restore CS8603 // Possible null reference return.
+		return mapperConfiguration;
+	}
 }

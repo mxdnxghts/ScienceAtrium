@@ -37,13 +37,15 @@ public static class TestExtension
         ApplicationContext applicationContext,
         TTrackedEntity[] trackedEntities,
         TUntrackedEntity[]? untrackedEntities = null,
-        bool ensureDeleted = true)
+        bool ensureDeleted = true,
+        bool ensureCreated = true)
         where TTrackedEntity : Entity
         where TUntrackedEntity : Entity
     {
         if (ensureDeleted)
             applicationContext.Database.EnsureDeleted();
-        applicationContext.Database.EnsureCreated();
+        if (ensureCreated)
+            applicationContext.Database.EnsureCreated();
 
         applicationContext.Set<TTrackedEntity>().AddRange(trackedEntities);
         if (untrackedEntities is not null)

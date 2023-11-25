@@ -6,6 +6,8 @@ using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
 using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
 using ScienceAtrium.Domain.RootAggregate;
+using ScienceAtrium.Domain.WorkTemplateAggregate;
+using ScienceAtrium.Infrastructure.Extensions;
 
 namespace Infrastructure.IntegrationTests.Repositories.UserAggregate;
 #pragma warning disable NUnit1032 // An IDisposable field/property should be Disposed in a TearDown method
@@ -20,7 +22,7 @@ public class UserRepositoryTests
         _applicationContext = new ApplicationContext(
             new DbContextOptionsBuilder<ApplicationContext>()
             .UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true").Options);
-
+        
         _userRepository = new UserRepository<Customer>(_applicationContext, null);
 
         _names = new List<string>
@@ -31,6 +33,49 @@ public class UserRepositoryTests
             "Alex",
             "Maxim",
         };
+    }
+
+    [Test]
+    public void A()
+    {
+        var subjects = new Subject[]
+        {
+            new(Guid.NewGuid())
+            {
+                Name = "Технологии разработки ПО"
+            },
+            new(Guid.NewGuid())
+            {
+                Name = "Операционные системы и среды"
+            },
+            new(Guid.NewGuid())
+            {
+                Name = "Математическое моделирование"
+            },
+        };
+
+        var workTemplates = new WorkTemplate[]
+        {
+            new WorkTemplate(Guid.NewGuid())
+            .UpdateTitle(subjects[0].Name)
+            .UpdateSubject(subjects[0])
+            .UpdateWorkType(WorkType.LaboratoryWork)
+            .UpdatePrice(1200),
+            new WorkTemplate(Guid.NewGuid())
+            .UpdateTitle(subjects[1].Name)
+            .UpdateSubject(subjects[1])
+            .UpdateWorkType(WorkType.LaboratoryWork)
+            .UpdatePrice(1200),
+            new WorkTemplate(Guid.NewGuid())
+            .UpdateTitle(subjects[2].Name)
+            .UpdateSubject(subjects[2])
+            .UpdateWorkType(WorkType.LaboratoryWork)
+            .UpdatePrice(1200),
+        };
+
+        _applicationContext.WorkTemplates.AddRange(workTemplates);
+        _applicationContext.TrySaveChanges(null);
+        Assert.Pass();
     }
 
     [Test]
@@ -46,7 +91,7 @@ public class UserRepositoryTests
     [Test]
     public void CreateUserTest()
     {
-        var user = GetUserEntity<Customer>();
+        var user = GetCustomerEntity();
 
         _userRepository.Create(user);
         Assert.That(_userRepository.Get(x => x.Id == user.Id),
@@ -79,31 +124,53 @@ public class UserRepositoryTests
     [Test]
     public void PrepareTests()
     {
-        TestExtension.PrepareTests<Customer, Entity>(_applicationContext,
-            GetUserEntities<Customer>(200, UserType.Customer), ensureDeleted: true);
-        TestExtension.PrepareTests<Executor, Entity>(_applicationContext,
-            GetUserEntities<Executor>(200, UserType.Executor), ensureDeleted: false);
+        //TestExtension.PrepareTests<Customer, Entity>(_applicationContext,
+        //    GetCustomerEntities(200, UserType.Customer), ensureDeleted: false, ensureCreated: false);
+        //TestExtension.PrepareTests<Executor, Entity>(_applicationContext,
+        //    GetExecutorEntities(200, UserType.Executor), ensureDeleted: false, ensureCreated: false);
+
+        _applicationContext.Database.EnsureDeleted();
+        _applicationContext.Database.EnsureCreated();
+
+        _applicationContext.Users.AddRange(GetCustomerEntities(200));
+        _applicationContext.Users.AddRange(GetExecutorEntities(200));
+        _applicationContext.TrySaveChanges(null);
+
 
         Assert.Pass();
     }
 
-    private TUser GetUserEntity<TUser>(UserType? userType = null)
-        where TUser : User
+    private Customer GetCustomerEntity(UserType? userType = null)
     {
-        return new User(
-            id: Guid.NewGuid(),
-            name: TestExtension.GetRandomName(_names),
-            email: TestExtension.GetRandomEmail(_names),
-            phoneNumber: TestExtension.GetRandomPhoneNumber(),
-            userType: userType ?? (UserType)Random.Shared.Next(0, 1)).MapTo<TUser>();
+        return new Customer(Guid.NewGuid())
+            .UpdateName(TestExtension.GetRandomName(_names))
+            .UpdateEmail(TestExtension.GetRandomEmail(_names))
+            .UpdatePhoneNumber(TestExtension.GetRandomPhoneNumber())
+            .UpdateUserType(UserType.Customer) as Customer;
     }
 
-    private TUser[] GetUserEntities<TUser>(int usersCount, UserType? userType = null)
-        where TUser : User
+    private Executor GetExecutorEntity(UserType? userType = null)
     {
-        var users = new TUser[usersCount];
+        return new Executor(Guid.NewGuid())
+            .UpdateName(TestExtension.GetRandomName(_names))
+            .UpdateEmail(TestExtension.GetRandomEmail(_names))
+            .UpdatePhoneNumber(TestExtension.GetRandomPhoneNumber())
+            .UpdateUserType(UserType.Executor) as Executor;
+    }
+
+    private Customer[] GetCustomerEntities(int usersCount, UserType? userType = null)
+    {
+        var users = new Customer[usersCount];
         for (int i = 0; i < usersCount; i++)
-            users[i] = GetUserEntity<TUser>(userType);
+            users[i] = GetCustomerEntity(userType);
+        return users;
+    }
+
+    private Executor[] GetExecutorEntities(int usersCount, UserType? userType = null)
+    {
+        var users = new Executor[usersCount];
+        for (int i = 0; i < usersCount; i++)
+            users[i] = GetExecutorEntity(userType);
         return users;
     }
 }

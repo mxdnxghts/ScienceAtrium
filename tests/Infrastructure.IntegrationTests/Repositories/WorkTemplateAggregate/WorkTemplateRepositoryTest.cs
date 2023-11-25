@@ -171,12 +171,13 @@ public class WorkTemplateRepositoryTest
     {
         var subject = _applicationContext.Subjects.SingleOrDefault(x => x.Name == TestExtension.GetRandomSubject(_subjects));
 
-        return new WorkTemplate(
-            id: Guid.NewGuid(),
-            title: $"{TestExtension.GetRandomEmail(_names)}-title",
-            description: $"{TestExtension.GetRandomEmail(_names)}-description",
-            workType: WorkType.CourseWork,
-            price: Random.Shared.Next(1000, 10_000)
-        ).UpdateSubject(subject);
+        //return new WorkTemplate(
+        //    id: Guid.NewGuid(),
+        //    title: $"{TestExtension.GetRandomEmail(_names)}-title",
+        //    description: $"{TestExtension.GetRandomEmail(_names)}-description",
+        //    workType: WorkType.CourseWork,
+        //    price: Random.Shared.Next(1000, 10_000)
+        //).UpdateSubject(subject);
+        return new(Guid.NewGuid());
     }
 }
