@@ -1,8 +1,24 @@
-﻿@page "/"
+﻿@page "/basket"
 @rendermode InteractiveServer
+@inject IMediator _mediator;
 
 <h3>Basket</h3>
+<div class="rectangle">
+	@foreach (var workTemplate in currentOrder?.WorkTemplates ?? Array.Empty<WorkTemplate>())
+	{
+		<div class="def-cont rec">
+			<span class="subject-name">@workTemplate.Title</span>
+			<span class="price">@workTemplate.Price</span>
+		</div>
+	}
+</div>
 
 @code {
-
+    private Order currentOrder;
+    private Customer currentUser;
+    protected override async Task OnInitializedAsync()
+    {
+        currentUser = await _mediator.Send(new GetCachedCustomerQuery());
+        currentOrder = await _mediator.Send(new GetOrderByCustomerIdQuery(currentUser.Id));
+    }
 }

@@ -1,9 +1,11 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager _navigationManager;
 
 @{
     const string M1d2B = "M1d2B";
     const string Deemure = "Deemure";
     const string Ferquerro = "Ferquerro";
+    string basketRoute = "/basket";
 }
 
 <body>
@@ -13,16 +15,28 @@
             <div class="search">
                 <form name="from-search">
                     <input type="text" placeholder="Поиск по странице">
-                    <button name="btn-search"><img src="img/search.png"></button>
+                    <button>
+                        <img src="img/search.png">
+                    </button>
                 </form>
 
-                <div class="def-btn">
-                    <button3 name="filter"><img src="img/filter.png"></button3>
+                <div>
+                    <button>
+                        <img src="img/filter.png">
+                    </button>
                 </div>
             </div>
 
-            <div class="def-btn">
-                <button2 name="profile"><img src="img/profile.png"></button2>
+            <div>
+                <button id="shop-btn-redirection">
+                    <img src="img/shoppbasket.png">
+                </button>
+            </div>
+
+            <div>
+                <button>
+                    <img src="img/profile.png">
+                </button>
             </div>
 
         </div>

@@ -8,14 +8,12 @@
 
 <section>
 	<div class="rectangle">
-		<form>
-		</form>
 		@foreach (var workTemplate in workTemplates)
 		{
 			<div class="def-cont rec">
 				<span class="subject-name">@workTemplate.Title</span>
 				<span class="price">@workTemplate.Price</span>
-				<button @onclick="async () => await SubmitWorkTemplateAsync(workTemplate)" class="button-order">Заказать</button>
+				<button @onclick="async () => await SubmitWorkTemplateAsync(workTemplate)" class="button-order">Добавить</button>
 			</div>
 		}
 	</div>
@@ -23,26 +21,48 @@
 
 @code {
 	private readonly List<WorkTemplate> workTemplates = [];
-	private Customer _currentUser;
+	private Customer currentUser;
+	private Order currentOrder;
 	protected override async Task OnInitializedAsync()
 	{
-		await _mediator.Send(new SetCachedCustomerCommand(await GetCustomer()));
+		await SetCachedCustomerAsync(currentUser);
 		var list = await _mediator.Send(new GetWorkTemplateListQuery());
-		workTemplates.AddRange(list.Skip(1));
-		_currentUser = await _mediator.Send(new GetCachedCustomerQuery());
+		workTemplates.AddRange(list);
+		currentUser = await _mediator.Send(new GetCachedCustomerQuery());
+		currentOrder = new Order(Guid.NewGuid()).UpdateCustomer(_customerReader, currentUser);
+		await MakeOrderAsync(currentOrder, currentUser.Id);
 	}
 
 	private async Task SubmitWorkTemplateAsync(WorkTemplate workTemplate)
 	{
-		var order = new Order(Guid.NewGuid()).AddWorkTemplate(workTemplate).UpdateCustomer(_customerReader, _currentUser);
-		await _mediator.Send(new CreateOrderCommand(order));
-		_navigationManager.NavigateTo("/basket");
+		currentOrder.AddWorkTemplate(workTemplate);
+		await _mediator.Send(new UpdateOrderCommand(currentOrder));
+	}
+
+	private async Task SetCachedCustomerAsync(Customer customer)
+	{
+		if (currentOrder?.IsEmpty() == true)
+			await _mediator.Send(new SetCachedCustomerCommand(await GetCustomer()));
 	}
 
 	private async Task<Customer> GetCustomer()
 	{
 		var results = await _mediator.Send(new GetCustomerListQuery());
-		var s = results.Find(x => x.Id != Guid.Empty && x.CurrentOrder?.Id == null) ?? _mapper.Map<Customer>(User.Default);
 		return results.Find(x => x.Id != Guid.Empty && x.CurrentOrder?.Id == null) ?? _mapper.Map<Customer>(User.Default);
+	}
+
+	private async Task MakeOrderAsync(Order order, Guid customerId)
+	{
+		var dbOrder = await _mediator.Send(new GetOrderByCustomerIdQuery(customerId));
+
+		// is not exists
+		if (dbOrder.IsEmpty())
+		{
+			await _mediator.Send(new CreateOrderCommand(order));
+			return;
+		}
+
+		await _mediator.Send(new UpdateOrderCommand(order));
+
 	}
 }
