@@ -1,10 +1,11 @@
-﻿using ScienceAtrium.Domain.OrderAggregate;
+﻿using Microsoft.EntityFrameworkCore;
+using ScienceAtrium.Domain.OrderAggregate;
 
 namespace ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 
 public class Customer : User
 {
-    private List<Order> _formedOrders;
+	private List<Order> _formedOrders;
     
     public Customer(Guid id) : base(id)
     {
@@ -13,10 +14,11 @@ public class Customer : User
 
     public IReadOnlyCollection<Order> FormedOrders => _formedOrders;
 
-	public override User UpdateCurrentOrder(Order? currentOrder)
+	public override User UpdateCurrentOrder(Order? currentOrder, EntityState entityState = EntityState.Added)
 	{
-		base.UpdateCurrentOrder(currentOrder);
-        AddFormedOrder(currentOrder);
+        base.UpdateCurrentOrder(currentOrder, entityState);
+		_formedOrders.AddRange(Orders);
+		_formedOrders = _formedOrders.Distinct().ToList();
         return this;
 	}
 

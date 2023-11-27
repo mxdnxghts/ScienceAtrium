@@ -1,4 +1,5 @@
-﻿using ScienceAtrium.Domain.OrderAggregate;
+﻿using Microsoft.EntityFrameworkCore;
+using ScienceAtrium.Domain.OrderAggregate;
 
 namespace ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
 public class Executor : User
@@ -11,10 +12,11 @@ public class Executor : User
 
     public IReadOnlyCollection<Order> DoneOrders => _doneOrders;
 
-	public override User UpdateCurrentOrder(Order? currentOrder)
+	public override User UpdateCurrentOrder(Order? currentOrder, EntityState entityState = EntityState.Added)
 	{
-		base.UpdateCurrentOrder(currentOrder);
-        AddDoneOrder(currentOrder);
+		base.UpdateCurrentOrder(currentOrder, entityState);
+		_doneOrders.AddRange(Orders);
+		_doneOrders = _doneOrders.Distinct().ToList();
 		return this;
 	}
 

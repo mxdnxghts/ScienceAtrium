@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
-using ScienceAtrium.Domain.UserAggregate;
-using AutoMapper;
-using ScienceAtrium.Domain.OrderAggregate;
-using ScienceAtrium.Domain.WorkTemplateAggregate;
 
 namespace ScienceAtrium.Application;
 
@@ -30,14 +29,14 @@ public static class DependencyInjection
             .UpdateName(customerJson.Name)
             .UpdateEmail(customerJson.Email)
             .UpdatePhoneNumber(customerJson.PhoneNumber)
-            .UpdateCurrentOrder(customerJson.CurrentOrder)
+            .UpdateCurrentOrder(customerJson.CurrentOrder, EntityState.Added)
             .UpdateUserType(customerJson.UserType) as Customer);
         mapperConfiguration.CreateMap<ExecutorJson, Executor>().ConstructUsing(customerJson =>
             new Executor(customerJson.Id)
             .UpdateName(customerJson.Name)
             .UpdateEmail(customerJson.Email)
             .UpdatePhoneNumber(customerJson.PhoneNumber)
-            .UpdateCurrentOrder(customerJson.CurrentOrder)
+            .UpdateCurrentOrder(customerJson.CurrentOrder, EntityState.Added)
             .UpdateUserType(customerJson.UserType) as Executor);
 #pragma warning restore CS8603 // Possible null reference return.
         return mapperConfiguration;
