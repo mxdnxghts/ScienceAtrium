@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Domain.Constants;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
@@ -33,25 +32,7 @@ public class User : Entity
     public string Email => _email;
     public string PhoneNumber => _phoneNumber;
     public UserType UserType => _userType;
-    public Order? CurrentOrder { get; private set; }
-    public Guid? CurrentOrderId { get; private set; }
     public IReadOnlyCollection<Order> Orders => _currentOrders;
-
-    public virtual User UpdateCurrentOrder(Order? currentOrder, EntityState entityState = EntityState.Added)
-    {
-        if (entityState == EntityState.Added)
-            AddOrder(currentOrder);
-        else if (entityState == EntityState.Modified)
-            UpdateOrder(x => x.Id == currentOrder.Id, currentOrder);
-        else if (entityState == EntityState.Deleted)
-            RemoveOrder(x => x.Id == currentOrder.Id);
-        else
-            AddOrder(currentOrder);
-
-		CurrentOrder = currentOrder;
-		CurrentOrderId = currentOrder?.Id;
-		return this;
-	}
 
     public User UpdateName(string name)
     {
@@ -102,37 +83,37 @@ public class User : Entity
             .Map<TUser>(this);
     }
 
-    protected List<Order> AddOrder(Order order)
+    public User AddOrder(Order order)
     {
         if (order?.IsEmpty() != false)
-			return _currentOrders;
+			return this;
 
 		var existOrder = _currentOrders.Find(x => x.Id == order.Id);
-        if (existOrder?.IsEmpty() != false)
-			return _currentOrders;
+        if (existOrder?.IsEmpty() == false)
+			return this;
 
 		_currentOrders.Add(order);
-        return _currentOrders;
+        return this;
     }
 
-    protected List<Order> RemoveOrder(Func<Order, bool> funcGetOrder)
+    public User RemoveOrder(Func<Order, bool> funcGetOrder)
     {
         var order = _currentOrders.FirstOrDefault(funcGetOrder);
         if (order?.IsEmpty() != false)
-			return _currentOrders;
+			return this;
 
 		_currentOrders.Remove(order);
-        return _currentOrders;
+        return this;
     }
 
-    protected List<Order> UpdateOrder(Func<Order, bool> funcGetOrder, Order newOrder)
+    public User UpdateOrder(Func<Order, bool> funcGetOrder, Order newOrder)
     {
         var order = _currentOrders.FirstOrDefault(funcGetOrder);
         if (order?.IsEmpty() != false)
-			return _currentOrders;
+			return this;
 
 		_currentOrders.Remove(order);
         _currentOrders.Add(newOrder);
-        return _currentOrders;
+        return this;
     }
 }

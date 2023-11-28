@@ -12,29 +12,27 @@ public class Executor : User
 
     public IReadOnlyCollection<Order> DoneOrders => _doneOrders;
 
-	public override User UpdateCurrentOrder(Order? currentOrder, EntityState entityState = EntityState.Added)
+	public Executor AddDoneOrder(Order order)
 	{
-		base.UpdateCurrentOrder(currentOrder, entityState);
+		AddOrder(order);
 		_doneOrders.AddRange(Orders);
 		_doneOrders = _doneOrders.Distinct().ToList();
 		return this;
 	}
 
-	public Executor AddDoneOrder(Order order)
-    {
-        _doneOrders = AddOrder(order);
-        return this;
-    }
-
     public Executor RemoveDoneOrder(Func<Order, bool> funcGetOrder)
-    {
-        _doneOrders = RemoveOrder(funcGetOrder);
-        return this;
-    }
+	{
+		RemoveOrder(funcGetOrder);
+		_doneOrders.AddRange(Orders);
+		_doneOrders = _doneOrders.Distinct().ToList();
+		return this;
+	}
 
     public Executor UpdateDoneOrder(Func<Order, bool> funcGetOrder, Order newOrder)
-    {
-        _doneOrders = UpdateOrder(funcGetOrder, newOrder);
-        return this;
-    }
+	{
+		UpdateOrder(funcGetOrder, newOrder);
+		_doneOrders.AddRange(Orders);
+		_doneOrders = _doneOrders.Distinct().ToList();
+		return this;
+	}
 }

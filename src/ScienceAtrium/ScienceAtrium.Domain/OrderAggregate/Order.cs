@@ -102,6 +102,13 @@ public class Order : Entity
         return this;
     }
 
+    public Order RemoveCustomer()
+	{
+		Customer = null;
+        CustomerId = null;
+		return this;
+	}
+
     public Order UpdateExecutor(IReader<Executor> reader, Executor executor)
     {
         if (executor?.IsValid(reader) != true)
@@ -112,7 +119,14 @@ public class Order : Entity
         return this;
     }
 
-    private bool ThrowIfHasIncorrectValue(WorkTemplate workTemplate)
+	public Order RemoveExecutor()
+	{
+		Executor = null;
+		ExecutorId = null;
+		return this;
+	}
+
+	private bool ThrowIfHasIncorrectValue(WorkTemplate workTemplate)
     {
         if (workTemplate is null || workTemplate.IsEmpty())
         {
