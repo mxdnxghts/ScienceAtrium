@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using ScienceAtrium.Domain.Constants;
+﻿using ScienceAtrium.Domain.Constants;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
 using System.Diagnostics;
@@ -13,7 +12,7 @@ public class User : Entity
     private string _email;
     private string _phoneNumber;
     private UserType _userType;
-	private List<Order> _currentOrders;
+	private readonly List<Order> _currentOrders;
 
 	public User(Guid id, string name, string email, string phoneNumber, UserType userType) : base(id)
     {
@@ -23,6 +22,12 @@ public class User : Entity
         _userType = userType;
         _currentOrders = new();
 	}
+
+    public User(Guid id, UserType userType) : base(id)
+    {
+        _currentOrders = new();
+        _userType = userType;
+    }
 
     public User(Guid id) : base(id)
     {
@@ -38,7 +43,7 @@ public class User : Entity
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            Debug.Fail(DebugExceptions.NullOrWhiteSpace(nameof(name)));
+            Debug.Print(DebugExceptions.NullOrWhiteSpace(nameof(name)));
             return this;
         }
 
@@ -50,7 +55,7 @@ public class User : Entity
     {
         if (string.IsNullOrWhiteSpace(email))
         {
-            Debug.Fail(DebugExceptions.NullOrWhiteSpace(nameof(email)));
+            Debug.Print(DebugExceptions.NullOrWhiteSpace(nameof(email)));
             return this;
         }
 
@@ -62,7 +67,7 @@ public class User : Entity
     {
         if (string.IsNullOrWhiteSpace(phoneNumber))
         {
-            Debug.Fail(DebugExceptions.NullOrWhiteSpace(nameof(phoneNumber)));
+            Debug.Print(DebugExceptions.NullOrWhiteSpace(nameof(phoneNumber)));
             return this;
         }
 
@@ -74,13 +79,6 @@ public class User : Entity
     {
         _userType = userType;
         return this;
-    }
-
-    public TUser MapTo<TUser>() where TUser : User
-    {
-        return new MapperConfiguration(mc => mc.CreateMap<User, TUser>())
-            .CreateMapper()
-            .Map<TUser>(this);
     }
 
     public User AddOrder(Order order)

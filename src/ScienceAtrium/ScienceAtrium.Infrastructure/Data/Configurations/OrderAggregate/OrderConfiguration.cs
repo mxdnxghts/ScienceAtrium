@@ -10,13 +10,13 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasKey(x => x.Id);
         builder
             .HasOne(x => x.Customer)
-            .WithOne(x => x.CurrentOrder)
-            .HasForeignKey<Order>(x => x.CustomerId)
+            .WithMany(x => x.Orders)
+            .HasForeignKey(x => x.CustomerId)
             .OnDelete(DeleteBehavior.ClientSetNull);
         builder
             .HasOne(x => x.Executor)
-            .WithOne(x => x.CurrentOrder)
-            .HasForeignKey<Order>(x => x.ExecutorId)
+            .WithMany(x => x.Orders)
+            .HasForeignKey(x => x.ExecutorId)
             .OnDelete(DeleteBehavior.ClientSetNull);
 
         builder
