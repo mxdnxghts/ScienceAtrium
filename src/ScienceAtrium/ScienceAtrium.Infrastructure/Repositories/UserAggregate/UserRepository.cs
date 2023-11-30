@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using ScienceAtrium.Domain.Exceptions;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
-using ScienceAtrium.Domain.Exceptions;
 
 namespace ScienceAtrium.Infrastructure.Repositories.UserAggregate;
 
@@ -20,15 +21,20 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
 {
     private readonly ApplicationContext _context;
     private readonly ILogger _logger;
+    private readonly IMapper _mapper;
     private DbSet<TUser> Users { get; }
 
-    public UserRepository(ApplicationContext context, ILogger logger)
+    public UserRepository(ApplicationContext context, ILogger logger, IMapper mapper)
     {
         _context = context;
         _logger = logger;
+        _mapper = mapper;
         Users = _context.Set<TUser>();
     }
-    public IQueryable<TUser> All => Users.Include(x => x.CurrentOrder).AsNoTracking();
+    public IQueryable<TUser> All => Users
+        .Include(x => x.Orders)
+        .ThenInclude(x => x.WorkTemplates)
+        .ThenInclude(x => x.Subject).AsNoTracking();
 
     public int Create(TUser entity)
     {
@@ -42,8 +48,8 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
             throw new CreationException(entity.Id);
 
         Users.Add(entity);
-        if (entity.CurrentOrder is not null)
-            _context.Orders.Update(entity.CurrentOrder);
+        if (entity.Orders?.Count > 0)
+            _context.Orders.UpdateRange(entity.Orders);
 
         return _context.TrySaveChanges(_logger);
     }
@@ -60,10 +66,10 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
             throw new CreationException(entity.Id);
 
         Users.Add(entity);
-        if (entity.CurrentOrder is not null)
-            _context.Orders.Update(entity.CurrentOrder);
+		if (entity.Orders?.Count > 0)
+			_context.Orders.UpdateRange(entity.Orders);
 
-        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
+		return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
     public int Delete(TUser entity)
@@ -72,11 +78,12 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
             throw new ValidationException(entity.Id);
 
         Users.Remove(entity);
-        if (entity.CurrentOrder is not null)
-            _context.Orders.Update(entity.CurrentOrder);
-        entity.UpdateCurrentOrder(null);
 
-        return _context.TrySaveChanges(_logger);
+		if (entity.Orders?.Count > 0)
+			_context.Orders.UpdateRange(entity.Orders);
+        RemoveUserFromOrders(ref entity);
+
+		return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> DeleteAsync(TUser entity, CancellationToken cancellationToken = default)
@@ -85,11 +92,12 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
             throw new ValidationException(entity.Id);
 
         Users.Remove(entity);
-        if (entity.CurrentOrder is not null)
-            _context.Orders.Update(entity.CurrentOrder);
-        entity.UpdateCurrentOrder(null);
+        
+        if (entity.Orders?.Count > 0)
+            _context.Orders.UpdateRange(entity.Orders);
+		RemoveUserFromOrders(ref entity);
 
-        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
+		return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
     public void Dispose()
@@ -131,12 +139,12 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
 
     public TUser Get(Expression<Func<TUser, bool>> predicate)
     {
-        return All.FirstOrDefault(predicate) ?? User.Default.MapTo<TUser>();
+        return All.FirstOrDefault(predicate) ?? _mapper.Map<TUser>(User.Default);
     }
 
     public async Task<TUser> GetAsync(Expression<Func<TUser, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        return await All.FirstOrDefaultAsync(predicate, cancellationToken) ?? User.Default.MapTo<TUser>();
+        return await All.FirstOrDefaultAsync(predicate, cancellationToken) ?? _mapper.Map<TUser>(User.Default);
     }
 
     public int Update(TUser entity)
@@ -145,8 +153,9 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
             throw new ValidationException(entity.Id);
 
         Users.Update(entity);
-        if (entity.CurrentOrder is not null)
-            _context.Orders.Update(entity.CurrentOrder);
+        
+        if (entity.Orders?.Count > 0)
+            _context.Orders.UpdateRange(entity.Orders);
 
         return _context.TrySaveChanges(_logger);
     }
@@ -157,9 +166,29 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
             throw new ValidationException(entity.Id);
 
         Users.Update(entity);
-        if (entity.CurrentOrder is not null)
-            _context.Orders.Update(entity.CurrentOrder);
+        
+        if (entity.Orders?.Count > 0)
+            _context.Orders.UpdateRange(entity.Orders);
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns>count of iterations - count of <see cref="List{Order}"/></returns>
+    private int RemoveUserFromOrders(ref TUser user)
+    {
+        var iterations = 0;
+		foreach (var order in user.Orders)
+		{
+            if (user.UserType == UserType.Customer)
+				order.RemoveCustomer();
+			if (user.UserType == UserType.Executor)
+				order.RemoveExecutor();
+            iterations++;
+		}
+        return iterations;
+	}
 }

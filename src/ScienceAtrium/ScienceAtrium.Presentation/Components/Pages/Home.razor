@@ -48,7 +48,7 @@
 	private async Task<Customer> GetCustomer()
 	{
 		var results = await _mediator.Send(new GetCustomerListQuery());
-		return results.Find(x => x.Id != Guid.Empty && x.CurrentOrder?.Id == null) ?? _mapper.Map<Customer>(User.Default);
+		return results.Find(x => x.Id != Guid.Empty) ?? _mapper.Map<Customer>(User.Default);
 	}
 
 	private async Task MakeOrderAsync(Order order, Guid customerId)
