@@ -1,13 +1,13 @@
-﻿using Infrastructure.IntegrationTests.Extensions;
+﻿using AutoMapper;
+using Infrastructure.IntegrationTests.Extensions;
 using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
-using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
-using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
-using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
+using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
+using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
 
 namespace Infrastructure.IntegrationTests.Repositories.UserAggregate;
 #pragma warning disable NUnit1032 // An IDisposable field/property should be Disposed in a TearDown method
@@ -23,7 +23,12 @@ public class UserRepositoryTests
             new DbContextOptionsBuilder<ApplicationContext>()
             .UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true").Options);
         
-        _userRepository = new UserRepository<Customer>(_applicationContext, null);
+        var mapper = new MapperConfiguration(mc =>
+        {
+            mc.CreateMap<User, Customer>();
+            mc.CreateMap<User, Executor>();
+        }).CreateMapper();
+		_userRepository = new UserRepository<Customer>(_applicationContext, null, mapper);
 
         _names = new List<string>
         {
@@ -105,7 +110,7 @@ public class UserRepositoryTests
 
         _userRepository.Delete(user);
         Assert.That(_userRepository.Get(x => x.Id == user.Id),
-            Is.EqualTo(User.Default.MapTo<Customer>()));
+            Is.EqualTo(User.Default));
     }
 
     [Test]
@@ -132,45 +137,60 @@ public class UserRepositoryTests
         _applicationContext.Database.EnsureDeleted();
         _applicationContext.Database.EnsureCreated();
 
-        _applicationContext.Users.AddRange(GetCustomerEntities(200));
-        _applicationContext.Users.AddRange(GetExecutorEntities(200));
+        var users = GetUserEntities(200);
+
+        _applicationContext.Users.AddRange(users.Item1);
+        _applicationContext.Users.AddRange(users.Item2);
         _applicationContext.TrySaveChanges(null);
 
 
         Assert.Pass();
     }
 
-    private Customer GetCustomerEntity(UserType? userType = null)
-    {
-        return new Customer(Guid.NewGuid())
-            .UpdateName(TestExtension.GetRandomName(_names))
-            .UpdateEmail(TestExtension.GetRandomEmail(_names))
-            .UpdatePhoneNumber(TestExtension.GetRandomPhoneNumber())
-            .UpdateUserType(UserType.Customer) as Customer;
-    }
+    private User GetUserEntity(UserType? userType)
+	{
+		return new User(Guid.NewGuid(), userType ?? (UserType)Random.Shared.Next(0, 1))
+			.UpdateName(TestExtension.GetRandomName(_names))
+			.UpdateEmail(TestExtension.GetRandomEmail(_names))
+			.UpdatePhoneNumber(TestExtension.GetRandomPhoneNumber())
+			.UpdateUserType(UserType.Customer);
+	}
 
-    private Executor GetExecutorEntity(UserType? userType = null)
-    {
-        return new Executor(Guid.NewGuid())
-            .UpdateName(TestExtension.GetRandomName(_names))
-            .UpdateEmail(TestExtension.GetRandomEmail(_names))
-            .UpdatePhoneNumber(TestExtension.GetRandomPhoneNumber())
-            .UpdateUserType(UserType.Executor) as Executor;
-    }
+    private Customer GetCustomerEntity()
+	{
+		return new Customer(Guid.NewGuid())
+			.UpdateName(TestExtension.GetRandomName(_names))
+			.UpdateEmail(TestExtension.GetRandomEmail(_names))
+			.UpdatePhoneNumber(TestExtension.GetRandomPhoneNumber())
+			.UpdateUserType(UserType.Customer) as Customer;
+	}
 
-    private Customer[] GetCustomerEntities(int usersCount, UserType? userType = null)
+    private Executor GetExecutorEntity()
+	{
+		return new Executor(Guid.NewGuid())
+			.UpdateName(TestExtension.GetRandomName(_names))
+			.UpdateEmail(TestExtension.GetRandomEmail(_names))
+			.UpdatePhoneNumber(TestExtension.GetRandomPhoneNumber())
+			.UpdateUserType(UserType.Executor) as Executor;
+	}
+
+    private (Customer[], Executor[]) GetUserEntities(int usersCount)
     {
-        var users = new Customer[usersCount];
+        var customers = new Customer[usersCount];
+        var executors = new Executor[usersCount];
         for (int i = 0; i < usersCount; i++)
-            users[i] = GetCustomerEntity(userType);
-        return users;
+        {
+            customers[i] = GetCustomerEntity();
+            executors[i] = GetExecutorEntity();
+        }
+        return (customers, executors);
     }
 
-    private Executor[] GetExecutorEntities(int usersCount, UserType? userType = null)
+    private User[] GetUserEntities(int usersCount, UserType? userType = null)
     {
-        var users = new Executor[usersCount];
+        var users = new User[usersCount];
         for (int i = 0; i < usersCount; i++)
-            users[i] = GetExecutorEntity(userType);
+            users[i] = GetUserEntity(userType);
         return users;
     }
 }

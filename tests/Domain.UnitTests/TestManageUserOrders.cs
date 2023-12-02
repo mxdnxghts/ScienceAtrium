@@ -1,6 +1,5 @@
 ﻿using ScienceAtrium.Domain.OrderAggregate;
-using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
-using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
+using ScienceAtrium.Domain.UserAggregate;
 
 namespace Domain.UnitTests;
 
@@ -10,37 +9,37 @@ public class TestManageUserOrders
     public void TestAddOrder()
     {
         var order = new Order(Guid.NewGuid());
-        var customer = new Customer(Guid.NewGuid()).AddFormedOrder(order);
-        var executor = new Executor(Guid.NewGuid()).AddDoneOrder(order);
-        Assert.That(customer.FormedOrders, Has.Count.AtLeast(0));
-        Assert.That(executor.DoneOrders, Has.Count.AtLeast(0));
+        var customer = new User(Guid.NewGuid(), UserType.Customer).AddOrder(order);
+        var executor = new User(Guid.NewGuid(), UserType.Executor).AddOrder(order);
+        Assert.That(customer.Orders, Has.Count.AtLeast(0));
+        Assert.That(executor.Orders, Has.Count.AtLeast(0));
     }
 
     [Test]
     public void TestUpdateOrder()
     {
         var order = new Order(Guid.NewGuid()).UpdateStatus(Status.Pending);
-        var customer = new Customer(Guid.NewGuid()).AddFormedOrder(order);
-        var executor = new Executor(Guid.NewGuid()).AddDoneOrder(order);
+        var customer = new User(Guid.NewGuid(), UserType.Customer).AddOrder(order);
+        var executor = new User(Guid.NewGuid(), UserType.Executor).AddOrder(order);
 
-        customer.UpdateFormedOrder(o => o.Status == Status.Pending, new Order(order.Id).UpdateStatus(Status.Cancelled));
-        executor.UpdateDoneOrder(o => o.Status == Status.Pending, new Order(order.Id).UpdateStatus(Status.Cancelled));
+        customer.UpdateOrder(o => o.Status == Status.Pending, new Order(order.Id).UpdateStatus(Status.Cancelled));
+        executor.UpdateOrder(o => o.Status == Status.Pending, new Order(order.Id).UpdateStatus(Status.Cancelled));
 
-        Assert.That(customer.FormedOrders.FirstOrDefault().Status, Is.EqualTo(Status.Cancelled));
-        Assert.That(executor.DoneOrders.FirstOrDefault().Status, Is.EqualTo(Status.Cancelled));
+        Assert.That(customer.Orders.FirstOrDefault().Status, Is.EqualTo(Status.Cancelled));
+        Assert.That(executor.Orders.FirstOrDefault().Status, Is.EqualTo(Status.Cancelled));
     }
 
     [Test]
     public void TestDeleteOrder()
     {
         var order = new Order(Guid.NewGuid()).UpdateStatus(Status.Pending);
-        var customer = new Customer(Guid.NewGuid()).AddFormedOrder(order);
-        var executor = new Executor(Guid.NewGuid()).AddDoneOrder(order);
+        var customer = new User(Guid.NewGuid(), UserType.Customer).AddOrder(order);
+        var executor = new User(Guid.NewGuid(), UserType.Executor).AddOrder(order);
 
-        customer.RemoveFormedOrder(o => o.Status == Status.Pending);
-        executor.RemoveDoneOrder(o => o.Status == Status.Pending);
+        customer.RemoveOrder(o => o.Status == Status.Pending);
+        executor.RemoveOrder(o => o.Status == Status.Pending);
 
-        Assert.That(customer.FormedOrders.FirstOrDefault(), Is.Null);
-        Assert.That(executor.DoneOrders.FirstOrDefault(), Is.Null);
+        Assert.That(customer.Orders.FirstOrDefault(), Is.Null);
+        Assert.That(executor.Orders.FirstOrDefault(), Is.Null);
     }
 }

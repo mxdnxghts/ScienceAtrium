@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate.Interfaces;
 using ScienceAtrium.Domain.UserAggregate;
-using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
-using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
@@ -14,8 +12,7 @@ namespace Infrastructure.IntegrationTests.DbContext;
 public class ApplicationContextTests
 {
     private List<string> _names;
-    private IReader<Customer> _customerReader;
-    private IReader<Executor> _executorReader;
+    private IReader<User> _userReader;
     private ApplicationContext _applicationContext;
 
     [SetUp]
@@ -23,8 +20,7 @@ public class ApplicationContextTests
     {
         _applicationContext = new ApplicationContext(new DbContextOptionsBuilder<ApplicationContext>()
             .UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true").Options);
-        _customerReader = new UserRepository<Customer>(_applicationContext, null);
-        _executorReader = new UserRepository<Executor>(_applicationContext, null);
+        _userReader = new UserRepository<User>(_applicationContext, null, null);
         _names = new List<string>
         {
             "Nick",
@@ -48,7 +44,7 @@ public class ApplicationContextTests
             email: TestExtension.GetRandomEmail(_names),
             phoneNumber: TestExtension.GetRandomPhoneNumber(),
             userType: UserType.Customer)
-                .UpdateCurrentOrder(order).MapTo<Customer>();
+                .AddOrder(order);
 
         var executor = new User(
             id: Guid.NewGuid(),
@@ -56,7 +52,7 @@ public class ApplicationContextTests
             email: TestExtension.GetRandomEmail(_names),
             phoneNumber: TestExtension.GetRandomPhoneNumber(),
             userType: UserType.Executor)
-                .UpdateCurrentOrder(order).MapTo<Executor>();
+                .AddOrder(order);
 
 
         var subject = new Subject(Guid.NewGuid())
@@ -72,9 +68,9 @@ public class ApplicationContextTests
         //    price: Random.Shared.Next(1000, 10_000)
         //)
         order.AddWorkTemplate(new WorkTemplate(Guid.NewGuid())
-            .UpdateSubject(subject))
-            .UpdateCustomer(_customerReader, customer)
-            .UpdateExecutor(_executorReader, executor);
+            .UpdateSubject(subject));
+            //.UpdateCustomer(_userReader, customer)
+            //.UpdateExecutor(_userReader, executor);
 
         _applicationContext.Orders.Add(order);
         Assert.That(_applicationContext.SaveChanges(), Is.AtLeast(1));
