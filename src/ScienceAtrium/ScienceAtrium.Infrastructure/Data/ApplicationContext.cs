@@ -22,4 +22,32 @@ public class ApplicationContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
     }
+
+    public override int SaveChanges()
+    {
+        var changes = base.SaveChanges();
+        ChangeTracker.Clear();
+        return changes;
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        var changes = base.SaveChanges(acceptAllChangesOnSuccess);
+        ChangeTracker.Clear();
+        return changes;
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var changes = await base.SaveChangesAsync(cancellationToken);
+        ChangeTracker.Clear();
+        return changes;
+    }
+
+    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        var changes = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        ChangeTracker.Clear();
+        return changes;
+    }
 }
