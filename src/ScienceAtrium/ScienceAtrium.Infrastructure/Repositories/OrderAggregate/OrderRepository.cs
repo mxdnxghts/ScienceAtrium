@@ -170,16 +170,16 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
 
 	public Order UpdateState(Order entity, EntityState entityState)
 	{
-        UpdateEntity(entity, entityState);
-
         if (entity.Executor is not null)
             _context.Users.Update(entity.Executor);
 
 		_context.Users.Update(entity.Customer);
         
-		_context.WorkTemplates.AttachRange(entity.WorkTemplates);
+		_context.WorkTemplates.UpdateRange(entity.WorkTemplates);
 		_context.Subjects.AttachRange(entity.WorkTemplates?.Select(x => x.Subject));
 
-		return entity;
+        UpdateEntity(entity, entityState);
+
+        return entity;
 	}
 }

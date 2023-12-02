@@ -177,18 +177,16 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
     /// 
     /// </summary>
     /// <param name="user"></param>
-    /// <returns>count of iterations - count of <see cref="List{Order}"/></returns>
+    /// <returns>count of iterations - count of <see cref="User.Orders"/></returns>
     private int RemoveUserFromOrders(ref TUser user)
     {
-        var iterations = 0;
 		foreach (var order in user.Orders)
 		{
             if (user.UserType == UserType.Customer)
 				order.RemoveCustomer();
 			if (user.UserType == UserType.Executor)
 				order.RemoveExecutor();
-            iterations++;
 		}
-        return iterations;
+        return user.Orders.Count;
 	}
 }
