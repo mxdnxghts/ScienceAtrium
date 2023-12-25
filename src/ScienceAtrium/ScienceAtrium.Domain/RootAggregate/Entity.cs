@@ -1,5 +1,4 @@
-﻿using ScienceAtrium.Domain.OrderAggregate;
-using ScienceAtrium.Domain.RootAggregate.Interfaces;
+﻿using ScienceAtrium.Domain.RootAggregate.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
