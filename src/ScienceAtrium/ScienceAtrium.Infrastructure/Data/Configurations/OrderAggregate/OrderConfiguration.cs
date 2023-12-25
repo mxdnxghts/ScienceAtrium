@@ -19,10 +19,6 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasForeignKey(x => x.ExecutorId)
             .OnDelete(DeleteBehavior.ClientSetNull);
 
-        builder
-            .HasMany(x => x.WorkTemplates)
-            .WithMany();
-
         builder.Property(x => x.TotalCost)
             .HasPrecision(12, 2)
             .HasField("_totalCost")

@@ -16,8 +16,15 @@ public class ApplicationContext : DbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<WorkTemplate> WorkTemplates { get; set; }
     public DbSet<Subject> Subjects { get; set; }
+    public DbSet<OrderWorkTemplate> OrderWorkTemplates { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+	{
+        optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+		base.OnConfiguring(optionsBuilder);
+	}
+
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
@@ -50,4 +57,27 @@ public class ApplicationContext : DbContext
         ChangeTracker.Clear();
         return changes;
     }
+
+	/// <summary>
+	/// Method updates states of entity. You should use this method with method <see cref="AvoidChanges"/> for the best state tracking of entities
+	/// </summary>
+	/// <param name="item">entity whose state will be changed</param>
+	/// <param name="state">future state of <see cref="item"/></param>
+	/// <typeparam name="TEntity">type of <see cref="item"/></typeparam>
+	public void TrackEntity<TEntity>(TEntity item, EntityState state)
+	{
+		if (item is not null)
+			Entry(item).State = state;
+	}
+
+	/// <summary>
+	/// Method updates states of entities. You should use this method with method <see cref="AvoidChanges"/> for the best state tracking of entities
+	/// </summary>
+	/// <param name="items">array of entities whose state will be changed</param>
+	/// <param name="state">future state of <see cref="items"/></param>
+	public void TrackEntities<TEntity>(TEntity?[] items, EntityState state)
+	{
+		foreach (var item in items.Where(x => x is not null))
+			TrackEntity(item, state);
+	}
 }
