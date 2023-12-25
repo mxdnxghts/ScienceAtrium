@@ -19,11 +19,13 @@ public class UserRepositoryTests
     [SetUp]
     public void Setup()
     {
-        _applicationContext = new ApplicationContext(
-            new DbContextOptionsBuilder<ApplicationContext>()
-            .UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true").Options);
-        
-        var mapper = new MapperConfiguration(mc =>
+		_applicationContext = new ApplicationContext(
+			new DbContextOptionsBuilder<ApplicationContext>()
+			//.UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true")
+			.UseSqlServer("Server=localhost\\SQLEXPRESS;Data Source=maxim;Initial Catalog=Test;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False; Encrypt=True;TrustServerCertificate=True")
+			.Options);
+
+		var mapper = new MapperConfiguration(mc =>
         {
             mc.CreateMap<User, Customer>();
             mc.CreateMap<User, Executor>();
@@ -78,9 +80,13 @@ public class UserRepositoryTests
             .UpdatePrice(1200),
         };
 
+        _applicationContext.Database.EnsureDeleted();
+        _applicationContext.Database.EnsureCreated();
+
         _applicationContext.WorkTemplates.AddRange(workTemplates);
-        _applicationContext.TrySaveChanges(null);
-        Assert.Pass();
+        var result = _applicationContext.TrySaveChanges(null);
+
+		Assert.That(result, Is.AtLeast(1));
     }
 
     [Test]
@@ -129,23 +135,62 @@ public class UserRepositoryTests
     [Test]
     public void PrepareTests()
     {
-        //TestExtension.PrepareTests<Customer, Entity>(_applicationContext,
-        //    GetCustomerEntities(200, UserType.Customer), ensureDeleted: false, ensureCreated: false);
-        //TestExtension.PrepareTests<Executor, Entity>(_applicationContext,
-        //    GetExecutorEntities(200, UserType.Executor), ensureDeleted: false, ensureCreated: false);
+		//TestExtension.PrepareTests<Customer, Entity>(_applicationContext,
+		//    GetCustomerEntities(200, UserType.Customer), ensureDeleted: false, ensureCreated: false);
+		//TestExtension.PrepareTests<Executor, Entity>(_applicationContext,
+		//    GetExecutorEntities(200, UserType.Executor), ensureDeleted: false, ensureCreated: false);
 
-        _applicationContext.Database.EnsureDeleted();
-        _applicationContext.Database.EnsureCreated();
+        var subjects = new Subject[]
+		{
+			new(Guid.NewGuid())
+			{
+				Name = "Технологии разработки ПО"
+			},
+			new(Guid.NewGuid())
+			{
+				Name = "Операционные системы и среды"
+			},
+			new(Guid.NewGuid())
+			{
+				Name = "Математическое моделирование"
+			},
+		};
 
-        var users = GetUserEntities(200);
+		var workTemplates = new WorkTemplate[]
+		{
+			new WorkTemplate(Guid.NewGuid())
+			.UpdateTitle(subjects[0].Name)
+			.UpdateSubject(subjects[0])
+			.UpdateWorkType(WorkType.LaboratoryWork)
+			.UpdatePrice(1200),
+			new WorkTemplate(Guid.NewGuid())
+			.UpdateTitle(subjects[1].Name)
+			.UpdateSubject(subjects[1])
+			.UpdateWorkType(WorkType.LaboratoryWork)
+			.UpdatePrice(1200),
+			new WorkTemplate(Guid.NewGuid())
+			.UpdateTitle(subjects[2].Name)
+			.UpdateSubject(subjects[2])
+			.UpdateWorkType(WorkType.LaboratoryWork)
+			.UpdatePrice(1200),
+		};
+
+		_applicationContext.Database.EnsureDeleted();
+		_applicationContext.Database.EnsureCreated();
+
+		_applicationContext.WorkTemplates.AddRange(workTemplates);
+		var wtSubjects = _applicationContext.TrySaveChanges(null);
+        
+		var users = GetUserEntities(200);
 
         _applicationContext.Users.AddRange(users.Item1);
         _applicationContext.Users.AddRange(users.Item2);
-        _applicationContext.TrySaveChanges(null);
+        var savedUsers = _applicationContext.TrySaveChanges(null);
 
 
-        Assert.Pass();
-    }
+        Assert.That(wtSubjects, Is.AtLeast(1));
+		Assert.That(savedUsers, Is.AtLeast(1));
+	}
 
     private User GetUserEntity(UserType? userType)
 	{

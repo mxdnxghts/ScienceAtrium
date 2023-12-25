@@ -33,7 +33,9 @@ public class OrderRepositoryTest
     {
         _applicationContext = new ApplicationContext(
             new DbContextOptionsBuilder<ApplicationContext>()
-            .UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true").Options);
+            //.UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true")
+            .UseSqlServer("Server=localhost\\SQLEXPRESS;Data Source=maxim;Initial Catalog=Test;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False; Encrypt=True;TrustServerCertificate=True")
+            .Options);
 
         _orderRepository = new OrderRepository(_applicationContext, null);
         _mapper = new MapperConfiguration(mc =>
@@ -74,15 +76,56 @@ public class OrderRepositoryTest
     public void CreateOrderWithSameCustomerTest()
     {
         var customer = _customerReader
-            .Get(x => x.Id == new Guid("007c17e7-b6af-48eb-a134-085fde7cb9b3"));
+            .Get(x => x.Id != Guid.Empty);
 
         var order = MapOrder(customer);
 		_orderRepository.Create(order);
+
         var newOrder = MapOrder(customer);
 		_orderRepository.Create(newOrder);
 		Assert.That(_orderRepository.Get(x => x.Id == order.Id),
 			Is.Not.EqualTo(Order.Default));
 	}
+
+    [Test]
+    public void AddWorkTemplateToOrderTest()
+    {
+		var order = MapOrder();
+		_orderRepository.Create(order);
+
+		var workTemplate = _applicationContext.WorkTemplates
+			.Include(x => x.Subject)
+			.AsNoTracking()
+			.FirstOrDefault(x => x.Title.Trim().ToLower() == "Математическое моделирование".Trim().ToLower());
+        var count = order.WorkTemplates.ToList().Count;
+		order.AddWorkTemplate(workTemplate);
+
+        var s = _orderRepository.Get(x => x.Id == order.Id);
+
+		_applicationContext = new ApplicationContext(
+			new DbContextOptionsBuilder<ApplicationContext>()
+			//.UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=12844752;Include Error Detail=true")
+			.UseSqlServer("Server=localhost\\SQLEXPRESS;Data Source=maxim;Initial Catalog=Test;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False; Encrypt=True;TrustServerCertificate=True")
+			.Options);
+
+		_orderRepository = new OrderRepository(_applicationContext, null);
+
+		_orderRepository.Update(order);
+		Assert.That(_orderRepository.Get(x => x.Id == order.Id).WorkTemplates.Count,
+			Is.AtLeast(count + 1));
+	}
+
+    [Test]
+    public void RemoveWorkTemplateTest()
+    {
+        var order = _orderRepository.Get(x => x.Id != Guid.Empty);
+        var count = order.WorkTemplates.ToList().Count;
+        order.RemoveWorkTemplate(x => x.Id != Guid.Empty);
+        _orderRepository.Update(order);
+
+        Assert.That(_orderRepository.Get(x => x.Id == order.Id).WorkTemplates.Count,
+            Is.AtMost(count - 1));
+    }
 
     [Test]
     public void GetOrderTest()
@@ -219,11 +262,11 @@ public class OrderRepositoryTest
         Executor? executor = null,
         int position = default)
     {
-        customer ??= _customerBase.All.AsEnumerable()
+        customer ??= _customerBase.All
             .Where(x => x.UserType == UserType.Customer)
             .ToList()[position];
 
-		executor ??= _executorBase.All.AsEnumerable()
+		executor ??= _executorBase.All
             .Where(x => x.UserType == UserType.Executor)
             .ToList()[position];
 
