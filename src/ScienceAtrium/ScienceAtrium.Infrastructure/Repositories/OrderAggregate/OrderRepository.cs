@@ -1,10 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ScienceAtrium.Domain.Exceptions;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Infrastructure.Data;
+using ScienceAtrium.Infrastructure.Data.Configurations.OrderAggregate;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
+using System.Data;
 using System.Linq.Expressions;
 
 namespace ScienceAtrium.Infrastructure.Repositories.OrderAggregate;
@@ -22,8 +25,7 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
     public IQueryable<Order> All => _context.Orders
         .Include(x => x.Customer)
         .Include(x => x.Executor)
-		.Include(x => x.WorkTemplates).ThenInclude(x => x.Subject)
-        .AsNoTracking();
+        .Include(x => x.WorkTemplatesLink).ThenInclude(x => x.WorkTemplate).ThenInclude(x => x.Subject);
 
     public int Create(Order entity)
     {
@@ -128,7 +130,7 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
     {
         if (!FitsConditions(entity))
             throw new ValidationException();
-        
+
 		UpdateState(entity, EntityState.Modified);
 
 		return _context.TrySaveChanges(_logger);
@@ -138,7 +140,7 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
     {
         if (!await FitsConditionsAsync(entity, cancellationToken))
             throw new ValidationException();
-        
+
 		UpdateState(entity, EntityState.Modified);
 
 		return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
@@ -151,35 +153,57 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
 			_context.Orders.Add(entity);
 			entity.Customer.AddOrder(entity);
 			entity.Executor?.AddOrder(entity);
+			_context.OrderWorkTemplates.AddRange(entity.WorkTemplatesLink);
+
 		}
-        else if (entityState == EntityState.Modified)
-        {
-            _context.Orders.Update(entity);
+		else if (entityState == EntityState.Modified)
+		{
+			_context.Orders.Update(entity);
 			entity.Customer.UpdateOrder(x => x.Id == entity.Id, entity);
 			entity.Executor?.UpdateOrder(x => x.Id == entity.Id, entity);
-		}
-        else if (entityState == EntityState.Deleted)
-        {
-            _context.Orders.Remove(entity);
+            TrackOrderWorkTemplatesOnRemove(entity);
+        }   
+		else if (entityState == EntityState.Deleted)
+		{
+			_context.Orders.Remove(entity);
 			entity.Customer.RemoveOrder(x => x.Id == entity.Id);
 			entity.Executor?.RemoveOrder(x => x.Id == entity.Id);
+            _context.OrderWorkTemplates.RemoveRange(entity.WorkTemplatesLink);
 		}
 
-        return entity;
+		return entity;
 	}
 
 	public Order UpdateState(Order entity, EntityState entityState)
 	{
-        if (entity.Executor is not null)
-            _context.Users.Update(entity.Executor);
+		if (entity.Executor is not null)
+			_context.Users.Update(entity.Executor);
 
 		_context.Users.Update(entity.Customer);
+
+		_context.WorkTemplates.AttachRange(entity.WorkTemplates);
+        _context.Subjects.AttachRange(entity.WorkTemplates?.Select(x => x.Subject));
+
+		UpdateEntity(entity, entityState);
         
-		_context.WorkTemplates.UpdateRange(entity.WorkTemplates);
-		_context.Subjects.AttachRange(entity.WorkTemplates?.Select(x => x.Subject));
+		return entity;
+	}
 
-        UpdateEntity(entity, entityState);
+    private void TrackOrderWorkTemplatesOnRemove(Order order)
+	{
+		_context.TrackEntities(order.WorkTemplatesLink.ToArray(), EntityState.Detached);
+		var newOrderWorkTemplates = order.WorkTemplatesLink.Where(owt => !_context.OrderWorkTemplates.Contains(owt)).ToList();
+        if(newOrderWorkTemplates.Count != 0)
+		{
+			_context.OrderWorkTemplates.AddRange(newOrderWorkTemplates);
+            return;
+		}
 
-        return entity;
+		var removedOrderWorkTemplates = order.WorkTemplatesLink.Except(newOrderWorkTemplates).ToList();
+		if (removedOrderWorkTemplates.Count != 0)
+		{
+            _context.OrderWorkTemplates.RemoveRange(removedOrderWorkTemplates);
+			return;
+        }
 	}
 }
