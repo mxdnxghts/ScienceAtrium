@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using ScienceAtrium.Domain.Constants;
+﻿using ScienceAtrium.Domain.Constants;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
 using System.Diagnostics;
@@ -9,44 +8,42 @@ namespace ScienceAtrium.Domain.UserAggregate;
 public class User : Entity
 {
     public static readonly User Default = new User(Guid.Empty);
-    private string _name;
+	private string _name;
     private string _email;
     private string _phoneNumber;
     private UserType _userType;
-    private readonly List<Order> _orders;
+	private readonly List<Order> _currentOrders;
 
-    public User(Guid id, string name, string email, string phoneNumber, UserType userType) : base(id)
+	public User(Guid id, string name, string email, string phoneNumber, UserType userType) : base(id)
     {
         _name = name;
         _email = email;
         _phoneNumber = phoneNumber;
         _userType = userType;
-        _orders = new();
+        _currentOrders = new();
+	}
+
+    public User(Guid id, UserType userType) : base(id)
+    {
+        _currentOrders = new();
+        _userType = userType;
     }
 
     public User(Guid id) : base(id)
     {
-        _orders = new();
-    }
+        _currentOrders = new();
+	}
     public string Name => _name;
     public string Email => _email;
     public string PhoneNumber => _phoneNumber;
     public UserType UserType => _userType;
-    public Order? CurrentOrder { get; private set; }
-    public Guid? CurrentOrderId { get; private set; }
-
-    public virtual User UpdateCurrentOrder(Order? currentOrder)
-    {
-        CurrentOrder = currentOrder;
-        CurrentOrderId = currentOrder?.Id;
-        return this;
-    }
+    public IReadOnlyCollection<Order> Orders => _currentOrders;
 
     public User UpdateName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            Debug.Fail(DebugExceptions.NullOrWhiteSpace(nameof(name)));
+            Debug.Print(DebugExceptions.NullOrWhiteSpace(nameof(name)));
             return this;
         }
 
@@ -58,7 +55,7 @@ public class User : Entity
     {
         if (string.IsNullOrWhiteSpace(email))
         {
-            Debug.Fail(DebugExceptions.NullOrWhiteSpace(nameof(email)));
+            Debug.Print(DebugExceptions.NullOrWhiteSpace(nameof(email)));
             return this;
         }
 
@@ -70,7 +67,7 @@ public class User : Entity
     {
         if (string.IsNullOrWhiteSpace(phoneNumber))
         {
-            Debug.Fail(DebugExceptions.NullOrWhiteSpace(nameof(phoneNumber)));
+            Debug.Print(DebugExceptions.NullOrWhiteSpace(nameof(phoneNumber)));
             return this;
         }
 
@@ -84,55 +81,37 @@ public class User : Entity
         return this;
     }
 
-    public TUser MapTo<TUser>() where TUser : User
-    {
-        return new MapperConfiguration(mc => mc.CreateMap<User, TUser>())
-            .CreateMapper()
-            .Map<TUser>(this);
-    }
-
-    protected List<Order> AddOrder(Order order)
+    public User AddOrder(Order order)
     {
         if (order?.IsEmpty() != false)
-        {
-            //Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(Order)));
-            return _orders;
-        }
+			return this;
 
-        var existOrder = _orders.Find(x => x.Id == order.Id);
-        if (existOrder?.IsEmpty() == true)
-        {
-            //Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(Order), existOrder.Id));
-            return _orders;
-        }
-        _orders.Add(order);
-        return _orders;
+		var existOrder = _currentOrders.Find(x => x.Id == order.Id);
+        if (existOrder?.IsEmpty() == false)
+			return this;
+
+		_currentOrders.Add(order);
+        return this;
     }
 
-    protected List<Order> RemoveOrder(Func<Order, bool> funcGetOrder)
+    public User RemoveOrder(Func<Order, bool> funcGetOrder)
     {
-        var order = _orders.FirstOrDefault(funcGetOrder);
+        var order = _currentOrders.FirstOrDefault(funcGetOrder);
         if (order?.IsEmpty() != false)
-        {
-            Debug.Fail(DebugExceptions.HasNullValue(nameof(Order)));
-            return _orders;
-        }
+			return this;
 
-        _orders.Remove(order);
-        return _orders;
+		_currentOrders.Remove(order);
+        return this;
     }
 
-    protected List<Order> UpdateOrder(Func<Order, bool> funcGetOrder, Order newOrder)
+    public User UpdateOrder(Func<Order, bool> funcGetOrder, Order newOrder)
     {
-        var order = _orders.FirstOrDefault(funcGetOrder);
+        var order = _currentOrders.FirstOrDefault(funcGetOrder);
         if (order?.IsEmpty() != false)
-        {
-            Debug.Fail(DebugExceptions.HasNullValue(nameof(Order)));
-            return _orders;
-        }
+			return this;
 
-        _orders.Remove(order);
-        _orders.Add(newOrder);
-        return _orders;
+		_currentOrders.Remove(order);
+        _currentOrders.Add(newOrder);
+        return this;
     }
 }

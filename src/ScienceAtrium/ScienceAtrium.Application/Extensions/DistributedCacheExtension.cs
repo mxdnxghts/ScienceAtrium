@@ -24,7 +24,10 @@ public static class DistributedCacheExtensions
             SlidingExpiration = slidingExpiration,
         };
 
-        var jsonData = JsonConvert.SerializeObject(data, Formatting.None);
+        var jsonData = JsonConvert.SerializeObject(data, Formatting.None, new JsonSerializerSettings
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+        });
         await cache.SetStringAsync(key, jsonData, options, cancellationToken);
     }
 

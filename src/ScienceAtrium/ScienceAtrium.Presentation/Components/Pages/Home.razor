@@ -29,26 +29,31 @@
 		var list = await _mediator.Send(new GetWorkTemplateListQuery());
 		workTemplates.AddRange(list);
 		currentUser = await _mediator.Send(new GetCachedCustomerQuery());
-		currentOrder = new Order(Guid.NewGuid()).UpdateCustomer(_customerReader, currentUser);
-		await MakeOrderAsync(currentOrder, currentUser.Id);
+		currentOrder = await GetOrderAsync(currentUser.Id);
 	}
 
 	private async Task SubmitWorkTemplateAsync(WorkTemplate workTemplate)
 	{
 		currentOrder.AddWorkTemplate(workTemplate);
-		await _mediator.Send(new UpdateOrderCommand(currentOrder));
+		await MakeOrderAsync(currentOrder, currentUser.Id);
 	}
 
 	private async Task SetCachedCustomerAsync(Customer customer)
 	{
-		if (currentOrder?.IsEmpty() == true)
-			await _mediator.Send(new SetCachedCustomerCommand(await GetCustomer()));
+		if (currentOrder is null || currentOrder.IsEmpty())
+			await _mediator.Send(new SetCachedCustomerCommand(await GetCustomerAsync()));
 	}
 
-	private async Task<Customer> GetCustomer()
+	private async Task<Customer> GetCustomerAsync()
 	{
 		var results = await _mediator.Send(new GetCustomerListQuery());
-		return results.Find(x => x.Id != Guid.Empty && x.CurrentOrder?.Id == null) ?? _mapper.Map<Customer>(User.Default);
+		return results.Find(x => x.Id != Guid.Empty) ?? _mapper.Map<Customer>(User.Default);
+	}
+
+	private async Task<Order> GetOrderAsync(Guid customerId)
+	{
+		var order = await _mediator.Send(new GetOrderByCustomerIdQuery(customerId));
+		return order ?? new Order(Guid.NewGuid()).UpdateCustomer(_customerReader, currentUser);
 	}
 
 	private async Task MakeOrderAsync(Order order, Guid customerId)

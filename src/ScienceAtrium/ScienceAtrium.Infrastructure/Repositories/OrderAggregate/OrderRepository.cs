@@ -1,14 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ScienceAtrium.Domain.Exceptions;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Infrastructure.Data;
+using ScienceAtrium.Infrastructure.Data.Configurations.OrderAggregate;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
+using System.Data;
 using System.Linq.Expressions;
 
 namespace ScienceAtrium.Infrastructure.Repositories.OrderAggregate;
-public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdate<Order>
+public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdate<Order, Order>
 {
     private readonly ApplicationContext _context;
     private readonly ILogger _logger;
@@ -20,10 +23,9 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
     }
 
     public IQueryable<Order> All => _context.Orders
-        .Include(x => x.Customer.FormedOrders)
-        .Include(x => x.Executor.DoneOrders)
-        .Include(x => x.WorkTemplates).ThenInclude(x => x.Subject)
-        .AsNoTracking();
+        .Include(x => x.Customer)
+        .Include(x => x.Executor)
+        .Include(x => x.WorkTemplatesLink).ThenInclude(x => x.WorkTemplate).ThenInclude(x => x.Subject);
 
     public int Create(Order entity)
     {
@@ -32,9 +34,6 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
 
         if (Exist(x => x.Id == entity.Id))
             throw new EntityNotFoundException();
-
-        entity.Customer.UpdateCurrentOrder(entity);
-        entity.Executor?.UpdateCurrentOrder(entity);
 
 		UpdateState(entity, EntityState.Added);
 
@@ -58,10 +57,7 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
     {
         if (!FitsConditions(entity))
             throw new ValidationException();
-
-        entity.Customer.UpdateCurrentOrder(null);
-        entity.Executor?.UpdateCurrentOrder(null);
-
+        
 		UpdateState(entity, EntityState.Deleted);
 
 		return _context.TrySaveChanges(_logger);
@@ -71,10 +67,7 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
     {
         if (!await FitsConditionsAsync(entity, cancellationToken))
             throw new ValidationException();
-
-        entity.Customer.UpdateCurrentOrder(null);
-        entity.Executor?.UpdateCurrentOrder(null);
-
+        
 		UpdateState(entity, EntityState.Deleted);
 
 		return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
@@ -138,9 +131,6 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
         if (!FitsConditions(entity))
             throw new ValidationException();
 
-        entity.Customer.UpdateCurrentOrder(entity);
-        entity.Executor?.UpdateCurrentOrder(entity);
-
 		UpdateState(entity, EntityState.Modified);
 
 		return _context.TrySaveChanges(_logger);
@@ -150,9 +140,6 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
     {
         if (!await FitsConditionsAsync(entity, cancellationToken))
             throw new ValidationException();
-
-        entity.Customer.UpdateCurrentOrder(entity);
-        entity.Executor?.UpdateCurrentOrder(entity);
 
 		UpdateState(entity, EntityState.Modified);
 
@@ -164,33 +151,59 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
 		if (entityState == EntityState.Added)
 		{
 			_context.Orders.Add(entity);
-		}
-        else if (entityState == EntityState.Modified)
-        {
-            _context.Orders.Update(entity);
-        }
-        else if (entityState == EntityState.Deleted)
-        {
-            _context.Orders.Remove(entity);
-        }
+			entity.Customer.AddOrder(entity);
+			entity.Executor?.AddOrder(entity);
+			_context.OrderWorkTemplates.AddRange(entity.WorkTemplatesLink);
 
-        return entity;
+		}
+		else if (entityState == EntityState.Modified)
+		{
+			_context.Orders.Update(entity);
+			entity.Customer.UpdateOrder(x => x.Id == entity.Id, entity);
+			entity.Executor?.UpdateOrder(x => x.Id == entity.Id, entity);
+            TrackOrderWorkTemplatesOnRemove(entity);
+        }   
+		else if (entityState == EntityState.Deleted)
+		{
+			_context.Orders.Remove(entity);
+			entity.Customer.RemoveOrder(x => x.Id == entity.Id);
+			entity.Executor?.RemoveOrder(x => x.Id == entity.Id);
+            _context.OrderWorkTemplates.RemoveRange(entity.WorkTemplatesLink);
+		}
+
+		return entity;
 	}
 
 	public Order UpdateState(Order entity, EntityState entityState)
 	{
-		entity.Customer.UpdateCurrentOrder(entity);
-		entity.Executor?.UpdateCurrentOrder(entity);
+		if (entity.Executor is not null)
+			_context.Users.Update(entity.Executor);
 
-        UpdateEntity(entity, entityState);
-		_context.WorkTemplates.AttachRange(entity.WorkTemplates);
 		_context.Users.Update(entity.Customer);
 
-        if (entity.Executor is not null)
-            _context.Users.Update(entity.Executor);
+		_context.WorkTemplates.AttachRange(entity.WorkTemplates);
+        _context.Subjects.AttachRange(entity.WorkTemplates?.Select(x => x.Subject));
 
-		_context.Subjects.AttachRange(entity.WorkTemplates?.Select(x => x.Subject));
+		UpdateEntity(entity, entityState);
         
-        return entity;
+		return entity;
+	}
+
+    private void TrackOrderWorkTemplatesOnRemove(Order order)
+	{
+		_context.TrackEntities(order.WorkTemplatesLink.ToArray(), EntityState.Detached);
+		var newOrderWorkTemplates = order.WorkTemplatesLink.Where(owt => !_context.OrderWorkTemplates.Contains(owt)).ToList();
+        if(newOrderWorkTemplates.Count != 0)
+		{
+			_context.OrderWorkTemplates.AddRange(newOrderWorkTemplates);
+            return;
+		}
+
+		var removedOrderWorkTemplates = order.WorkTemplatesLink.Except(newOrderWorkTemplates).ToList();
+		if (removedOrderWorkTemplates.Count != 0)
+		{
+            _context.OrderWorkTemplates.RemoveRange(removedOrderWorkTemplates);
+			return;
+        }
 	}
 }
