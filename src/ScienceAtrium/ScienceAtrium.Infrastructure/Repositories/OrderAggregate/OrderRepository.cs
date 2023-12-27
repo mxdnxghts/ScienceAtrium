@@ -161,7 +161,7 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
 			_context.Orders.Update(entity);
 			entity.Customer.UpdateOrder(x => x.Id == entity.Id, entity);
 			entity.Executor?.UpdateOrder(x => x.Id == entity.Id, entity);
-            TrackOrderWorkTemplatesOnRemove(entity);
+            TrackOrderWorkTemplatesOnModified(entity);
         }   
 		else if (entityState == EntityState.Deleted)
 		{
@@ -189,7 +189,7 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
 		return entity;
 	}
 
-    private void TrackOrderWorkTemplatesOnRemove(Order order)
+    private void TrackOrderWorkTemplatesOnModified(Order order)
 	{
 		_context.TrackEntities(order.WorkTemplatesLink.ToArray(), EntityState.Detached);
 		var newOrderWorkTemplates = order.WorkTemplatesLink.Where(owt => !_context.OrderWorkTemplates.Contains(owt)).ToList();
