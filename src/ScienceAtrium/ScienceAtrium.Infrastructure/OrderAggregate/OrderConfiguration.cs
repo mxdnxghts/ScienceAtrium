@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ScienceAtrium.Domain.OrderAggregate;
 
-namespace ScienceAtrium.Infrastructure.Data.Configurations.OrderAggregate;
+namespace ScienceAtrium.Infrastructure.OrderAggregate;
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
     public void Configure(EntityTypeBuilder<Order> builder)

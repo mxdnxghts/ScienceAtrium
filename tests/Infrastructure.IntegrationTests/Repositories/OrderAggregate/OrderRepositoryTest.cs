@@ -2,17 +2,16 @@
 using Infrastructure.IntegrationTests.Extensions;
 using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Domain.OrderAggregate;
-using ScienceAtrium.Domain.UserAggregate;
-using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
-using ScienceAtrium.Domain.WorkTemplateAggregate;
-using ScienceAtrium.Infrastructure.Data;
-using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
-using ScienceAtrium.Infrastructure.Repositories.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Domain.RootAggregate.Interfaces;
-using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
+using ScienceAtrium.Domain.UserAggregate;
+using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
+using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
+using ScienceAtrium.Domain.WorkTemplateAggregate;
+using ScienceAtrium.Infrastructure.Data;
+using ScienceAtrium.Infrastructure.OrderAggregate;
+using ScienceAtrium.Infrastructure.UserAggregate;
 using System.Linq.Expressions;
-using Microsoft.Extensions.Options;
 
 namespace Infrastructure.IntegrationTests.Repositories.OrderAggregate;
 #pragma warning disable NUnit1032 // An IDisposable field/property should be Disposed in a TearDown method

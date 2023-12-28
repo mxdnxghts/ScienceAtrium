@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ScienceAtrium.Domain.Constants;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 
-namespace ScienceAtrium.Infrastructure.Data.Configurations.WorkTemplateAggregate;
+namespace ScienceAtrium.Infrastructure.WorkTemplateAggregate;
 public class WorkTemplateConfiguration : IEntityTypeConfiguration<WorkTemplate>
 {
     public void Configure(EntityTypeBuilder<WorkTemplate> builder)

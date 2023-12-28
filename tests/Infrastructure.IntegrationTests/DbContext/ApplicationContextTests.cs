@@ -5,7 +5,7 @@ using ScienceAtrium.Domain.RootAggregate.Interfaces;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
-using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
+using ScienceAtrium.Infrastructure.UserAggregate;
 
 namespace Infrastructure.IntegrationTests.DbContext;
 #pragma warning disable NUnit1032 // An IDisposable field/property should be Disposed in a TearDown method

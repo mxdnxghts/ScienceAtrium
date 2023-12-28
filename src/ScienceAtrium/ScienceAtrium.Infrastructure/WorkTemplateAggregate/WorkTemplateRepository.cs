@@ -6,7 +6,7 @@ using Serilog;
 using System.Linq.Expressions;
 using ScienceAtrium.Domain.Exceptions;
 
-namespace ScienceAtrium.Infrastructure.Repositories.WorkTemplateAggregate;
+namespace ScienceAtrium.Infrastructure.WorkTemplateAggregate;
 public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplate>
 {
     private readonly ApplicationContext _context;
@@ -30,7 +30,7 @@ public sealed class WorkTemplateRepository : IWorkTemplateRepository<WorkTemplat
             throw new EntityNotFoundException();
 
         _context.WorkTemplates.Add(entity);
-        
+
 
         return _context.TrySaveChanges(_logger);
     }

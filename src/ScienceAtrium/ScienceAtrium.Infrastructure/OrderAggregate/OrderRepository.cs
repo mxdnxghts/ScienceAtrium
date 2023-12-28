@@ -1,16 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ScienceAtrium.Domain.Exceptions;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Infrastructure.Data;
-using ScienceAtrium.Infrastructure.Data.Configurations.OrderAggregate;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Data;
 using System.Linq.Expressions;
 
-namespace ScienceAtrium.Infrastructure.Repositories.OrderAggregate;
+namespace ScienceAtrium.Infrastructure.OrderAggregate;
 public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdate<Order, Order>
 {
     private readonly ApplicationContext _context;
@@ -35,9 +33,9 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
         if (Exist(x => x.Id == entity.Id))
             throw new EntityNotFoundException();
 
-		UpdateState(entity, EntityState.Added);
+        UpdateState(entity, EntityState.Added);
 
-		return _context.TrySaveChanges(_logger);
+        return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> CreateAsync(Order entity, CancellationToken cancellationToken = default)
@@ -50,27 +48,27 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
 
         UpdateState(entity, EntityState.Added);
 
-		return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
+        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
     public int Delete(Order entity)
     {
         if (!FitsConditions(entity))
             throw new ValidationException();
-        
-		UpdateState(entity, EntityState.Deleted);
 
-		return _context.TrySaveChanges(_logger);
+        UpdateState(entity, EntityState.Deleted);
+
+        return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> DeleteAsync(Order entity, CancellationToken cancellationToken = default)
     {
         if (!await FitsConditionsAsync(entity, cancellationToken))
             throw new ValidationException();
-        
-		UpdateState(entity, EntityState.Deleted);
 
-		return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
+        UpdateState(entity, EntityState.Deleted);
+
+        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
     public void Dispose()
@@ -131,9 +129,9 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
         if (!FitsConditions(entity))
             throw new ValidationException();
 
-		UpdateState(entity, EntityState.Modified);
+        UpdateState(entity, EntityState.Modified);
 
-		return _context.TrySaveChanges(_logger);
+        return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> UpdateAsync(Order entity, CancellationToken cancellationToken = default)
@@ -141,69 +139,69 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
         if (!await FitsConditionsAsync(entity, cancellationToken))
             throw new ValidationException();
 
-		UpdateState(entity, EntityState.Modified);
+        UpdateState(entity, EntityState.Modified);
 
-		return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
+        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
-	public Order UpdateEntity(Order entity, EntityState entityState)
-	{
-		if (entityState == EntityState.Added)
-		{
-			_context.Orders.Add(entity);
-			entity.Customer.AddOrder(entity);
-			entity.Executor?.AddOrder(entity);
-			_context.OrderWorkTemplates.AddRange(entity.WorkTemplatesLink);
+    public Order UpdateEntity(Order entity, EntityState entityState)
+    {
+        if (entityState == EntityState.Added)
+        {
+            _context.Orders.Add(entity);
+            entity.Customer.AddOrder(entity);
+            entity.Executor?.AddOrder(entity);
+            _context.OrderWorkTemplates.AddRange(entity.WorkTemplatesLink);
 
-		}
-		else if (entityState == EntityState.Modified)
-		{
-			_context.Orders.Update(entity);
-			entity.Customer.UpdateOrder(x => x.Id == entity.Id, entity);
-			entity.Executor?.UpdateOrder(x => x.Id == entity.Id, entity);
+        }
+        else if (entityState == EntityState.Modified)
+        {
+            _context.Orders.Update(entity);
+            entity.Customer.UpdateOrder(x => x.Id == entity.Id, entity);
+            entity.Executor?.UpdateOrder(x => x.Id == entity.Id, entity);
             TrackOrderWorkTemplatesOnModified(entity);
-        }   
-		else if (entityState == EntityState.Deleted)
-		{
-			_context.Orders.Remove(entity);
-			entity.Customer.RemoveOrder(x => x.Id == entity.Id);
-			entity.Executor?.RemoveOrder(x => x.Id == entity.Id);
+        }
+        else if (entityState == EntityState.Deleted)
+        {
+            _context.Orders.Remove(entity);
+            entity.Customer.RemoveOrder(x => x.Id == entity.Id);
+            entity.Executor?.RemoveOrder(x => x.Id == entity.Id);
             _context.OrderWorkTemplates.RemoveRange(entity.WorkTemplatesLink);
-		}
+        }
 
-		return entity;
-	}
+        return entity;
+    }
 
-	public Order UpdateState(Order entity, EntityState entityState)
-	{
-		if (entity.Executor is not null)
-			_context.Users.Update(entity.Executor);
+    public Order UpdateState(Order entity, EntityState entityState)
+    {
+        if (entity.Executor is not null)
+            _context.Users.Update(entity.Executor);
 
-		_context.Users.Update(entity.Customer);
+        _context.Users.Update(entity.Customer);
 
-		_context.WorkTemplates.AttachRange(entity.WorkTemplates);
+        _context.WorkTemplates.AttachRange(entity.WorkTemplates);
         _context.Subjects.AttachRange(entity.WorkTemplates?.Select(x => x.Subject));
 
-		UpdateEntity(entity, entityState);
-        
-		return entity;
-	}
+        UpdateEntity(entity, entityState);
+
+        return entity;
+    }
 
     private void TrackOrderWorkTemplatesOnModified(Order order)
-	{
-		_context.TrackEntities(order.WorkTemplatesLink.ToArray(), EntityState.Detached);
-		var newOrderWorkTemplates = order.WorkTemplatesLink.Where(owt => !_context.OrderWorkTemplates.Contains(owt)).ToList();
-        if(newOrderWorkTemplates.Count != 0)
-		{
-			_context.OrderWorkTemplates.AddRange(newOrderWorkTemplates);
+    {
+        _context.TrackEntities(order.WorkTemplatesLink.ToArray(), EntityState.Detached);
+        var newOrderWorkTemplates = order.WorkTemplatesLink.Where(owt => !_context.OrderWorkTemplates.Contains(owt)).ToList();
+        if (newOrderWorkTemplates.Count != 0)
+        {
+            _context.OrderWorkTemplates.AddRange(newOrderWorkTemplates);
             return;
-		}
-
-		var removedOrderWorkTemplates = order.WorkTemplatesLink.Except(newOrderWorkTemplates).ToList();
-		if (removedOrderWorkTemplates.Count != 0)
-		{
-            _context.OrderWorkTemplates.RemoveRange(removedOrderWorkTemplates);
-			return;
         }
-	}
+
+        var removedOrderWorkTemplates = order.WorkTemplatesLink.Except(newOrderWorkTemplates).ToList();
+        if (removedOrderWorkTemplates.Count != 0)
+        {
+            _context.OrderWorkTemplates.RemoveRange(removedOrderWorkTemplates);
+            return;
+        }
+    }
 }

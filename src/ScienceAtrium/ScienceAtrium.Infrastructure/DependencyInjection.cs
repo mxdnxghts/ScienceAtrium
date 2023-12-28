@@ -8,9 +8,9 @@ using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
-using ScienceAtrium.Infrastructure.Repositories.OrderAggregate;
-using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
-using ScienceAtrium.Infrastructure.Repositories.WorkTemplateAggregate;
+using ScienceAtrium.Infrastructure.OrderAggregate;
+using ScienceAtrium.Infrastructure.UserAggregate;
+using ScienceAtrium.Infrastructure.WorkTemplateAggregate;
 using Serilog;
 
 namespace ScienceAtrium.Infrastructure;

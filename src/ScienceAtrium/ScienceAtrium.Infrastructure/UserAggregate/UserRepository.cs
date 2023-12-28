@@ -7,7 +7,7 @@ using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
 using System.Linq.Expressions;
 
-namespace ScienceAtrium.Infrastructure.Repositories.UserAggregate;
+namespace ScienceAtrium.Infrastructure.UserAggregate;
 
 /// <summary>
 /// Represents implementation of interface <see cref="IUserRepository{TEntity}"/>
@@ -66,10 +66,10 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
             throw new CreationException(entity.Id);
 
         Users.Add(entity);
-		if (entity.Orders?.Count > 0)
-			_context.Orders.UpdateRange(entity.Orders);
+        if (entity.Orders?.Count > 0)
+            _context.Orders.UpdateRange(entity.Orders);
 
-		return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
+        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
     public int Delete(TUser entity)
@@ -79,11 +79,11 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
 
         Users.Remove(entity);
 
-		if (entity.Orders?.Count > 0)
-			_context.Orders.UpdateRange(entity.Orders);
+        if (entity.Orders?.Count > 0)
+            _context.Orders.UpdateRange(entity.Orders);
         RemoveUserFromOrders(ref entity);
 
-		return _context.TrySaveChanges(_logger);
+        return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> DeleteAsync(TUser entity, CancellationToken cancellationToken = default)
@@ -92,12 +92,12 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
             throw new ValidationException(entity.Id);
 
         Users.Remove(entity);
-        
+
         if (entity.Orders?.Count > 0)
             _context.Orders.UpdateRange(entity.Orders);
-		RemoveUserFromOrders(ref entity);
+        RemoveUserFromOrders(ref entity);
 
-		return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
+        return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 
     public void Dispose()
@@ -153,7 +153,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
             throw new ValidationException(entity.Id);
 
         Users.Update(entity);
-        
+
         if (entity.Orders?.Count > 0)
             _context.Orders.UpdateRange(entity.Orders);
 
@@ -166,7 +166,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
             throw new ValidationException(entity.Id);
 
         Users.Update(entity);
-        
+
         if (entity.Orders?.Count > 0)
             _context.Orders.UpdateRange(entity.Orders);
 
@@ -180,13 +180,13 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
     /// <returns>count of iterations - count of <see cref="User.Orders"/></returns>
     private int RemoveUserFromOrders(ref TUser user)
     {
-		foreach (var order in user.Orders)
-		{
+        foreach (var order in user.Orders)
+        {
             if (user.UserType == UserType.Customer)
-				order.RemoveCustomer();
-			if (user.UserType == UserType.Executor)
-				order.RemoveExecutor();
-		}
+                order.RemoveCustomer();
+            if (user.UserType == UserType.Executor)
+                order.RemoveExecutor();
+        }
         return user.Orders.Count;
-	}
+    }
 }
