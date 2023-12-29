@@ -1,50 +1,65 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager _navigationManager;
-
-@{
-    const string M1d2B = "M1d2B";
-    const string Deemure = "Deemure";
-    const string Ferquerro = "Ferquerro";
-    string basketRoute = "/basket";
-}
 
 <body>
-    <header>
-        <h1>ScienceAtrium</h1>
-        <div class="container">
-            <div class="search">
-                <form name="from-search">
-                    <input type="text" placeholder="Поиск по странице">
-                    <button>
-                        <img src="img/search.png">
-                    </button>
-                </form>
+    <header id="header" class="header">
 
-                <div>
-                    <button>
-                        <img src="img/filter.png">
-                    </button>
-                </div>
-            </div>
+		<div class="container">
 
-            <div>
-                <button id="shop-btn-redirection">
-                    <img src="img/shoppbasket.png">
-                </button>
-            </div>
+			<div class="nav">
 
-            <div>
-                <button>
-                    <img src="img/profile.png">
-                </button>
-            </div>
+				<h1>ScienceAtrium</h1>
 
-        </div>
-    </header>
+				<ul class="menu">
+					<li>
+						<a href="#">
+							Профиль
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							Каталог
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							Корзина
+						</a>
+					</li>
+					<li>
+						<a href="#">
+							Войти
+						</a>
+					</li>
+				</ul>
+
+			</div>
+
+		</div>
+	</header>
     @Body
     <footer id="footer" class="footer">
-        <div class="footerweb">
-            <div>@DateTime.Now.Year Команда ХС: @M1d2B, @Deemure, @Ferquerro. </div>
+
+        <h6 style="text-align: center;">ScienceAtrium</h6>
+
+        <div class="button-collection">
+
+            <div class="check-in">
+
+                <button class="but-check-in"><img src="img/check-in.png">Войти</button>
+
+            </div>
+
+            <div class="check-out">
+
+                <button class="but-check-out"><img src="img/check-out.png">Выйти</button>
+
+            </div>
+
         </div>
+
+        <a href="mailto:info.scienceatrium@gmail.com" class="mailto"><img src="img/envelope.png" width="25" height="25">
+            info.scienceatrium@gmail.com
+        </a>
+
     </footer>
 </body>

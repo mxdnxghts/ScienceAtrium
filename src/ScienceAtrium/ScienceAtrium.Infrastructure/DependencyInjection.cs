@@ -19,7 +19,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddDbContext<ApplicationContext>(o
-            => o.UseNpgsql(configuration.GetConnectionString("ScienceAtriumOrder")));
+            => o.UseSqlServer(configuration.GetConnectionString("MSSQL")));
 
         serviceCollection.AddSerilog(o => o.MinimumLevel.Warning().WriteTo.Console());
 
