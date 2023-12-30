@@ -2,15 +2,15 @@
 using Infrastructure.IntegrationTests.Extensions;
 using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Domain.OrderAggregate;
-using ScienceAtrium.Domain.UserAggregate;
-using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
-using ScienceAtrium.Domain.WorkTemplateAggregate;
-using ScienceAtrium.Infrastructure.Data;
-using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
-using ScienceAtrium.Infrastructure.Repositories.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Domain.RootAggregate.Interfaces;
-using ScienceAtrium.Infrastructure.Repositories.UserAggregate;
+using ScienceAtrium.Domain.UserAggregate;
+using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
+using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
+using ScienceAtrium.Domain.WorkTemplateAggregate;
+using ScienceAtrium.Infrastructure.Data;
+using ScienceAtrium.Infrastructure.OrderAggregate;
+using ScienceAtrium.Infrastructure.UserAggregate;
 using System.Linq.Expressions;
 
 namespace Infrastructure.IntegrationTests.Repositories.OrderAggregate;
@@ -26,27 +26,37 @@ public class OrderRepositoryTest
     private IMapper _mapper;
     private List<string> _names;
     private Expression<Func<User, bool>> _expression;
+    private readonly object _lock = new();
 
     [SetUp]
     public void Setup()
     {
-        _applicationContext = new ApplicationContext(
-            new DbContextOptionsBuilder<ApplicationContext>()
-            .UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true").Options);
+        _applicationContext = new ApplicationContext(GetDbContextOptions());
 
         _orderRepository = new OrderRepository(_applicationContext, null);
-
-        _customerBase = new UserRepository<Customer>(_applicationContext, null);
-        _customerReader = new UserRepository<Customer>(_applicationContext, null);
-        _executorBase = new UserRepository<Executor>(_applicationContext, null);
-        _executorReader = new UserRepository<Executor>(_applicationContext, null);
         _mapper = new MapperConfiguration(mc =>
         {
-            mc.CreateMap<User, Customer>();
-            mc.CreateMap<User, Executor>();
+            //AddUserMapper(mc);
+            mc.CreateMap<User, Customer>().ConstructUsing(user =>
+            new Customer(user.Id)
+            .UpdateName(user.Name)
+            .UpdateEmail(user.Email)
+            .UpdatePhoneNumber(user.PhoneNumber)
+            .UpdateUserType(user.UserType) as Customer);
+            mc.CreateMap<User, Executor>().ConstructUsing(user =>
+            new Executor(user.Id)
+            .UpdateName(user.Name)
+            .UpdateEmail(user.Email)
+            .UpdatePhoneNumber(user.PhoneNumber)
+            .UpdateUserType(user.UserType) as Executor);
         }).CreateMapper();
 
-        _expression = x => x.Id != Guid.Empty && x.CurrentOrderId == null;
+        _customerBase = new UserRepository<Customer>(_applicationContext, null, _mapper);
+        _customerReader = new UserRepository<Customer>(_applicationContext, null, _mapper);
+        _executorBase = new UserRepository<Executor>(_applicationContext, null, _mapper);
+        _executorReader = new UserRepository<Executor>(_applicationContext, null, _mapper);
+
+        _expression = x => x.Id != Guid.Empty;
 
         _names = new List<string>
         {
@@ -56,8 +66,67 @@ public class OrderRepositoryTest
             "Alex",
             "Maxim",
         };
+    }
 
-        _applicationContext.Database.EnsureCreated();
+    [Test]
+    public void CreateOrderWithSameCustomerTest()
+    {
+		_applicationContext = new ApplicationContext(GetDbContextOptions());
+		var customer = _customerReader
+            .Get(x => x.Id != Guid.Empty);
+
+        var order = MapOrder(customer);
+		_orderRepository.Create(order);
+
+		_applicationContext = new ApplicationContext(GetDbContextOptions());
+
+		var newOrder = MapOrder(customer);
+        lock (_lock)
+        {
+			_orderRepository.Create(newOrder);
+		}
+		Assert.That(_orderRepository.Get(x => x.Id == order.Id),
+			Is.Not.EqualTo(Order.Default));
+	}
+
+    [Test]
+    public void AddWorkTemplateToOrderTest()
+    {
+		var order = MapOrder();
+		_orderRepository.Create(order);
+
+		var workTemplate = _applicationContext.WorkTemplates
+			.Include(x => x.Subject)
+			.AsNoTracking()
+			.FirstOrDefault(x => x.Title.Trim().ToLower() == "Математическое моделирование".Trim().ToLower());
+        var count = order.WorkTemplates.ToList().Count;
+		order.AddWorkTemplate(workTemplate);
+
+        var s = _orderRepository.Get(x => x.Id == order.Id);
+
+		_applicationContext = new ApplicationContext(
+			new DbContextOptionsBuilder<ApplicationContext>()
+			//.UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=12844752;Include Error Detail=true")
+			.UseSqlServer("Server=localhost\\SQLEXPRESS;Data Source=maxim;Initial Catalog=Test;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False; Encrypt=True;TrustServerCertificate=True")
+			.Options);
+
+		_orderRepository = new OrderRepository(_applicationContext, null);
+
+		_orderRepository.Update(order);
+		Assert.That(_orderRepository.Get(x => x.Id == order.Id).WorkTemplates.Count,
+			Is.AtLeast(count + 1));
+	}
+
+    [Test]
+    public void RemoveWorkTemplateTest()
+    {
+        var order = _orderRepository.Get(x => x.Id != Guid.Empty);
+        var count = order.WorkTemplates.ToList().Count;
+        order.RemoveWorkTemplate(x => x.Id != Guid.Empty);
+        _orderRepository.Update(order);
+
+        Assert.That(_orderRepository.Get(x => x.Id == order.Id).WorkTemplates.Count,
+            Is.AtMost(count - 1));
     }
 
     [Test]
@@ -153,13 +222,13 @@ public class OrderRepositoryTest
         {
             Name = "Math"
         };
-        var workTemplate = new WorkTemplate(
-            id: new Guid("{40405132-7516-4731-86E3-B6D4A6D956E7}"),
-            title: $"{TestExtension.GetRandomEmail(_names)}-title",
-            description: $"{TestExtension.GetRandomEmail(_names)}-description",
-            workType: WorkType.CourseWork,
-            price: Random.Shared.Next(1000, 10_000)
-        ).UpdateSubject(subject);
+        //var workTemplate = new WorkTemplate(
+        //    id: new Guid("{40405132-7516-4731-86E3-B6D4A6D956E7}"),
+        //    title: $"{TestExtension.GetRandomEmail(_names)}-title",
+        //    description: $"{TestExtension.GetRandomEmail(_names)}-description",
+        //    workType: WorkType.CourseWork,
+        //    price: Random.Shared.Next(1000, 10_000)
+        var workTemplate = new WorkTemplate(Guid.NewGuid()).UpdateSubject(subject);
 
         TestExtension.PrepareTests<Subject, Entity>(
             _applicationContext,
@@ -181,18 +250,13 @@ public class OrderRepositoryTest
         Assert.Pass();
     }
 
-    private Order MapOrder()
+    private Order MapOrder(Customer? customer = null)
     {
-        var customer = _applicationContext
-            .Set<Customer>().Include(x => x.CurrentOrder).AsNoTracking().AsEnumerable()
-            .FirstOrDefault(x => x.UserType == UserType.Customer && x.CurrentOrder?.Id == null);
+        customer ??= _customerReader.Get(x => x.UserType == UserType.Customer);
 
-        var executor = _applicationContext
-            .Set<Executor>().Include(x => x.CurrentOrder).AsNoTracking().AsEnumerable()
-            .FirstOrDefault(x => x.UserType == UserType.Executor && x.CurrentOrder?.Id == null);
-        return GetOrderEntity(
-            _mapper.Map<Customer>(customer),
-            _mapper.Map<Executor>(executor));
+        var executor = _executorReader.Get(x => x.UserType == UserType.Executor);
+
+		return GetOrderEntity(customer, executor);
     }
 
     private Order GetOrderEntity(
@@ -200,19 +264,22 @@ public class OrderRepositoryTest
         Executor? executor = null,
         int position = default)
     {
-        customer ??= _customerBase.All.Where(_expression).ToList()[position]
-            .MapTo<Customer>();
-        executor ??= _executorBase.All.Where(_expression).ToList()[position]
-            .MapTo<Executor>();
+        customer ??= _customerBase.All
+            .Where(x => x.UserType == UserType.Customer)
+            .ToList()[position];
 
-        var order = new Order(Guid.NewGuid())
+		executor ??= _executorBase.All
+            .Where(x => x.UserType == UserType.Executor)
+            .ToList()[position];
+
+		var order = new Order(Guid.NewGuid())
             .UpdateCustomer(_customerReader, customer)
             .UpdateExecutor(_executorReader, executor)
-            .AddWorkTemplate(_applicationContext.WorkTemplates
-                .SingleOrDefault(x => x.WorkType == WorkType.CourseWork));
+            .AddWorkTemplate(_applicationContext.WorkTemplates.Include(x => x.Subject).AsNoTracking()
+                .FirstOrDefault(x => x.WorkType == WorkType.LaboratoryWork));
 
-        customer.UpdateCurrentOrder(order);
-        executor.UpdateCurrentOrder(order);
+		customer.AddOrder(order);
+        executor.AddOrder(order);
 
         return order;
     }
@@ -232,12 +299,39 @@ public class OrderRepositoryTest
             name: TestExtension.GetRandomName(_names),
             email: TestExtension.GetRandomEmail(_names),
             phoneNumber: TestExtension.GetRandomPhoneNumber(),
-            userType: UserType.Customer).MapTo<Customer>(),
+            userType: UserType.Customer) as Customer,
         new User(
             id: Guid.NewGuid(),
             name: TestExtension.GetRandomName(_names),
             email: TestExtension.GetRandomEmail(_names),
             phoneNumber: TestExtension.GetRandomPhoneNumber(),
-            userType: UserType.Executor).MapTo<Executor>());
+            userType: UserType.Executor) as Executor);
+    }
+
+	private IMapperConfigurationExpression AddUserMapper(IMapperConfigurationExpression mapperConfiguration)
+	{
+#pragma warning disable CS8603 // Possible null reference return.
+		mapperConfiguration.CreateMap<User, Customer>().ConstructUsing(user =>
+			new Customer(user.Id)
+			.UpdateName(user.Name)
+			.UpdateEmail(user.Email)
+			.UpdatePhoneNumber(user.PhoneNumber)
+			.UpdateUserType(user.UserType) as Customer);
+		mapperConfiguration.CreateMap<User, Executor>().ConstructUsing(user =>
+			new Executor(user.Id)
+			.UpdateName(user.Name)
+			.UpdateEmail(user.Email)
+			.UpdatePhoneNumber(user.PhoneNumber)
+			.UpdateUserType(user.UserType) as Executor);
+#pragma warning restore CS8603 // Possible null reference return.
+		return mapperConfiguration;
+	}
+
+    private DbContextOptions<ApplicationContext> GetDbContextOptions()
+    {
+        return new DbContextOptionsBuilder<ApplicationContext>()
+            //.UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true")
+            .UseSqlServer("Server=localhost\\SQLEXPRESS;Data Source=maxim;Initial Catalog=Test;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False; Encrypt=True;TrustServerCertificate=True")
+            .Options;
     }
 }

@@ -12,22 +12,22 @@ public class Order : Entity
 {
     public static readonly Order Default = new(Guid.Empty);
 
-    private readonly List<WorkTemplate> _workTemplates;
+    private readonly List<OrderWorkTemplate> _workTemplatesLink;
     private Status _status;
     private Paymentmethod _paymentMethod;
     private decimal _totalCost;
 
     public Order(Guid id) : base(id)
     {
-        _workTemplates = new();
+		_workTemplatesLink = new();
         _status = Status.Pending;
         _paymentMethod = Paymentmethod.YooMoney;
     }
 
     public Order(Guid id, Status status, Paymentmethod paymentMethod) : base(id)
     {
-        _workTemplates = new();
-        _status = status;
+		_workTemplatesLink = new();
+		_status = status;
         _paymentMethod = paymentMethod;
     }
     public DateTime OrderDate { get; } = DateTime.UtcNow;
@@ -38,34 +38,35 @@ public class Order : Entity
     public Guid? CustomerId { get; private set; }
     public Executor? Executor { get; private set; }
     public Guid? ExecutorId { get; private set; }
-    public IReadOnlyCollection<WorkTemplate> WorkTemplates => _workTemplates;
+    public IReadOnlyCollection<WorkTemplate> WorkTemplates => WorkTemplatesLink.Select(x => x.WorkTemplate).ToList();
+    public IReadOnlyCollection<OrderWorkTemplate> WorkTemplatesLink => _workTemplatesLink;
 
     public Order AddWorkTemplate(WorkTemplate workTemplate)
     {
-        if (!ThrowIfHasIncorrectValue(workTemplate))
+        if (ThrowIfHasIncorrectValue(workTemplate))
             return this;
-        _workTemplates.Add(workTemplate);
-        _totalCost = _workTemplates.Sum(x => x.Price);
+        _workTemplatesLink.Add(new OrderWorkTemplate(this, workTemplate));
+        _totalCost = GetTotal();
         return this;
     }
 
-    public Order UpdateWorkTemplate(WorkTemplate workTemplate)
+    public Order AddWorkTemplates(params WorkTemplate[] workTemplates)
     {
-        if (!ThrowIfHasIncorrectValue(workTemplate))
-            return this;
-        _workTemplates.Remove(workTemplate);
-        _workTemplates.Add(workTemplate);
-        _totalCost = _workTemplates.Sum(x => x.Price);
+        foreach (var workTemplate in workTemplates)
+            AddWorkTemplate(workTemplate);
+
         return this;
     }
 
     public Order RemoveWorkTemplate(Func<WorkTemplate, bool> funcGetWorkTemplate)
     {
-        var workTemplate = _workTemplates.FirstOrDefault(funcGetWorkTemplate);
-        if (!ThrowIfHasIncorrectValue(workTemplate))
+        var workTemplate = _workTemplatesLink.Select(x => x.WorkTemplate)
+            .FirstOrDefault(funcGetWorkTemplate);
+        if (ThrowIfHasIncorrectValue(workTemplate))
             return this;
-        _workTemplates.Remove(workTemplate);
-        _totalCost = _workTemplates.Sum(x => x.Price);
+        _workTemplatesLink.Remove(_workTemplatesLink
+            .FirstOrDefault(x => x.WorkTemplateId == workTemplate.Id));
+        _totalCost = GetTotal();
         return this;
     }
 
@@ -94,33 +95,50 @@ public class Order : Entity
         return this;
     }
 
+    public Order RemoveCustomer()
+	{
+		Customer = null;
+        CustomerId = null;
+		return this;
+	}
+
     public Order UpdateExecutor(IReader<Executor> reader, Executor executor)
     {
-        if (!executor.IsValid(reader))
-        {
-            Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(Customer)));
+        if (executor?.IsValid(reader) != true)
             return this;
-        }
 
         Executor = executor;
         ExecutorId = executor.Id;
         return this;
     }
 
-    private bool ThrowIfHasIncorrectValue(WorkTemplate workTemplate)
+	public Order RemoveExecutor()
+	{
+		Executor = null;
+		ExecutorId = null;
+		return this;
+	}
+
+	private bool ThrowIfHasIncorrectValue(WorkTemplate workTemplate)
     {
         if (workTemplate is null || workTemplate.IsEmpty())
         {
-            Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(WorkTemplate)));
-            return false;
+            Debug.Print(DebugExceptions.HasIncorrectValue(nameof(WorkTemplate)));
+            return true;
         }
 
-        var existingWorkTemplate = _workTemplates.Find(x => x.Id == workTemplate.Id);
+        var existingWorkTemplate = _workTemplatesLink.Select(x => x.WorkTemplate)
+            .FirstOrDefault(x => x.Id == workTemplate.Id);
         if (existingWorkTemplate?.IsEmpty() == true)
         {
             Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(WorkTemplate), existingWorkTemplate.Id));
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
+
+    private decimal GetTotal()
+    {
+        return _workTemplatesLink.Select(x => x.WorkTemplate).Sum(x => x.Price);
+	}
 }

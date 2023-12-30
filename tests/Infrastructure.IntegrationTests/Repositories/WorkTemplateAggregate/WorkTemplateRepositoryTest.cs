@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
 using ScienceAtrium.Infrastructure.Data;
-using ScienceAtrium.Infrastructure.Repositories.WorkTemplateAggregate;
+using ScienceAtrium.Infrastructure.WorkTemplateAggregate;
 
 namespace Infrastructure.IntegrationTests.Repositories.WorkTemplateAggregate;
 #pragma warning disable NUnit1032 // An IDisposable field/property should be Disposed in a TearDown method
@@ -107,7 +107,7 @@ public class WorkTemplateRepositoryTest
     {
         var wt = _workTemplateRepository.Get(x => x.Price != 0).UpdateDescription("new description");
         var oldWt = _workTemplateRepository.Get(x => x.Price != 0);
-        
+
 
         _workTemplateRepository.Update(wt);
 
@@ -171,12 +171,13 @@ public class WorkTemplateRepositoryTest
     {
         var subject = _applicationContext.Subjects.SingleOrDefault(x => x.Name == TestExtension.GetRandomSubject(_subjects));
 
-        return new WorkTemplate(
-            id: Guid.NewGuid(),
-            title: $"{TestExtension.GetRandomEmail(_names)}-title",
-            description: $"{TestExtension.GetRandomEmail(_names)}-description",
-            workType: WorkType.CourseWork,
-            price: Random.Shared.Next(1000, 10_000)
-        ).UpdateSubject(subject);
+        //return new WorkTemplate(
+        //    id: Guid.NewGuid(),
+        //    title: $"{TestExtension.GetRandomEmail(_names)}-title",
+        //    description: $"{TestExtension.GetRandomEmail(_names)}-description",
+        //    workType: WorkType.CourseWork,
+        //    price: Random.Shared.Next(1000, 10_000)
+        //).UpdateSubject(subject);
+        return new(Guid.NewGuid());
     }
 }
