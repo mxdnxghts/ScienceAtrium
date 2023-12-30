@@ -11,7 +11,7 @@ namespace ScienceAtrium.Domain.OrderAggregate;
 public class Order : Entity
 {
     public static readonly Order Default = new(Guid.Empty);
-    
+
     private readonly List<OrderWorkTemplate> _workTemplatesLink;
     private Status _status;
     private Paymentmethod _paymentMethod;
@@ -56,16 +56,6 @@ public class Order : Entity
             AddWorkTemplate(workTemplate);
 
         return this;
-    }
-
-    public Order UpdateWorkTemplate(WorkTemplate workTemplate)
-    {
-        if (ThrowIfHasIncorrectValue(workTemplate))
-            return this;
-		_workTemplatesLink.Remove(new OrderWorkTemplate(this, workTemplate));
-		_workTemplatesLink.Add(new OrderWorkTemplate(this, workTemplate));
-		_totalCost = GetTotal();
-		return this;
     }
 
     public Order RemoveWorkTemplate(Func<WorkTemplate, bool> funcGetWorkTemplate)

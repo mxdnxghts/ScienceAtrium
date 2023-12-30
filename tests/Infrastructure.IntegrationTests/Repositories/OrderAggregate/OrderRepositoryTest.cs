@@ -26,15 +26,12 @@ public class OrderRepositoryTest
     private IMapper _mapper;
     private List<string> _names;
     private Expression<Func<User, bool>> _expression;
+    private readonly object _lock = new();
 
     [SetUp]
     public void Setup()
     {
-        _applicationContext = new ApplicationContext(
-            new DbContextOptionsBuilder<ApplicationContext>()
-            //.UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true")
-            .UseSqlServer("Server=localhost\\SQLEXPRESS;Data Source=maxim;Initial Catalog=Test;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False; Encrypt=True;TrustServerCertificate=True")
-            .Options);
+        _applicationContext = new ApplicationContext(GetDbContextOptions());
 
         _orderRepository = new OrderRepository(_applicationContext, null);
         _mapper = new MapperConfiguration(mc =>
@@ -74,14 +71,20 @@ public class OrderRepositoryTest
     [Test]
     public void CreateOrderWithSameCustomerTest()
     {
-        var customer = _customerReader
+		_applicationContext = new ApplicationContext(GetDbContextOptions());
+		var customer = _customerReader
             .Get(x => x.Id != Guid.Empty);
 
         var order = MapOrder(customer);
 		_orderRepository.Create(order);
 
-        var newOrder = MapOrder(customer);
-		_orderRepository.Create(newOrder);
+		_applicationContext = new ApplicationContext(GetDbContextOptions());
+
+		var newOrder = MapOrder(customer);
+        lock (_lock)
+        {
+			_orderRepository.Create(newOrder);
+		}
 		Assert.That(_orderRepository.Get(x => x.Id == order.Id),
 			Is.Not.EqualTo(Order.Default));
 	}
@@ -323,4 +326,12 @@ public class OrderRepositoryTest
 #pragma warning restore CS8603 // Possible null reference return.
 		return mapperConfiguration;
 	}
+
+    private DbContextOptions<ApplicationContext> GetDbContextOptions()
+    {
+        return new DbContextOptionsBuilder<ApplicationContext>()
+            //.UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true")
+            .UseSqlServer("Server=localhost\\SQLEXPRESS;Data Source=maxim;Initial Catalog=Test;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False; Encrypt=True;TrustServerCertificate=True")
+            .Options;
+    }
 }

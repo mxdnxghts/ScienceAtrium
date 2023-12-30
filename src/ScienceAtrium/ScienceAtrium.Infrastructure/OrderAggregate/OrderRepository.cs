@@ -5,7 +5,6 @@ using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
-using System.Data;
 using System.Linq.Expressions;
 
 namespace ScienceAtrium.Infrastructure.OrderAggregate;
