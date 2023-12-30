@@ -1,10 +1,10 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@inject IMediator _mediator;
-@inject Serilog.ILogger _logger;
-@inject NavigationManager _navigationManager;
-@inject IReader<Customer> _customerReader;
-@inject IMapper _mapper;
+@inject IMediator Mediator;
+@inject Serilog.ILogger Logger;
+@inject NavigationManager NavigationManager;
+@inject IReader<Customer> CustomerReader;
+@inject IMapper Mapper;
 
 <section id="main" class="main">
 	<div class="container">
@@ -106,7 +106,7 @@
 	<h4 style="text-align: center;">Каталог</h4>
 
 	<div class="blocks-catalog">
-		@foreach (var workTemplate in workTemplates)
+		@foreach (var workTemplate in _workTemplates)
 		{
 			<div style="background-color: #C9C0B3;" class="ctlblock">
 				<img src="img/title-page.png" width="80" height="100">
@@ -151,57 +151,57 @@
 </section>
 
 @code {
-	private readonly List<WorkTemplate> workTemplates = [];
-	private Customer currentUser;
-	private Order currentOrder;
+	private readonly List<WorkTemplate> _workTemplates = [];
+	private Customer _currentUser;
+	private Order _currentOrder;
 
 	protected override async Task OnInitializedAsync()
 	{
-		await SetCachedCustomerAsync(currentUser);
-		var list = await _mediator.Send(new GetWorkTemplateListQuery());
-		workTemplates.AddRange(list);
-		currentUser = await _mediator.Send(new GetCachedCustomerQuery());
-		currentOrder = await GetOrderAsync(currentUser.Id);
+		await SetCachedCustomerAsync(_currentUser);
+		var list = await Mediator.Send(new GetWorkTemplateListQuery());
+		_workTemplates.AddRange(list);
+		_currentUser = await Mediator.Send(new GetCachedCustomerQuery());
+		_currentOrder = await GetOrderAsync(_currentUser.Id);
 	}
 
 	private async Task AddWorkTemplateAsync(WorkTemplate workTemplate)
 	{
-		currentOrder.AddWorkTemplate(workTemplate);
-		await MakeOrderAsync(currentOrder, currentUser.Id);
+		_currentOrder.AddWorkTemplate(workTemplate);
+		await MakeOrderAsync(_currentOrder, _currentUser.Id);
 	}
 
+	[Obsolete("Change parameter of inside method's call")]
 	private async Task SetCachedCustomerAsync(Customer customer)
 	{
-		if (currentOrder is null || currentOrder.IsEmpty())
-			await _mediator.Send(new SetCachedCustomerCommand(await GetCustomerAsync()));
+		if (_currentOrder is null || _currentOrder.IsEmpty())
+			await Mediator.Send(new SetCachedCustomerCommand(await GetCustomerAsync()));
 	}
 
 	private async Task<Customer> GetCustomerAsync()
 	{
-		var results = await _mediator.Send(new GetCustomerListQuery());
-		return results.Find(x => x.Id != Guid.Empty) ?? _mapper.Map<Customer>(User.Default);
+		var results = await Mediator.Send(new GetCustomerListQuery());
+		return results.Find(x => x.Id != Guid.Empty) ?? Mapper.Map<Customer>(User.Default);
 	}
 
 	private async Task<Order> GetOrderAsync(Guid customerId)
 	{
-		var order = await _mediator.Send(new GetOrderByCustomerIdQuery(customerId));
+		var order = await Mediator.Send(new GetOrderByCustomerIdQuery(customerId));
 		if (order.Equals(Order.Default))
-			return new Order(Guid.NewGuid()).UpdateCustomer(_customerReader, currentUser);
+			return new Order(Guid.NewGuid()).UpdateCustomer(CustomerReader, _currentUser);
 		return order;
 	}
 
 	private async Task MakeOrderAsync(Order order, Guid customerId)
 	{
-		var dbOrder = await _mediator.Send(new GetOrderByCustomerIdQuery(customerId));
+		var dbOrder = await Mediator.Send(new GetOrderByCustomerIdQuery(customerId));
 
 		// is not exists
 		if (dbOrder.IsEmpty())
 		{
-			await _mediator.Send(new CreateOrderCommand(order));
+			await Mediator.Send(new CreateOrderCommand(order));
 			return;
 		}
 
-		await _mediator.Send(new UpdateOrderCommand(order));
-
+		await Mediator.Send(new UpdateOrderCommand(order));
 	}
 }
