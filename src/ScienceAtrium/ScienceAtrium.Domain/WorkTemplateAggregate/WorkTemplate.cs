@@ -1,4 +1,5 @@
 ﻿using ScienceAtrium.Domain.Constants;
+using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
 using System.Diagnostics;
 
@@ -17,21 +18,15 @@ public class WorkTemplate : Entity
         _title = string.Empty;
         _description = string.Empty;
     }
-    public WorkTemplate(Guid id, string title, string description, WorkType workType, decimal price) : base(id)
-    {
-        _title = title;
-        _description = description;
-        _workType = workType;
-        _price = price;
-    }
     public string Title => _title ?? string.Empty;
     public string Description => _description ?? string.Empty;
     public WorkType WorkType => _workType;
     public decimal Price => _price;
     public Guid? SubjectId { get; private set; }
     public Subject? Subject { get; private set; }
+	public IReadOnlyCollection<OrderWorkTemplate> OrdersLink { get; private set; }
 
-    public WorkTemplate UpdateSubject(Subject subject)
+	public WorkTemplate UpdateSubject(Subject subject)
     {
         if (subject?.IsEmpty() == true)
         {

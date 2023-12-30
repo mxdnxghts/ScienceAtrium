@@ -24,13 +24,17 @@ public static class DistributedCacheExtensions
             SlidingExpiration = slidingExpiration,
         };
 
-        var jsonData = JsonConvert.SerializeObject(data, Formatting.None);
+        var jsonData = JsonConvert.SerializeObject(data, Formatting.None, new JsonSerializerSettings
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+        });
         await cache.SetStringAsync(key, jsonData, options, cancellationToken);
     }
 
     public static async Task<TData> GetRecordAsync<TData>(
         this IDistributedCache cache,
         string key,
+        JsonSerializerSettings? jsonSerializerSettings = null,
         CancellationToken cancellationToken = default)
     {
         var data = await cache.GetStringAsync(key, cancellationToken);

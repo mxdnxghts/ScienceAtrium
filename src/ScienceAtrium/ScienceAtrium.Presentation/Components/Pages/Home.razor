@@ -1,48 +1,207 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@inject IMediator _mediator;
-@inject Serilog.ILogger _logger;
-@inject NavigationManager _navigationManager;
-@inject IReader<Customer> _customerReader;
-@inject IMapper _mapper;
+@inject IMediator Mediator;
+@inject Serilog.ILogger Logger;
+@inject NavigationManager NavigationManager;
+@inject IReader<Customer> CustomerReader;
+@inject IMapper Mapper;
 
-<section>
-	<div class="rectangle">
-		<form>
-		</form>
-		@foreach (var workTemplate in workTemplates)
-		{
-			<div class="def-cont rec">
-				<span class="subject-name">@workTemplate.Title</span>
-				<span class="price">@workTemplate.Price</span>
-				<button @onclick="async () => await SubmitWorkTemplateAsync(workTemplate)" class="button-order">Заказать</button>
-			</div>
-		}
+<section id="main" class="main">
+	<div class="container">
+
+		<div class="text-main">
+
+			<p class="left">nceAtrium</p>
+			<p class="right">Education</p>
+			<p></p>
+
+		</div>
+
+		<div class="img-main">
+
+			<img class="keyboard" src="img/keyboard.png" width="600px">
+			<img class="mouse" src="img/mouse.png" width="150px" height="130px">
+
+		</div>
+
+		<div class="img-title-page">
+
+			<img class="title-page" src="img/title-page.png" width="500px" height="700px">
+
+		</div>
+
 	</div>
 </section>
 
+<section id="work" class="work">
+
+	<div class="fan-title">
+
+		<img class="title-one" src="img/title-page.png" width="350" height="500">
+		<img class="title-two" src="img/title-page.png" width="350" height="500">
+		<img class="title-three" src="img/title-page.png" width="350" height="500">
+		<img class="title-four" src="img/title-page.png" width="350" height="500">
+		<img class="title-five" src="img/title-page.png" width="350" height="500">
+
+	</div>
+
+	<h2>Выполняемые работы</h2>
+
+	<div class="blok-work">
+
+		<div class="lab">
+
+			<img src="img/paper.png" width="70" height="70">
+			<p style="font-weight: 700;">Лабораторная работа</p>
+			<p>Выполнение работы по выбранному предмету</p>
+			<p>₽ 2000</p>
+
+		</div>
+
+		<div class="diploma">
+
+			<img src="img/diploma.png" width="70" height="70">
+			<p style="font-weight: 700;">Курсовая работа</p>
+			<p>Выполнение работы по выбранному предмету</p>
+			<p>₽ 20000</p>
+
+		</div>
+
+	</div>
+
+</section>
+
+<section id="stages-of-work" class="stages-of-work">
+
+	<h3 style="text-align: center;">Как проходит работа</h3>
+
+	<div class="blocks-stages">
+
+		<div class="stgblock">
+			<img src="img/envelope.png" width="60" height="60">
+			<p>Вы оформляете заказ</p>
+		</div>
+
+		<div class="stgblock">
+			<img src="img/opposite-opinion.png" width="70" height="70">
+			<p>Обсуждение деталей</p>
+		</div>
+
+		<div class="stgblock">
+			<img src="img/keyboard-2.png" width="70" height="70">
+			<p>Мы выполняем работу</p>
+		</div>
+
+		<div class="stgblock">
+			<img src="img/cardboard-box.png" width="70" height="70">
+			<p>Сдача работы</p>
+		</div>
+
+	</div>
+
+</section>
+
+<section id="catalog" class="catalog">
+
+	<h4 style="text-align: center;">Каталог</h4>
+
+	<div class="blocks-catalog">
+		@foreach (var workTemplate in _workTemplates)
+		{
+			<div style="background-color: #C9C0B3;" class="ctlblock">
+				<img src="img/title-page.png" width="80" height="100">
+				<p style="white-space: normal;max-width:150px;">@workTemplate.Title</p>
+				<p>₽ @workTemplate.Price</p>
+				<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="button-order">Заказать</button>
+			</div>
+		}
+	</div>
+
+</section>
+
+<section id="guarantees" class="guarantees">
+
+	<h5>Наши гарантии на все работы</h5>
+
+	<div class="fan-file">
+
+		<img class="file-four" src="img/file-4.png" width="350" height="500">
+		<img class="file-three" src="img/file-3.png" width="350" height="500">
+		<img class="file-two" src="img/file-2.png" width="350" height="500">
+		<img class="file-one" src="img/file-1.png" width="350" height="500">
+
+	</div>
+
+	<div class="block-guarantees">
+
+		<div class="calblock">
+			<img src="img/calendar.png" width="90" height="90">
+			<p style="font-weight: 700;">Гарантия сроков</p>
+			<p>Вы получаете работу точно в срок, иначе мы вернем 1% от его стоимости за каждый день просрочки </p>
+		</div>
+
+		<div class="warblock">
+			<img src="img/warranty.png" width="90" height="90">
+			<p style="font-weight: 700;">Гарантия качества</p>
+			<p>Вы получите то что вам нужно при хотя бы малейшем контактировании с нами</p>
+		</div>
+
+	</div>
+
+</section>
+
 @code {
-	private readonly List<WorkTemplate> workTemplates = [];
+	private readonly List<WorkTemplate> _workTemplates = [];
 	private Customer _currentUser;
+	private Order _currentOrder;
+
 	protected override async Task OnInitializedAsync()
 	{
-		await _mediator.Send(new SetCachedCustomerCommand(await GetCustomer()));
-		var list = await _mediator.Send(new GetWorkTemplateListQuery());
-		workTemplates.AddRange(list.Skip(1));
-		_currentUser = await _mediator.Send(new GetCachedCustomerQuery());
+		await SetCachedCustomerAsync(_currentUser);
+		var list = await Mediator.Send(new GetWorkTemplateListQuery());
+		_workTemplates.AddRange(list);
+		_currentUser = await Mediator.Send(new GetCachedCustomerQuery());
+		_currentOrder = await GetOrderAsync(_currentUser.Id);
 	}
 
-	private async Task SubmitWorkTemplateAsync(WorkTemplate workTemplate)
+	private async Task AddWorkTemplateAsync(WorkTemplate workTemplate)
 	{
-		var order = new Order(Guid.NewGuid()).AddWorkTemplate(workTemplate).UpdateCustomer(_customerReader, _currentUser);
-		await _mediator.Send(new CreateOrderCommand(order));
-		_navigationManager.NavigateTo("/basket");
+		_currentOrder.AddWorkTemplate(workTemplate);
+		await MakeOrderAsync(_currentOrder, _currentUser.Id);
 	}
 
-	private async Task<Customer> GetCustomer()
+	[Obsolete("Change parameter of inside method's call")]
+	private async Task SetCachedCustomerAsync(Customer customer)
 	{
-		var results = await _mediator.Send(new GetCustomerListQuery());
-		var s = results.Find(x => x.Id != Guid.Empty && x.CurrentOrder?.Id == null) ?? _mapper.Map<Customer>(User.Default);
-		return results.Find(x => x.Id != Guid.Empty && x.CurrentOrder?.Id == null) ?? _mapper.Map<Customer>(User.Default);
+		if (_currentOrder is null || _currentOrder.IsEmpty())
+			await Mediator.Send(new SetCachedCustomerCommand(await GetCustomerAsync()));
+	}
+
+	private async Task<Customer> GetCustomerAsync()
+	{
+		var results = await Mediator.Send(new GetCustomerListQuery());
+		return results.Find(x => x.Id != Guid.Empty) ?? Mapper.Map<Customer>(User.Default);
+	}
+
+	private async Task<Order> GetOrderAsync(Guid customerId)
+	{
+		var order = await Mediator.Send(new GetOrderByCustomerIdQuery(customerId));
+		if (order.Equals(Order.Default))
+			return new Order(Guid.NewGuid()).UpdateCustomer(CustomerReader, _currentUser);
+		return order;
+	}
+
+	private async Task MakeOrderAsync(Order order, Guid customerId)
+	{
+		var dbOrder = await Mediator.Send(new GetOrderByCustomerIdQuery(customerId));
+
+		// is not exists
+		if (dbOrder.IsEmpty())
+		{
+			await Mediator.Send(new CreateOrderCommand(order));
+			return;
+		}
+
+		await Mediator.Send(new UpdateOrderCommand(order));
 	}
 }

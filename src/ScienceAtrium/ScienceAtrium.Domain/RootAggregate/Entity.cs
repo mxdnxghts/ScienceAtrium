@@ -1,9 +1,10 @@
 ﻿using ScienceAtrium.Domain.RootAggregate.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
 namespace ScienceAtrium.Domain.RootAggregate;
 
-public abstract class Entity : IEquatable<Entity>, IEntityValidation
+public abstract class Entity : IEqualityComparer<Entity>, IEquatable<Entity>, IEntityValidation
 {
     protected Entity(Guid id)
     {
@@ -23,26 +24,20 @@ public abstract class Entity : IEquatable<Entity>, IEntityValidation
         return other.Id == Id;
     }
 
-    public override bool Equals(object? obj)
-    {
-        if (obj is null)
-            return false;
+	public bool Equals(Entity? x, Entity? y)
+	{
+		if (x is null || y is null)
+			return false;
 
-        if (obj.GetType() != GetType())
-            return false;
+		return x.Id == y.Id;
+	}
 
-        if (obj is not Entity entity)
-            return false;
+	public int GetHashCode([DisallowNull] Entity obj)
+	{
+		return obj.Id.GetHashCode() * 12;
+	}
 
-        return entity.Id == Id;
-    }
-
-    public override int GetHashCode()
-    {
-        return Id.GetHashCode() * 12;
-    }
-
-    public bool IsEmpty()
+	public bool IsEmpty()
     {
         return Id == Guid.Empty;
     }
@@ -50,6 +45,8 @@ public abstract class Entity : IEquatable<Entity>, IEntityValidation
     public bool IsExist<TReaderEntity>(IReader<TReaderEntity> reader, Expression<Func<TReaderEntity, bool>> func)
         where TReaderEntity : Entity
     {
+        if (reader is null)
+            return true;
         return reader.Exist(func);
     }
 

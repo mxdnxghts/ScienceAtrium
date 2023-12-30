@@ -1,0 +1,32 @@
+{
+    "plugins": [
+        {
+            "type": "add",
+            "pluginName": "fleet.dotnet"
+        },
+        {
+            "type": "add",
+            "pluginName": "fleet.ai"
+        },
+        {
+            "type": "add",
+            "pluginName": "fleet.docker"
+        },
+        {
+            "type": "add",
+            "pluginName": "fleet.git.frontend"
+        },
+        {
+            "type": "add",
+            "pluginName": "fleet.image.view"
+        },
+        {
+            "type": "add",
+            "pluginName": "fleet.space"
+        },
+        {
+            "type": "add",
+            "pluginName": "fleet.selfprofiling"
+        }
+    ]
+}

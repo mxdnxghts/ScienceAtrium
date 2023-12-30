@@ -6,6 +6,8 @@ public class GetOrderListHandler(IOrderRepository<Order> _orderRepository) : IRe
 {
     public Task<List<Order>> Handle(GetOrderListQuery request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(_orderRepository.All.ToList());
-    }
+        if (request.WhereExpression is not null)
+            return Task.FromResult(_orderRepository.All.Where(request.WhereExpression).ToList());
+		return Task.FromResult(_orderRepository.All.ToList());
+	}
 }
