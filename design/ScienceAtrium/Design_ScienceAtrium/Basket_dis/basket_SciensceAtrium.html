@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>ScienceAtrium</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;1,500;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="basket.css">
+  </head>
+
+  <body>
+
+    <header id="header" class="header">
+
+      <div class="container">
+  
+        <div class="navbar">
+  
+          <h1>ScienceAtrium</h1>
+  
+          <ul class="links">
+            <li><a href="profile">Профиль</a></li>
+            <li><a href="catalog">Каталог</a></li>
+            <li><a href="basket">Корзина</a></li>
+          </ul>
+  
+          <a href="#" class="action_btn">Выйти</a>
+          <div class="toggle_btn">
+            <i class="fa-solid fa-bars"></i>
+          </div>
+  
+        </div>
+  
+        <div class="dropdown_menu">
+  
+          <ul class="links">
+            <li><a href="profile">Профиль</a></li>
+            <li><a href="basket">Корзина</a></li>
+            <li><a href="cataloge">Каталог</a></li>
+            <li><a href="#" class="action_btn">Выйти</a></li>
+          </ul>
+          
+        </div>
+  
+        </div>
+  
+      </div>
+    </header>
+
+    <script>
+      const toggleBtn = document.querySelector('.toggle_btn')
+      const toggleBtnIcon = document.querySelector('.toggle_btn i')
+      const dropDownMenu = document.querySelector('.dropdown_menu')
+  
+  
+      toggleBtn.onclick = function() {
+        dropDownMenu.classList.toggle('open')
+        const isOpen = dropDownMenu.classList.constais('open')
+  
+  
+        toggleBtnIcon.classList = isOpen
+          ? 'fa-solid fa-xmark'
+          : 'fa-solid fa-bars'
+      }
+    </script>
+  
+    <section id="block" class="block">
+      
+      <div class="container">
+
+        <div class="row">
+
+          <div class="column col-one" style="background-image: linear-gradient(180deg,hsl(36deg 9% 44%) 1%, hsl(41deg 9% 62%) 62%, hsl(47deg 15% 82%) 100%);">
+
+            <h2>Корзина</h2>
+
+            <div class="blocks-catalog">
+
+              <div style="background-color: #C9C0B3;" class="ctlblock">
+                <img src="img/title-page.png" width="100" height="130">
+                <p style="white-space: normal;">Инструментальные средства разработки ПО</p>
+                <button class="btn-shop">Заказать</button>
+              </div>
+        
+              <div style="background-color: #91ABA2;" class="ctlblock">
+                <img src="img/title-page.png" width="100" height="130">
+                <p style="white-space: normal;">Операционные системы и среды</p>
+                <button class="btn-shop">Заказать</button>
+              </div>
+        
+              <div style="background-color: #EFC87B;" class="ctlblock">
+                <img src="img/title-page.png" width="100" height="130">
+                <p style="white-space: normal;">Технология разработки ПО</p>
+                <button class="btn-shop">Заказать</button>
+              </div>
+        
+              <div style="background-color: #C9C0B3;" class="ctlblock">
+                <img src="img/title-page.png" width="100" height="130">
+                <p style="white-space: normal;">Дополнительный блок для предмета</p>
+                <button class="btn-shop">Заказать</button>
+              </div>
+        
+              <div style="background-color: #91ABA2;" class="ctlblock">
+                <img src="img/title-page.png" width="100" height="130">
+                <p style="white-space: normal;">Дополнительный блок для предмета</p>
+                <button class="btn-shop">Заказать</button>
+              </div>
+        
+              <div style="background-color: #EFC87B;" class="ctlblock">
+                <img src="img/title-page.png" width="100" height="130">
+                <p style="white-space: normal;">Дополнительный блок для предмета</p>
+                <button class="btn-shop">Заказать</button>
+              </div>
+        
+            </div>
+
+          </div>
+
+          <div class="column col-two" style="background-image: linear-gradient(180deg,hsl(36deg 9% 44%) 1%, hsl(41deg 9% 62%) 62%, hsl(47deg 15% 82%) 100%);">
+
+            <h3>К оформлению</h3>
+
+            <span>Технология разработки ПО</span>
+            <span>Инструментальные средства разработки ПО</span>
+            <span>Операционные системы и среды</span>
+
+            <button class="btn-shop" style="width: 150px; height: 50px;">Оплатить</button>
+            <span style="margin-top: 320px;">₽ 6000</span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+  
+    <footer id="footer" class="footer">
+
+      <h4 style="text-align: center;">ScienceAtrium</h4>
+  
+      <a href="mailto:info.scienceatrium@gmail.com" class="mailto"><img src="img/envelope.png" width="25" height="25">
+        info.scienceatrium@gmail.com
+      </a>
+  
+    </footer>
+  
+  
+  </body>
+  
+  </html>
