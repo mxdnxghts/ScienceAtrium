@@ -1,185 +1,538 @@
-h1 {
-    padding-top: 0px;
-    padding-left: 30px;
-    margin-top: 10px;
-    margin-bottom: 0px;
-    color: #F39D30;
-    font-size: 64px;
-  
+.container {
+  display: flex;
+  margin: 0 auto; 
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  padding: 0;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Montserrat Alternates', sans-serif;  
+  background-color: #F7F8F1;
+  font-size: 32px;
+  color: #F7F8F1;
+  background-size: 100%;
+  height: 870px;
+  background-repeat: no-repeat;
+  background-color: #F7F8F1;
+}
+
+.nav{
+  position: fixed;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 100px;
+  line-height: 100px;
+  background: linear-gradient(rgba(39, 39, 39, 0.67), transparent);
+  z-index: 50000;
+  position: absolute;
+}
+.nav-logo p{
+  color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif; 
+  font-size: 48px;
+  font-weight: 600;
+  margin-top: 10px;
+  margin-left: 30px;
+}
+.nav-menu ul{
+  display: flex;
+  margin-top: 10px;
+  font-size: 20px;
+  color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif; 
+}
+.nav-menu ul li{
+  list-style-type: none;
+}
+.nav-menu ul li .link{
+  text-decoration: none;
+  font-weight: 500;
+  color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif;
+  padding-bottom: 15px;
+  margin: 0 25px;
+}
+.link:hover, .active{
+  border-bottom: 2px solid #fff;
+}
+.nav-button .btn{
+  width: 130px;
+  height: 40px;
+  font-size: 16px;
+  color: #F7F8F1;
+  font-weight: 300;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: .3s ease;
+}
+.btn:hover{
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.nav-menu-btn{
+  display: none;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  color: #F7F8F1;
+  font-size: 30px;
+  font-weight: 400;
+  font-family: 'Montserrat Alternates', sans-serif;  
+}
+
+.col-one {
+  max-width: 800px;
+  height: 700px;
+  text-align: center;
+  margin-top: 120px;
+  margin-left: 30px;
+  box-shadow: 0 0 15px 2px rgb(123, 115, 103, 24);
+  border-radius: 10px;
+  font-family: 'Montserrat Alternates', sans-serif;  
+}
+
+.blocks-catalog{
+  width: 800px;
+  height: 630px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  font-size: 18px;
+  overflow-y: scroll;
+  word-break: break-all;
+  color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif;  
+}
+
+.ctlblock{
+  width: 250px;
+  height: 300px;
+  background-size: cover;
+  margin: 20px 70px;
+  text-align: center;
+  flex-direction: column;
+  border-radius: 10px;
+  box-shadow: 0 0 15px 1px rgb(123, 115, 103, 24);
+  transform: scale(1);
+}
+
+.btn-shop{
+  width: 100px;
+  height: 30px;
+  margin-top: 20px;
+  border-radius: 10px;
+  background-color: #D9D9D9;
+  color: #7B7367;
+  border: none;
+  overflow: hidden;
+  cursor: pointer;
+  font-family: 'Montserrat Alternates', sans-serif;  
+}
+
+.btn-shop:hover{
+  background-color: #B7B5B5;
+  color: #F7F8F1;
+}
+
+.ctlblock:hover{
+  transform: scale(1.1);
+}
+
+.blocks-stages img{
+  margin-top: 10px;
+}
+
+.blocks-catalog p{
+  margin-top: 20px;
+}
+
+.blocks-catalog::-webkit-scrollbar {
+  width: 12px;
+}
+
+.blocks-catalog::-webkit-scrollbar-track {
+  background: #C9C0B3;
+  border-radius: 10px;
+}
+
+.blocks-catalog::-webkit-scrollbar-thumb {
+  background-color: #A89B89;    
+  border-radius: 10px;      
+  border: 3px solid #C9C0B3;  
+}
+
+.blocks-catalog input {
+  width: 100px;
+  height: 30px;
+  justify-content: center;
+  background-color: #D9D9D9;
+  color: #7B7367;
+  border-radius: 10px;
+  border-style: none;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+
+h3 {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  color: #F7F8F1;
+  font-size: 30px;
+  font-weight: 400;
+  font-family: 'Montserrat Alternates', sans-serif;  
+}
+
+.col-two {
+  width: 450px;
+  height: 700px;
+  text-align: center;
+  margin-top: 120px;
+  margin-left: auto;
+  margin-right: 30px;
+  box-shadow: 0 0 15px 2px rgb(123, 115, 103, 24);
+  border-radius: 10px;
+  color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+
+.col-two span {
+  font-size: 26px;
+  font-weight: 200;
+  margin-left: 30px;
+  display: flex;
+  text-align: left;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+
+.col-two .name-sub {
+  margin-top: 30px;
+}
+
+.col-two .price {
+  color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif;  
+  float: left;
+  margin-left: 20px;
+  margin-top: 60%;
+  margin-bottom: 40%;
+}
+
+.col-two .bt-col-two {
+  width: 150px;
+  height: 50px;
+  float: right;
+  margin-right: 30px;
+  bottom: 0;
+  margin-top: 60%;
+  margin-bottom: 40%;
+  font-size: 20px;
+  font-family: 'Montserrat Alternates', sans-serif;  
+}
+
+.footer{
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 140px;
+  width: 100%;
+  height: 150px;
+  font-size: 24px;
+  background-color: #7B7367;
+  color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+
+h4{
+  text-align: center;
+  font-weight: 400;
+  font-size: 48px;
+  white-space: nowrap;
+  color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif;  
+}
+
+.mailto{
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  text-decoration: none;
+  color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+
+
+
+
+
+
+@media(max-width: 992px) {
+  .nav-button{
+    display: none;
   }
-  
-  .container {
+  .nav-menu.responsive{
+    top: 100px;
+  }
+  .nav-menu{
+    position: absolute;
+    top: -800px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    background: rgba(145, 171, 162, 0.83);
+    width: 100%;
+    height: 90vh;
+    backdrop-filter: blur(900px);
+    transition: .3s;
+  }
+  .nav-menu ul{
+    flex-direction: column;
+    text-align: center;
+    font-size: 34px;
+  }
+  .nav-menu-btn{
+    display: block;
+  }
+  .nav-menu-btn i{
+    font-size: 25px;
+    color: #F7F8F1;
+    font-family: 'Montserrat Alternates', sans-serif;
+    padding: 10px;
+    background: rgba(145, 171, 162, 0.57);
+    border-radius: 30%;
+    cursor: pointer;
+    transition: .3s;
+  }
+  .nav-menu-btn i:hover{
+    background: rgba(145, 171, 162, 0.83);
   }
 
   body {
-    padding: 0;
-    margin: 0;
-    font-family: 'Gabarito', cursive;
-    color: #000;
-    font-size: 32px;
-  }
-  
-  
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    padding: 0;
-    margin: 0;
-  }
-  
-  .profile::before {
-    color: #FF8F00;
-    font-size: 20px;
-    font-weight: bold;
+    overflow-x: hidden;
   }
 
-  .def-btn {
-    height: 40px;
-    width: 40px;
-    border-radius: 10px;
-    background: #C0C0C0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
+  h2 {
+    font-size: 42px;
+  }
+
+  .col-one {
+    width: 500px;
+    height: 700px;
+  }
+
+  .ctlblock {
+    display: inline-flex;
     justify-content: center;
-    margin-left: 1400px;
-  }
-  
-  .profile::before {
-    color: #FF8F00;
-    font-size: 20px;
-    font-weight: bold;
+    text-align: center;
+    align-items: center;
+    margin: 10px auto;
   }
 
-  .shoppbasket{
-    color: #FF8F00;
-    font-size: 20px;
-    font-weight: bold;
+  .blocks-catalog {
+    width: 480px;
+    height: 610px;
   }
 
-  .def-cont{
-    width: 750px;
-    height: 100px;
-    background-color: #F9D6AD;
-    font-size: 20px;
-    font-family: 'Gabarito', cursive;
-    border-radius: 10px;
-  }
-
-  .rec{
+  .col-two {
+    width: 350px;
+    height: 700px;
     margin-left: auto;
-    margin-right: auto;
+    margin-right: 20px;
+  }
+
+  .ctlblock p {
     margin-top: 10px;
   }
 
-  .price{
-    font-size: 18px;
-    text-align: right;
-    display: flex;
-    justify-content: right;
-    margin-right: 20px;
-    margin-top: -20px;
+  .ctlblock input {
+    margin-top: -5px;
+    width: 80px;
+    height: 30px;
   }
 
-  .text-price-basket{
-    font-size: 18px;
-    text-align: left;
-    display: flex;
-    justify-content: left;
+  .ctlblock button {
+    width: 80px;
+    height: 30px;
+  }
+
+  .btn-shop {
+    margin-top: 5px;
+  }
+
+  
+}
+
+@media(max-width: 576px) {
+  .dropdown_menu {
+    left: 2rem;
+    width: unset;
+  }
+
+  .dropdown_menu li {
+    margin-left: 150px;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  h2 {
+    font-size: 34px;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .col-one {
+    width: 260px;
+    height: 650px;
     margin-left: 20px;
-    margin-top: 25px;
   }
 
-  .price-basket{
-    font-size: 18px;
-    text-align: left;
-    display: flex;
-    justify-content: left;
-    margin-left: 85px;
-    margin-top: -20px;
+  .ctlblock {
+    width: 200px;
+    height: 250px;
+    font-size: 16px;
   }
 
-  .text-quantity-basket{
-    font-size: 18px;
-    text-align: right;
-    display: flex;
-    justify-content: right;
-    margin-right: 40px;
-    margin-top: -25px;
-  }
-
-  .quantity-basket{
-    font-size: 18px;
-    text-align: right;
-    display: flex;
-    justify-content: right;
-    margin-right: 20px;
-    margin-top: -22px;
-  }
-
-  .placing{
-    height: 40px;
-    width: 110px;
-    font-size: 18px;
-    border-radius: 10px;
-    background-color: #DBD7D7;
-    cursor: pointer;
-    display: flex;
+  catalog{
     margin-left: auto;
     margin-right: auto;
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 100px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 26px;
+    background-color: #F7F8F1;
   }
 
-  .quantity_inner {
-    display: inline-flex;
-    border-radius: 10px;
-    border: 4px solid #FF8F00;
-    font-size: 25px;
-    margin-left: 20px;
-    margin-top: 25px;
-}        
-.quantity_inner .bt_minus,
-.quantity_inner .bt_plus,
-.quantity_inner .quantity {
-    height: 30px;
-    width: 30px;
-    padding: 0;
-    border: 0;
-    margin: 0;
-    background: transparent;
-    cursor: pointer;
-    outline: 0;
-}
-.quantity_inner .quantity {
-    width: 15px;
-    text-align: center;
+  .blocks-catalog{
+    width: 250px;
+    height: 570px;
     font-size: 18px;
-    font-weight: bold;
-    color: #000;
-}
-.quantity_inner .bt_minus svg,
-.quantity_inner .bt_plus svg {
-    stroke: #FF8F00;
-    stroke-width: 4;
-    size: 20px;
-    transition: 0.5s;
-    margin: 10px;
-}    
-.quantity_inner .bt_minus:hover svg,
-.quantity_inner .bt_plus:hover svg {
-    stroke: #000;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    white-space: nowrap;
+    word-break: break-all;
+    color: #F7F8F1;
+    font-family: 'Montserrat Alternates', sans-serif;  
+  }
+
+  .col-two {
+    width: 260px;
+    height: 650px;
+    margin-left: 10px;
+    margin-right: 20px;
+  }
+
+  .ctlblock p {
+    margin-top: 10px;
+  }
+
+  .ctlblock input {
+    margin-top: -5px;
+    width: 80px;
+    height: 30px;
+  }
+
+  .ctlblock button {
+    width: 80px;
+    height: 30px;
+  }
+
+  .btn-shop {
+    margin-top: 5px;
+  }
+
+  .blocks-catalog p {
+    margin-top: -3px;
+  }
+
+  h3 {
+    word-break: break-all;
+  }
+
+  .col-two span {
+    font-size: 18px;
+  }
+
+  .col-two .price {
+    font-size: 22px;
+    float: left;
+    margin-left: 20px;
+
+    bottom: 0;
+    margin-top: 99%;
+    margin-bottom: 1%;
+  }
+
+  .col-two .bt-col-two {
+    width: 110px;
+    height: 40px;
+    font-size: 16px;
+    float: right;
+    margin-left: auto;
+    margin-right: 20px;
+    
+    bottom: 0;
+    margin-top: 99%;
+    margin-bottom: 1%;
+  }
+
+  .footer{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 140px;
+    width: 100%;
+    height: 150px;
+    font-size: 22px;
+    background-color: #7B7367;
+    color: #F7F8F1;
+    font-family: 'Montserrat Alternates', sans-serif;
+  }
+  
+  h4{
+    text-align: center;
+    font-weight: 400;
+    font-size: 34px;
+    white-space: nowrap;
+    color: #F7F8F1;
+    font-family: 'Montserrat Alternates', sans-serif;  
+  }
+  
+  .mailto{
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    text-decoration: none;
+    color: #F7F8F1;
+    font-family: 'Montserrat Alternates', sans-serif;
+  }
+
+
 }
 
-  .footerweb {
-    color: #98938E;
-    font-size: 16px;
-    width: auto;
-    height: 200px;
-    background-color: #65626A;
-  }
+
+
+
+
+
+
+
+
+
+

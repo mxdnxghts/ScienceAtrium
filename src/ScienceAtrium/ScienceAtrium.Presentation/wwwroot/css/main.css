@@ -1,12 +1,3 @@
-h1 {
-  margin-left: 20px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  color: #F7F8F1;
-  font-size: 48px;
-  font-weight: 700;
-}
-
 .container {
   display: flex;
   margin: 0 auto; 
@@ -27,11 +18,12 @@ h6 {
 
 body {
   padding: 0;
+  overflow-x: hidden;
   margin: 0;
-  font-family: 'Montserrat Alternates', sans-serif;  
   background-color: #F7F8F1;
   font-size: 32px;
   color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif;  
   background-size: 100%;
   height: 900px;
   position: relative;
@@ -46,171 +38,67 @@ body {
 );
 }
 
-li{
-  list-style: none;
-}
-
-.navbar a {
-  text-decoration: none;
-  position: relative;
-  color: #F7F8F1; 
-  cursor: pointer;
-  line-height: 1; 
-  font-weight: 400;
-  font-size: 26px;
-}
-
-.dropdown_menu a {
-  text-decoration: none;
-  position: relative;
-  color: #F7F8F1; 
-  cursor: pointer;
-  line-height: 1; 
-  font-weight: 400;
-  font-size: 26px;
-}
-
-.navbar a:after {
-  display: block;
-  position: absolute;
-  left: 0; 
-  width: 0;
-  height: 2px; 
-  background-color: #EFC87B;
-  content: "";
-  transition: width 0.3s ease-out;
-}
-
-.dropdown_menu a:after {
-  display: block;
-  position: absolute;
-  left: 0; 
-  width: 0;
-  height: 2px; 
-  background-color: #EFC87B;
-  content: "";
-  transition: width 0.3s ease-out;
-  
-}
-
-.navbar a:hover:after,
-.navbar a:focus:after{
-  width: 100%; 
-}
-
-.dropdown_menu a:hover:after,
-.dropdown_menu a:focus:after{
-  width: 100%; 
-}
-
-header{
-  width: 100%;
-  height: 70px;
-  z-index: 1000;
-  top: 0;
-  background-image: linear-gradient(
-  315deg,
-  hsl(35deg 17% 75%) 0%,
-  hsl(44deg 14% 72%) 10%,
-  hsl(56deg 11% 70%) 17%,
-  hsl(73deg 10% 69%) 22%,
-  hsl(91deg 10% 68%) 27%,
-  hsl(113deg 9% 67%) 31%,
-  hsl(136deg 10% 65%) 35%,
-  hsl(151deg 12% 63%) 39%,
-  hsl(155deg 13% 63%) 43%,
-  hsl(142deg 11% 65%) 46%,
-  hsl(121deg 9% 67%) 50%,
-  hsl(98deg 10% 68%) 53%,
-  hsl(78deg 10% 69%) 57%,
-  hsl(61deg 10% 70%) 60%,
-  hsl(47deg 13% 72%) 64%,
-  hsl(38deg 16% 74%) 67%,
-  hsl(41deg 15% 73%) 71%,
-  hsl(51deg 12% 71%) 74%,
-  hsl(67deg 10% 69%) 78%,
-  hsl(85deg 10% 68%) 82%,
-  hsl(105deg 9% 67%) 86%,
-  hsl(129deg 10% 66%) 90%,
-  hsl(147deg 12% 64%) 95%,
-  hsl(159deg 13% 62%) 100%
-  );
-}
-
-.navbar {
-  width: 100%;
-  height: 70px;
-  max-width: 1440px;
-  margin: 0 auto;
+.nav{
+  position: fixed;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
+  width: 100%;
+  height: 100px;
+  line-height: 100px;
+  background: linear-gradient(rgba(39, 39, 39, 0.67), transparent);
+  z-index: 50000;
+  position: absolute;
 }
-
-.navbar .links {
+.nav-logo p{
+  color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif; 
+  font-size: 48px;
+  font-weight: 600;
+  margin-top: 10px;
+  margin-left: 30px;
+}
+.nav-menu ul{
   display: flex;
-  gap: 2rem;
-}
-
-.navbar .toggle_btn {
+  margin-top: 10px;
+  font-size: 20px;
   color: #F7F8F1;
-  font-size: 28px;
-  cursor: pointer;
-  display: none;
+  font-family: 'Montserrat Alternates', sans-serif; 
 }
-
-.action_btn {
-  background-color: #EFC87B;
+.nav-menu ul li{
+  list-style-type: none;
+}
+.nav-menu ul li .link{
+  text-decoration: none;
+  font-weight: 500;
   color: #F7F8F1;
-  padding: 0.5rem 1rem;
+  font-family: 'Montserrat Alternates', sans-serif;
+  padding-bottom: 15px;
+  margin: 0 25px;
+}
+.link:hover, .active{
+  border-bottom: 2px solid #fff;
+}
+.nav-button .btn{
+  width: 130px;
+  height: 40px;
+  font-size: 16px;
+  color: #F7F8F1;
+  font-weight: 300;
+  background: rgba(255, 255, 255, 0.4);
   border: none;
-  outline: none;
   border-radius: 10px;
-  font-size: 28px;
-  font-weight: 400px;
   cursor: pointer;
-  transition: scale 0.2 ease;
-  margin-right: 20px;
+  transition: .3s ease;
+}
+.btn:hover{
+  background: rgba(255, 255, 255, 0.3);
+}
+#registerBtn{
+  margin-left: 15px;
 }
 
-.action_btn:hover {
-  scale: 1.05;
-  color: #F7F8F1;
-}
-
-.action_btn:active {
-  scale: 0.95;
-}
-
-.dropdown_menu {
+.nav-menu-btn{
   display: none;
-  position: absolute;
-  z-index: 999;
-  right: 2rem;
-  top: 60px;
-  height: 0;
-  width: 250px;
-  background: rgba(145, 171, 162, 0.6);
-  backdrop-filter: blur(15px);
-  border-radius: 10px;
-  overflow: hidden;
-  transition: height 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.dropdown_menu.open {
-  height: 240px;
-}
-
-.dropdown_menu li {
-  padding: 0.4rem;
-  display: flex;
-  align-items: center;
-  margin-left: 20px;
-}
-
-.dropdown_menu .action_btn {
-  display: flex;
-  justify-content: center;
 }
 
 .text-main{
@@ -256,8 +144,6 @@ header{
   top: 45%;
   left: 50%;
   transform: translate(-50%,-50%);
-  /* margin-left: 35%;
-  margin-right: 65%; */
 }
 
 .work {
@@ -494,6 +380,11 @@ h4{
 
 .btn-shop:hover{
   background-color: #B7B5B5;
+  color: #F7F8F1;
+}
+
+.btn-shop:hover{
+  background-color: #B7B5B5;
 }
 
 .blocks-catalog::-webkit-scrollbar {
@@ -563,6 +454,7 @@ h5{
 .fan-file{
   position: absolute;
   right: 0;
+  z-index: 1500;
 }
 
 .file-one{
@@ -694,18 +586,43 @@ h6{
 }
 
 @media(max-width: 992px) {
-  .navbar .links,
-  .navbar .action_btn {
+  .nav-button{
     display: none;
   }
-
-  .navbar .toggle_btn {
-    display: block;
-    margin-right: 20px;
+  .nav-menu.responsive{
+    top: 100px;
   }
-
-  .dropdown_menu {
+  .nav-menu{
+    position: absolute;
+    top: -800px;
+    display: flex;
+    justify-content: center;
+    background: rgba(145, 171, 162, 0.83);
+    width: 100%;
+    height: 90vh;
+    backdrop-filter: blur(900px);
+    transition: .3s;
+  }
+  .nav-menu ul{
+    flex-direction: column;
+    text-align: center;
+    font-size: 34px;
+  }
+  .nav-menu-btn{
     display: block;
+  }
+  .nav-menu-btn i{
+    font-size: 25px;
+    color: #F7F8F1;
+    font-family: 'Montserrat Alternates', sans-serif;
+    padding: 10px;
+    background: rgba(145, 171, 162, 0.57);
+    border-radius: 30%;
+    cursor: pointer;
+    transition: .3s;
+  }
+  .nav-menu-btn i:hover{
+    background: rgba(145, 171, 162, 0.83);
   }
 
   body {
@@ -733,9 +650,9 @@ h6{
   }
 
   .img-title-page img {
-    top: 220px;
+    margin-top: -130px;
     width: 400px;
-    height: 600px;
+    height: 550px;
   }
 
   h2 {
@@ -865,15 +782,6 @@ h6{
 }
 
 @media(max-width: 576px) {
-  .dropdown_menu {
-    left: 2rem;
-    width: unset;
-  }
-
-  .dropdown_menu li {
-    margin-left: 130px;
-  }
-
   body {
     overflow-x: hidden;
   }
@@ -900,13 +808,6 @@ h6{
     margin-top: 210px;
     margin-left: -40px;
   }
-
-  /* .img-title-page img{
-    margin-top: 120px;
-    margin-left: -40px;
-    width: 350px;
-    height: 450px;
-  } */
 
   .img-main .keyboard {
     width: 450px;
