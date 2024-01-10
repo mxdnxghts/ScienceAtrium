@@ -1,6 +1,7 @@
 ﻿namespace ScienceAtrium.Domain.OrderAggregate;
-public enum Status
+public enum OrderStatus
 {
+    Deferred,
     Pending,
     Fulfilled,
     Cancelled,

@@ -1,11 +1,12 @@
-﻿using ScienceAtrium.Domain.WorkTemplateAggregate;
+﻿using Microsoft.EntityFrameworkCore;
+using ScienceAtrium.Domain.WorkTemplateAggregate;
 
 namespace ScienceAtrium.Domain.OrderAggregate;
 public class OrderWorkTemplate
 {
     public OrderWorkTemplate()
     {
-        
+
     }
 
     public OrderWorkTemplate(Order order, WorkTemplate workTemplate)
@@ -20,4 +21,11 @@ public class OrderWorkTemplate
     public Order Order { get; set; }
     public Guid? WorkTemplateId { get; set; }
     public WorkTemplate WorkTemplate { get; set; }
+    public WorkTemplateState State { get; set; } = WorkTemplateState.Deferred;
+    public EntityState EntityState { get; set; } = EntityState.Detached;
+
+    public override string ToString()
+    {
+        return $"{nameof(OrderId)}: {OrderId}\n{nameof(WorkTemplateId)}: {WorkTemplateId}\n{nameof(State)}: {State}";
+    }
 }
