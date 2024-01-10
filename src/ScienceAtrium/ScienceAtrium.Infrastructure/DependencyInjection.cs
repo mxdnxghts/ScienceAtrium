@@ -21,7 +21,11 @@ public static class DependencyInjection
         serviceCollection.AddDbContext<ApplicationContext>(o
             => o.UseSqlServer(configuration.GetConnectionString("MSSQL")));
 
-        serviceCollection.AddSerilog(o => o.MinimumLevel.Warning().WriteTo.Console());
+        serviceCollection.AddSerilog(o =>
+        {
+            o.MinimumLevel.Warning().WriteTo.Console();
+            o.MinimumLevel.Warning().WriteTo.File(configuration.GetRequiredSection("Logging:Path:Serilog").Value);
+        });
 
         serviceCollection.AddScoped<IOrderRepository<Order>, OrderRepository>();
         serviceCollection.AddScoped<IUserRepository<Customer>, UserRepository<Customer>>();

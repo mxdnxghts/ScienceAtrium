@@ -189,18 +189,20 @@ public sealed class OrderRepository : IOrderRepository<Order>, IEntityStateUpdat
     private void TrackOrderWorkTemplatesOnModified(Order order)
     {
         _context.TrackEntities(order.WorkTemplatesLink.ToArray(), EntityState.Detached);
-        var newOrderWorkTemplates = order.WorkTemplatesLink.Where(owt => !_context.OrderWorkTemplates.Contains(owt)).ToList();
-        if (newOrderWorkTemplates.Count != 0)
-        {
-            _context.OrderWorkTemplates.AddRange(newOrderWorkTemplates);
-            return;
-        }
 
-        var removedOrderWorkTemplates = order.WorkTemplatesLink.Except(newOrderWorkTemplates).ToList();
-        if (removedOrderWorkTemplates.Count != 0)
-        {
-            _context.OrderWorkTemplates.RemoveRange(removedOrderWorkTemplates);
-            return;
-        }
+        _context.OrderWorkTemplates.AddRange(
+            GetOrderWorkTemplatesByEntityState(order.WorkTemplatesLink, EntityState.Added));
+
+        _context.OrderWorkTemplates.RemoveRange(
+            GetOrderWorkTemplatesByEntityState(order.WorkTemplatesLink, EntityState.Deleted));
+
+        _context.OrderWorkTemplates.UpdateRange(
+            GetOrderWorkTemplatesByEntityState(order.WorkTemplatesLink, EntityState.Modified));
+    }
+
+    private IEnumerable<OrderWorkTemplate> GetOrderWorkTemplatesByEntityState(IEnumerable<OrderWorkTemplate> orderWorkTemplates,
+        EntityState entityState)
+    {
+        return orderWorkTemplates.Where(owt => owt.EntityState == entityState);
     }
 }

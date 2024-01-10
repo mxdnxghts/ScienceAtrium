@@ -8,5 +8,6 @@ public class OrderWorkTemplateConfiguration : IEntityTypeConfiguration<OrderWork
     public void Configure(EntityTypeBuilder<OrderWorkTemplate> builder)
     {
         builder.HasKey(x => new { x.OrderId, x.WorkTemplateId });
+        builder.Ignore(x => x.EntityState);
     }
 }
