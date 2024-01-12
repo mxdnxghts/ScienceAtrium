@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using ScienceAtrium.Domain.Constants;
 using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Domain.RootAggregate.Interfaces;
@@ -31,6 +32,32 @@ public class Order : Entity
 		_status = status;
         _paymentMethod = paymentMethod;
     }
+
+    [JsonConstructor]
+    protected Order(
+        Guid id,
+        List<OrderWorkTemplate> workTemplatesLink,
+        OrderStatus status,
+        Paymentmethod paymentMethod,
+        decimal totalCost,
+        DateTime orderDate,
+        Customer? customer,
+        Guid? customerId,
+        Executor? executor,
+        Guid? executorId)
+        : base(id)
+    {
+        _workTemplatesLink = workTemplatesLink;
+        _status = status;
+        _paymentMethod = paymentMethod;
+        _totalCost = totalCost;
+        OrderDate = orderDate;
+        Customer = customer;
+        CustomerId = customerId;
+        Executor = executor;
+        ExecutorId = executorId;
+    }
+
     public DateTime OrderDate { get; } = DateTime.UtcNow;
     public decimal TotalCost => _totalCost;
     public Paymentmethod PaymentMethod => _paymentMethod;

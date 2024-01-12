@@ -9,7 +9,6 @@ public class GetCachedCustomerHandler(IDistributedCache _cache, IMapper _mapper)
 {
     public async Task<Customer> Handle(GetCachedCustomerQuery request, CancellationToken cancellationToken)
     {
-        var customerJson = await _cache.GetRecordAsync<CustomerJson>("CachedCustomer", cancellationToken: cancellationToken);
-		return _mapper.Map<Customer>(customerJson);
-    }
+        return await _cache.GetRecordAsync<Customer>("CachedCustomer", cancellationToken: cancellationToken);
+	}
 }

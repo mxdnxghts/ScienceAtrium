@@ -2,6 +2,7 @@
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace ScienceAtrium.Domain.UserAggregate;
 
@@ -13,8 +14,20 @@ public class User : Entity
     private string _phoneNumber;
     private UserType _userType;
 	private readonly List<Order> _currentOrders;
+    public User(Guid id) : base(id)
+    {
+        _currentOrders = new();
+    }
 
-	public User(Guid id, string name, string email, string phoneNumber, UserType userType) : base(id)
+    public User(Guid id, UserType userType)
+        : base(id)
+    {
+        _currentOrders = new();
+        _userType = userType;
+    }
+
+    public User(Guid id, string name, string email, string phoneNumber, UserType userType)
+        : base(id)
     {
         _name = name;
         _email = email;
@@ -23,16 +36,21 @@ public class User : Entity
         _currentOrders = new();
 	}
 
-    public User(Guid id, UserType userType) : base(id)
+    protected User(Guid id,
+        string name,
+        string email,
+        string phoneNumber,
+        UserType userType,
+        List<Order> orders)
+        : base(id)
     {
-        _currentOrders = new();
+        _name = name;
+        _email = email;
+        _phoneNumber = phoneNumber;
         _userType = userType;
+        _currentOrders = orders;
     }
 
-    public User(Guid id) : base(id)
-    {
-        _currentOrders = new();
-	}
     public string Name => _name;
     public string Email => _email;
     public string PhoneNumber => _phoneNumber;
