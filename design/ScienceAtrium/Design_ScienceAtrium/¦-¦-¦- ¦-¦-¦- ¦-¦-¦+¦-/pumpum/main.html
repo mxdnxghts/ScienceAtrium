@@ -18,53 +18,65 @@
 
 		<div class="container">
 
-			<div class="navbar">
-
-				<h1>ScienceAtrium</h1>
-
-				<ul class="links">
-					<li><a href="hero">Профиль</a></li>
-					<li><a href="about">Корзина</a></li>
-					<li><a href="services">Каталог</a></li>
-				</ul>
-
-				<a href="#" class="action_btn">Войти</a>
-				<div class="toggle_btn">
-					<i class="fa-solid fa-bars"></i>
+			<nav class="nav">
+				<div class="nav-logo">
+					<p>ScienceAtrium</p>
 				</div>
-
-			</div>
-
-			<div class="dropdown_menu">
-
-				<ul class="links">
-					<li><a href="hero">Профиль</a></li>
-					<li><a href="about">Корзина</a></li>
-					<li><a href="services">Каталог</a></li>
-					<li><a href="#" class="action_btn">Войти</a></li>
-				</ul>
-				
-			</div>
+				<div class="nav-menu" id="navMenu">
+					<ul>
+						<li><a href="#" class="link active">Главная</a></li>
+						<li><a href="#" class="link">Профиль</a></li>
+						<li><a href="#" class="link">Корзина</a></li>
+						<li><a href="#" class="link">Каталог</a></li>
+					</ul>
+				</div>
+				<div class="nav-button">
+					<button class="btn white-btn" id="loginBtn" onclick="login()">Вход</button>
+					<button class="btn" id="registerBtn" onclick="register()">Регистрация</button>
+				</div>
+				<div class="nav-menu-btn">
+					<i class="bx bx-menu" onclick="myMenuFunction()"></i>
+				</div>
+			</nav>
+			
 		</div>
 			
 	</header>
 
 	<script>
-		const toggleBtn = document.querySelector('.toggle_btn')
-		const toggleBtnIcon = document.querySelector('.toggle_btn i')
-		const dropDownMenu = document.querySelector('.dropdown_menu')
-
-
-		toggleBtn.onclick = function() {
-			dropDownMenu.classList.toggle('open')
-			const isOpen = dropDownMenu.classList.constais('open')
-
-
-			toggleBtnIcon.classList = isOpen
-			  ? 'fa-solid fa-xmark'
-			  : 'fa-solid fa-bars'
+   
+		function myMenuFunction() {
+		 var i = document.getElementById("navMenu");
+		 if(i.className === "nav-menu") {
+			 i.className += " responsive";
+		 } else {
+			 i.className = "nav-menu";
+		 }
 		}
-	</script>
+	  
+	 </script>
+	 <script>
+		 var a = document.getElementById("loginBtn");
+		 var b = document.getElementById("registerBtn");
+		 var x = document.getElementById("login");
+		 var y = document.getElementById("register");
+		 function login() {
+			 x.style.left = "4px";
+			 y.style.right = "-520px";
+			 a.className += " white-btn";
+			 b.className = "btn";
+			 x.style.opacity = 1;
+			 y.style.opacity = 0;
+		 }
+		 function register() {
+			 x.style.left = "-510px";
+			 y.style.right = "5px";
+			 a.className = "btn";
+			 b.className += " white-btn";
+			 x.style.opacity = 0;
+			 y.style.opacity = 1;
+		 }
+	 </script>
 
 <section id="main" class="main">
 	<div class="container">
@@ -95,6 +107,8 @@
 
 <section id="work" class="work">
 
+	<h2>Выполняемые работы</h2>
+
 	<div class="fan-title">
 
 		<img class="title-one" src="img/title-page.png" width="350" height="500">
@@ -104,8 +118,6 @@
 		<img class="title-five" src="img/title-page.png" width="350" height="500">
 
 	</div>
-
-	<h2>Выполняемые работы</h2>
 
 	<div class="blok-work">
 
@@ -133,7 +145,7 @@
 
 <section id="stages-of-work" class="stages-of-work">
 
-	<h3 style="text-align: center;">Как проходит работа</h3>
+	<h3>Как проходит работа</h3>
 
 	<div class="blocks-stages">
 
@@ -163,7 +175,7 @@
 
 <section id="catalog" class="catalog">
 
-	<h4 style="text-align: center;">Каталог</h4>
+	<h4>Каталог</h4>
 
 	<div class="blocks-catalog">
 
@@ -217,15 +229,6 @@
 
 	<h5>Наши гарантии на все работы</h5>
 
-	<div class="fan-file">
-
-		<img class="file-four" src="img/file-4.png" width="350" height="500">
-		<img class="file-three" src="img/file-3.png" width="350" height="500">
-		<img class="file-two" src="img/file-2.png" width="350" height="500">
-		<img class="file-one" src="img/file-1.png" width="350" height="500">
-
-	</div>
-
 	<div class="block-guarantees">
 
 		<div class="calblock">
@@ -239,6 +242,15 @@
 			<p style="font-weight: 700;">Гарантия качества</p>
 			<p>Вы получите то что вам нужно при хотя бы малейшем контактировании с нами</p>
 		</div>
+
+	</div>
+
+	<div class="fan-file">
+
+		<img class="file-four" src="img/file-4.png" width="350" height="500">
+		<img class="file-three" src="img/file-3.png" width="350" height="500">
+		<img class="file-two" src="img/file-2.png" width="350" height="500">
+		<img class="file-one" src="img/file-1.png" width="350" height="500">
 
 	</div>
 
