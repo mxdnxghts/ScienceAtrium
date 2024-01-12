@@ -40,14 +40,14 @@ body {
 
 .nav{
   position: fixed;
+  top: 0;
   display: flex;
   justify-content: space-around;
   width: 100%;
   height: 100px;
   line-height: 100px;
-  background: linear-gradient(rgba(39, 39, 39, 0.67), transparent);
+  background: linear-gradient(rgba(39,39,39, 0.6), transparent);
   z-index: 50000;
-  position: absolute;
 }
 .nav-logo p{
   color: #F7F8F1;
@@ -76,7 +76,7 @@ body {
   margin: 0 25px;
 }
 .link:hover, .active{
-  border-bottom: 2px solid #fff;
+  border-bottom: 2px solid #F7F8F1;
 }
 .nav-button .btn{
   width: 130px;
@@ -84,19 +84,24 @@ body {
   font-size: 16px;
   color: #F7F8F1;
   font-weight: 300;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(247, 248, 241, 0.4);
   border: none;
   border-radius: 10px;
   cursor: pointer;
   transition: .3s ease;
 }
 .btn:hover{
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(247, 248, 241, 0.3);
 }
 #registerBtn{
   margin-left: 15px;
 }
-
+.btn.white-btn{
+  background: rgba(247, 248, 241, 0.7);
+}
+.btn.btn.white-btn:hover{
+  background: rgbargba(247, 248, 241, 0.5);
+}
 .nav-menu-btn{
   display: none;
 }
@@ -992,16 +997,16 @@ h6{
 
 
 
+
+
+
+
 .fixed{
   position: fixed;
   width: 100%;
   left: 0;
   top: 0;
+  height: 100px;
+  background: rgba(178, 196, 188, 1);
+  z-index: 10000;
 }
-
-
-
-
-
-
-

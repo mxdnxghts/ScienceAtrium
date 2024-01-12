@@ -67,7 +67,7 @@ body {
   margin: 0 25px;
 }
 .link:hover, .active{
-  border-bottom: 2px solid #fff;
+  border-bottom: 2px solid #F7F8F1;
 }
 .nav-button .btn{
   width: 130px;
@@ -75,21 +75,22 @@ body {
   font-size: 16px;
   color: #F7F8F1;
   font-weight: 300;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(247, 248, 241, 0.4);
   border: none;
   border-radius: 10px;
   cursor: pointer;
   transition: .3s ease;
 }
 .btn:hover{
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(247, 248, 241, 0.3);
 }
 
 .nav-menu-btn{
   display: none;
 }
 
-h2 {
+h1 {
+  position: sticky;
   text-align: center;
   margin-top: 20px;
   margin-bottom: 5px;
@@ -180,18 +181,8 @@ h2 {
   border: 3px solid #C9C0B3;  
 }
 
-.blocks-catalog input {
-  width: 100px;
-  height: 30px;
-  justify-content: center;
-  background-color: #D9D9D9;
-  color: #7B7367;
-  border-radius: 10px;
-  border-style: none;
-  font-family: 'Montserrat Alternates', sans-serif;
-}
-
-h3 {
+h2 {
+  position: sticky;
   text-align: center;
   margin-top: 20px;
   margin-bottom: 5px;
@@ -215,12 +206,26 @@ h3 {
 }
 
 .col-two span {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 200;
   margin-left: 30px;
   display: flex;
   text-align: left;
   font-family: 'Montserrat Alternates', sans-serif;
+}
+
+.col-two input {
+  width: 100px;
+  height: 50px;
+  justify-content: center;
+  background-color: #D9D9D9;
+  color: #7B7367;
+  border-radius: 10px;
+  border-style: none;
+  font-family: 'Montserrat Alternates', sans-serif;
+  margin-top: 55%;
+  margin-bottom: 45%;
+  font-size: 15px;
 }
 
 .col-two .name-sub {
@@ -232,8 +237,9 @@ h3 {
   font-family: 'Montserrat Alternates', sans-serif;  
   float: left;
   margin-left: 20px;
-  margin-top: 60%;
-  margin-bottom: 40%;
+  margin-top: 55%;
+  margin-bottom: 45%;
+  font-size: 26px;
 }
 
 .col-two .bt-col-two {
@@ -242,10 +248,17 @@ h3 {
   float: right;
   margin-right: 30px;
   bottom: 0;
-  margin-top: 60%;
-  margin-bottom: 40%;
+  margin-top: 55%;
+  margin-bottom: 45%;
   font-size: 20px;
   font-family: 'Montserrat Alternates', sans-serif;  
+}
+
+.col-two .delete-btn {
+  width: 100px;
+  height: 30px;
+  margin-right: 10px;
+
 }
 
 .footer{
@@ -260,7 +273,8 @@ h3 {
   font-family: 'Montserrat Alternates', sans-serif;
 }
 
-h4{
+h3{
+  position: sticky;
   text-align: center;
   font-weight: 400;
   font-size: 48px;
@@ -327,7 +341,7 @@ h4{
     overflow-x: hidden;
   }
 
-  h2 {
+  h1 {
     font-size: 42px;
   }
 
@@ -349,21 +363,8 @@ h4{
     height: 610px;
   }
 
-  .col-two {
-    width: 350px;
-    height: 700px;
-    margin-left: auto;
-    margin-right: 20px;
-  }
-
   .ctlblock p {
     margin-top: 10px;
-  }
-
-  .ctlblock input {
-    margin-top: -5px;
-    width: 80px;
-    height: 30px;
   }
 
   .ctlblock button {
@@ -371,8 +372,39 @@ h4{
     height: 30px;
   }
 
-  .btn-shop {
-    margin-top: 5px;
+  .col-two {
+    width: 350px;
+    height: 700px;
+    margin-left: auto;
+    margin-right: 20px;
+  }
+
+  .col-two .name-sub {
+    font-size: 18px;
+  }
+
+  .col-two .price {
+    font-size: 18px;
+    margin-top: 90%;
+    margin-bottom: 10%;
+  }
+
+  .col-two input {
+    width: 95px;
+    height: 30px;
+    font-size: 14px;
+    margin-left: 5px;
+    margin-top: 90%;
+    margin-bottom: 10%;
+  }
+
+  .col-two .bt-col-two {
+    width: 130px;
+    height: 40px;
+    font-size: 16px;
+    margin-top: 90%;
+    margin-bottom: 10%;
+    margin-right: 20px;
   }
 
   
@@ -392,7 +424,7 @@ h4{
     overflow-x: hidden;
   }
 
-  h2 {
+  h1 {
     font-size: 34px;
     text-align: center;
     white-space: normal;
@@ -432,21 +464,8 @@ h4{
     font-family: 'Montserrat Alternates', sans-serif;  
   }
 
-  .col-two {
-    width: 260px;
-    height: 650px;
-    margin-left: 10px;
-    margin-right: 20px;
-  }
-
   .ctlblock p {
     margin-top: 10px;
-  }
-
-  .ctlblock input {
-    margin-top: -5px;
-    width: 80px;
-    height: 30px;
   }
 
   .ctlblock button {
@@ -462,35 +481,47 @@ h4{
     margin-top: -3px;
   }
 
-  h3 {
+  .col-two {
+    width: 260px;
+    height: 650px;
+    margin-left: 10px;
+    margin-right: 20px;
+  }
+
+  h2 {
     word-break: break-all;
   }
 
-  .col-two span {
-    font-size: 18px;
+  .col-two .name-sub {
+    font-size: 13px;
   }
 
   .col-two .price {
-    font-size: 22px;
+    font-size: 18px;
     float: left;
     margin-left: 20px;
-
     bottom: 0;
-    margin-top: 99%;
-    margin-bottom: 1%;
+    margin-top: 90%;
+    margin-bottom: 10%;
+  }
+
+  .col-two input {
+    width: 85px;
+    height: 30px;
+    font-size: 10px;
+    float: left;
+    margin-left: -65px;
+    margin-top: 70%;
+    margin-bottom: 30%;
   }
 
   .col-two .bt-col-two {
-    width: 110px;
+    width: 100px;
     height: 40px;
-    font-size: 16px;
-    float: right;
-    margin-left: auto;
+    font-size: 14px;
+    margin-top: 90%;
+    margin-bottom: 10%;
     margin-right: 20px;
-    
-    bottom: 0;
-    margin-top: 99%;
-    margin-bottom: 1%;
   }
 
   .footer{
@@ -505,7 +536,7 @@ h4{
     font-family: 'Montserrat Alternates', sans-serif;
   }
   
-  h4{
+  h3{
     text-align: center;
     font-weight: 400;
     font-size: 34px;

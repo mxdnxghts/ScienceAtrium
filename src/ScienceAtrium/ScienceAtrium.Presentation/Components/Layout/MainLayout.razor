@@ -1,81 +1,89 @@
 ﻿@inherits LayoutComponentBase
-
 <body>
 	<header id="header" class="header">
 
 		<div class="container">
 
-			<div class="navbar">
-
-				<h1>ScienceAtrium</h1>
-
-				<ul class="links">
-					<li><a href="profile">Профиль</a></li>
-					<li><a href="basket">Корзина</a></li>
-					<li><a href="#catalog">Каталог</a></li>
-				</ul>
-
-				<a href="signIn" class="action_btn">Войти</a>
-				<div class="toggle_btn">
-					<i class="fa-solid fa-bars"></i>
+			<nav class="nav">
+				<div class="nav-logo">
+					<p>ScienceAtrium</p>
 				</div>
+				<div class="nav-menu" id="navMenu">
+					<ul>
+						<li><a href="/" class="link active">Главная</a></li>
+						<li><a href="accountInfo" class="link">Профиль</a></li>
+						<li><a href="basket" class="link">Корзина</a></li>
+						<li><a href="#catalog" class="link">Каталог</a></li>
+					</ul>
+				</div>
+				<div class="nav-button">
+					<button class="btn white-btn" id="loginBtn">Вход</button>
+					<button class="btn" id="registerBtn">Регистрация</button>
+				</div>
+				<div class="nav-menu-btn">
+					<i class="bx bx-menu" onclick="myMenuFunction()"></i>
+				</div>
+			</nav>
 
-			</div>
-
-			<div class="dropdown_menu">
-
-				<ul class="links">
-					<li><a href="profile">Профиль</a></li>
-					<li><a href="basket">Корзина</a></li>
-					<li><a href="#catalog">Каталог</a></li>
-					<li><a href="signIn" class="action_btn">Войти</a></li>
-				</ul>
-
-			</div>
 		</div>
 
 	</header>
 
 	<script>
-		const toggleBtn = document.querySelector('.toggle_btn')
-		const toggleBtnIcon = document.querySelector('.toggle_btn i')
-		const dropDownMenu = document.querySelector('.dropdown_menu')
 
-
-		toggleBtn.onclick = function() {
-			dropDownMenu.classList.toggle('open')
-			const isOpen = dropDownMenu.classList.constais('open')
-
-
-			toggleBtnIcon.classList = isOpen
-			? 'fa-solid fa-xmark'
-			: 'fa-solid fa-bars'
+		function myMenuFunction() {
+			var i = document.getElementById("navMenu");
+			if (i.className === "nav-menu") {
+				i.className += " responsive";
+			} else {
+				i.className = "nav-menu";
+			}
 		}
+
 	</script>
+	<script>
+		var login = document.getElementById("login");
+		var register = document.getElementById("register");
+		var loginBtn = document.getElementById("loginBtn");
+		var registerBtn = document.getElementById("registerBtn");
+
+		loginBtn.addEventListener("click", (e) => {
+			e.preventDefault();
+
+			login.style.left = "4px";
+			login.style.opacity = 1;
+
+			register.style.right = "-520px";
+			register.style.opacity = 0;
+
+			loginBtn.className += " white-btn";
+			registerBtn.className = "btn";
+		});
+
+		registerBtn.addEventListener("click", (e) => {
+			e.preventDefault();
+
+			login.style.left = "-510px";
+			login.style.opacity = 0;
+
+			register.style.right = "5px";
+			register.style.opacity = 1;
+
+			loginBtn.className = "btn";
+			registerBtn.className += " white-btn";
+		});
+	</script>
+
     @Body
-    <footer id="footer" class="footer">
 
-	<h6 style="text-align: center;">ScienceAtrium</h6>
+	<footer id="footer" class="footer">
 
-	<div class="button-collection">
+		<h3 class="align-content-center">ScienceAtrium</h3>
 
-		<div class="check-in">
+		<a href="mailto:info.scienceatrium@gmail.com" class="mailto">
+			<img src="img/envelope.png" width="25" height="25">
+			info.scienceatrium@gmail.com
+		</a>
 
-			<button class="but-check-in"><img src="img/check-in.png">Войти</button>
-
-		</div>
-
-		<div class="check-out">
-
-			<button class="but-check-out"><img src="img/check-out.png">Выйти</button>
-
-		</div>
-
-	</div>
-
-	<a href="mailto:info.scienceatrium@gmail.com" class="mailto"><img src="img/envelope.png" width="25" height="25">
-		info.scienceatrium@gmail.com
-	</a>
-
-</footer>
+	</footer>
 </body>
