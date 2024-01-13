@@ -150,7 +150,7 @@ body {
     min-height: 110vh;
 }
 
-.login-container {
+.inform-container {
     position: absolute;
     left: 4px;
     width: 500px;
@@ -159,35 +159,6 @@ body {
     transition: .5s ease-in-out;
 }
 
-.register-container {
-    position: absolute;
-    right: -520px;
-    width: 500px;
-    display: flex;
-    flex-direction: column;
-    transition: .5s ease-in-out;
-}
-
-.top span {
-    color: #F7F8F1;
-    font-family: 'Montserrat Alternates', sans-serif;
-    font-size: small;
-    padding: 10px 0;
-    display: flex;
-    justify-content: center;
-}
-
-.top span a {
-    font-weight: 500;
-    color: #F7F8F1;
-    font-family: 'Montserrat Alternates', sans-serif;
-    margin-left: 5px;
-}
-
-.two-forms {
-    display: flex;
-    gap: 10px;
-}
 
 .input-field {
     font-size: 15px;
@@ -240,20 +211,6 @@ body {
 .submit:hover {
     background: rgba(247, 248, 241, 0.5);
     box-shadow: 1px 5px 7px 1px rgba(0, 0, 0, 0.2);
-}
-
-.two-col {
-    display: flex;
-    justify-content: space-between;
-    color: #F7F8F1;
-    font-family: 'Montserrat Alternates', sans-serif;
-    font-size: small;
-    margin-top: 10px;
-}
-
-.two-col .one {
-    display: flex;
-    gap: 5px;
 }
 
 .two label a {

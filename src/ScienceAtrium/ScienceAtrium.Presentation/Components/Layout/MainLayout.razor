@@ -10,7 +10,7 @@
 				</div>
 				<div class="nav-menu" id="navMenu">
 					<ul>
-						<li><a href="/" class="link active">Главная</a></li>
+						<li><a href="/" class="link">Главная</a></li>
 						<li><a href="accountInfo" class="link">Профиль</a></li>
 						<li><a href="basket" class="link">Корзина</a></li>
 						<li><a href="#catalog" class="link">Каталог</a></li>
@@ -40,38 +40,6 @@
 			}
 		}
 
-	</script>
-	<script>
-		var login = document.getElementById("login");
-		var register = document.getElementById("register");
-		var loginBtn = document.getElementById("loginBtn");
-		var registerBtn = document.getElementById("registerBtn");
-
-		loginBtn.addEventListener("click", (e) => {
-			e.preventDefault();
-
-			login.style.left = "4px";
-			login.style.opacity = 1;
-
-			register.style.right = "-520px";
-			register.style.opacity = 0;
-
-			loginBtn.className += " white-btn";
-			registerBtn.className = "btn";
-		});
-
-		registerBtn.addEventListener("click", (e) => {
-			e.preventDefault();
-
-			login.style.left = "-510px";
-			login.style.opacity = 0;
-
-			register.style.right = "5px";
-			register.style.opacity = 1;
-
-			loginBtn.className = "btn";
-			registerBtn.className += " white-btn";
-		});
 	</script>
 
     @Body
