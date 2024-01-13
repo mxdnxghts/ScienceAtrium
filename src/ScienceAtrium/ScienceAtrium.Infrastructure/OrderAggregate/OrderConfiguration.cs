@@ -35,5 +35,9 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .Property(x => x.Status)
             .HasField("_status")
             .IsRequired();
+        builder
+            .Property(x => x.OrderDate)
+            .HasField("_orderDate")
+            .IsRequired();
     }
 }

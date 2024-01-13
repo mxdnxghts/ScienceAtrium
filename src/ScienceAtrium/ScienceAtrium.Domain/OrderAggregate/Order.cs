@@ -18,6 +18,7 @@ public class Order : Entity
     private OrderStatus _status;
     private Paymentmethod _paymentMethod;
     private decimal _totalCost;
+    private DateTime _orderDate = DateTime.UtcNow;
 
     public Order(Guid id) : base(id)
     {
@@ -51,14 +52,14 @@ public class Order : Entity
         _status = status;
         _paymentMethod = paymentMethod;
         _totalCost = totalCost;
-        OrderDate = orderDate;
+        _orderDate = orderDate;
         Customer = customer;
         CustomerId = customerId;
         Executor = executor;
         ExecutorId = executorId;
     }
 
-    public DateTime OrderDate { get; } = DateTime.UtcNow;
+    public DateTime OrderDate => _orderDate;
     public decimal TotalCost => _totalCost;
     public Paymentmethod PaymentMethod => _paymentMethod;
     public OrderStatus Status => _status;
@@ -68,9 +69,12 @@ public class Order : Entity
     public Guid? ExecutorId { get; private set; }
     public IReadOnlyCollection<WorkTemplate> WorkTemplates => GetWorkTemplates();
     public IReadOnlyCollection<OrderWorkTemplate> WorkTemplatesLink => _workTemplatesLink;
-    public bool IsReadyToPay => WorkTemplates?.Count > 1 && TotalCost > 0;
+    public bool IsReadyToPay =>
+        WorkTemplates?.Count > 1
+        && TotalCost > 0
+        && OrderDate >= DateTime.UtcNow;
 
-    public Order AddWorkTemplate(WorkTemplate workTemplate)
+	public Order AddWorkTemplate(WorkTemplate workTemplate)
     {
         if (ThrowIfWorkTemplateHasIncorrectValue(workTemplate))
             return this;
@@ -112,6 +116,14 @@ public class Order : Entity
             .FirstOrDefault(x => x.WorkTemplateId == workTemplate.Id).EntityState = EntityState.Deleted;
 
         _totalCost = GetTotal();
+        return this;
+    }
+
+    public Order UpdateOrderDate(DateTime orderDate)
+    {
+        if (OrderDate <= DateTime.UtcNow)
+            return this;
+        _orderDate = orderDate;
         return this;
     }
 

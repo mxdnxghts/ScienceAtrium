@@ -23,8 +23,12 @@ public static class DependencyInjection
 
         serviceCollection.AddSerilog(o =>
         {
-            o.MinimumLevel.Warning().WriteTo.Console();
-            o.MinimumLevel.Warning().WriteTo.File(configuration.GetRequiredSection("Logging:Path:Serilog").Value);
+            o.MinimumLevel.Warning()
+                .WriteTo.Console()
+                .WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogInfo").Value);
+
+            o.MinimumLevel.Information().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogInfo").Value);
+            o.MinimumLevel.Error().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogError").Value);
         });
 
         serviceCollection.AddScoped<IOrderRepository<Order>, OrderRepository>();

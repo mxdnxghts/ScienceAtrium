@@ -33,8 +33,9 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
     }
     public IQueryable<TUser> All => Users
         .Include(x => x.Orders)
-        .ThenInclude(x => x.WorkTemplates)
-        .ThenInclude(x => x.Subject).AsNoTracking();
+		.ThenInclude(x => x.WorkTemplates)
+        .ThenInclude(x => x.Subject)
+        .AsNoTracking();
 
     public int Create(TUser entity)
     {
@@ -174,7 +175,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="user"></param>
     /// <returns>count of iterations - count of <see cref="User.Orders"/></returns>

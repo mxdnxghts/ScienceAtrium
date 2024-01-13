@@ -1,4 +1,5 @@
-﻿using ScienceAtrium.Domain.Constants;
+﻿using Newtonsoft.Json;
+using ScienceAtrium.Domain.Constants;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
 using System.Diagnostics;
@@ -17,6 +18,27 @@ public class WorkTemplate : Entity
     {
         _title = string.Empty;
         _description = string.Empty;
+    }
+
+    [JsonConstructor]
+    public WorkTemplate(
+        Guid id,
+        string title,
+        string description,
+        WorkType workType,
+        decimal price,
+        Guid? subjectId,
+        Subject? subject,
+        List<OrderWorkTemplate> ordersLink)
+        : base(id)
+    {
+        _title = title;
+        _description = description;
+        _workType = workType;
+        _price = price;
+        SubjectId = subjectId;
+        Subject = subject;
+        OrdersLink = ordersLink;
     }
     public string Title => _title ?? string.Empty;
     public string Description => _description ?? string.Empty;
