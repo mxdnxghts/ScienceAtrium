@@ -1,24 +1,139 @@
 ﻿@page "/basket"
 @rendermode InteractiveServer
 @inject IMediator Mediator;
+@inject Serilog.ILogger Logger;
+@inject NavigationManager NavigationManager
+@using ScienceAtrium.Domain.Exceptions
 
-<h3>Basket</h3>
-<div class="rectangle">
-	@foreach (var workTemplate in _currentOrder?.WorkTemplates ?? Array.Empty<WorkTemplate>())
-	{
-		<div class="def-cont rec">
-			<span class="subject-name">@workTemplate.Title</span>
-			<span class="price">@workTemplate.Price</span>
-		</div>
-	}
-</div>
+<link rel="stylesheet" href="css/basket.css" />
+
+<section id="block" class="block">
+
+    <div class="container">
+
+        <div class="col-one" style="background-image: linear-gradient(180deg,hsl(36deg 9% 44%) 1%, hsl(41deg 9% 62%) 62%, hsl(47deg 15% 82%) 100%);">
+
+                <h2>Корзина</h2>
+
+                <div class="blocks-catalog">
+                    @if (_currentOrder?.WorkTemplates?.Count > 0)
+                    {
+                        @foreach (var workTemplate in _waitInBasketWorkTemplates)
+                        {
+                            <div style="background-color: #C9C0B3;" class="ctlblock">
+                                <img src="img/title-page.png" width="100" height="130">
+                                <p style="white-space: normal;">@workTemplate.Title</p>
+                                <span class="price">@workTemplate.Price</span>
+                                <button @onclick="async () => await AddWorkTemplateToListAsync(workTemplate, WorkTemplateState.ReadyToPay, EntityState.Modified)" class="btn-shop">Добавить</button>
+                            </div>
+                        }
+                    }
+
+                    else {
+                        <div style="background-color: #C9C0B3;" class="ctlblock">
+                            <p style="white-space: normal;">Nothing to show</p>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="col-two" style="background-image: linear-gradient(180deg,hsl(36deg 9% 44%) 1%, hsl(41deg 9% 62%) 62%, hsl(47deg 15% 82%) 100%);">
+
+                <h3>К оформлению</h3>
+                @foreach(var workTemplate in _readyToPayWorkTemplates)
+                {
+                    <span class="name-sub">
+                        @workTemplate.Title
+                        <button @onclick="async () => await AddWorkTemplateToListAsync(workTemplate, WorkTemplateState.WaitInBasket, EntityState.Modified)" class="btn-shop">Убрать</button>
+                    </span>
+                }
+
+                <span class="price">₽ @_totalPriceReadyToPayWorkTemplates</span>
+			    <input type="date" id="date" name="date" @bind="_orderDate">
+                <button @onclick="PayAsync" class="btn-shop bt-col-two" >Оплатить</button>
+
+            </div>
+
+    </div>
+
+</section>
 
 @code {
     private Order _currentOrder;
     private Customer _currentUser;
+    private decimal _totalPriceReadyToPayWorkTemplates;
+    private DateTime _orderDate = DateTime.Now;
+    private List<WorkTemplate> _waitInBasketWorkTemplates = [];
+    private List<WorkTemplate> _readyToPayWorkTemplates = [];
+
     protected override async Task OnInitializedAsync()
     {
         _currentUser = await Mediator.Send(new GetCachedCustomerQuery());
         _currentOrder = await Mediator.Send(new GetOrderByCustomerIdQuery(_currentUser.Id));
+
+        RefreshWorkTemplates(_currentOrder);
+
+        _totalPriceReadyToPayWorkTemplates = CalculateTotalPriceReadyToPayWorkTemplates(_currentOrder);
+    }
+
+    private async Task PayAsync()
+    {
+        if (!_currentOrder.IsReadyToPay)
+        {
+            // handle when the order isn't ready to be payed
+            return;
+        }
+        _currentOrder.UpdateStatus(OrderStatus.Pending).UpdateOrderDate(_orderDate);
+        await Mediator.Send(new UpdateOrderCommand(_currentOrder));
+
+        RefreshWorkTemplates(Order.Default);
+        await Task.Delay(1000);
+        NavigationManager.NavigateTo("/account");
+    }
+
+    private async Task AddWorkTemplateToListAsync(WorkTemplate workTemplate,
+        WorkTemplateState workTemplateState,
+        EntityState entityState)
+    {
+        var orderWorkTemplate = _currentOrder.WorkTemplatesLink.FirstOrDefault(x => x.WorkTemplateId == workTemplate.Id);
+        if (orderWorkTemplate is null)
+        {
+            Logger.Error(
+                $"OrderWorkTemplate with Id {{{orderWorkTemplate.WorkTemplateId}}} wasn't found");
+            return;
+        }
+        orderWorkTemplate.State = workTemplateState;
+        orderWorkTemplate.EntityState = entityState;
+
+        var changes = await Mediator.Send(new UpdateOrderCommand(_currentOrder));
+        _totalPriceReadyToPayWorkTemplates = CalculateTotalPriceReadyToPayWorkTemplates(_currentOrder);
+        if (changes < 1)
+            Logger.Debug("While changing state of {1} has occurred some errors and nothing was saved to db", orderWorkTemplate);
+
+        RefreshWorkTemplates(_currentOrder);
+    }
+
+    private decimal CalculateTotalPriceReadyToPayWorkTemplates(Order order)
+    {
+        return order.WorkTemplatesLink
+            .Where(x => x.State == WorkTemplateState.ReadyToPay)
+            .Select(x => x.WorkTemplate.Price)
+            .Sum();
+    }
+
+    private void RefreshWorkTemplates(Order order)
+    {
+        _waitInBasketWorkTemplates = GetWorkTemplatesWithState(_currentOrder, WorkTemplateState.WaitInBasket);
+        _readyToPayWorkTemplates = GetWorkTemplatesWithState(_currentOrder, WorkTemplateState.ReadyToPay);
+    }
+
+    private List<WorkTemplate> GetWorkTemplatesWithState(Order order, WorkTemplateState workTemplateState)
+    {
+        return order.WorkTemplatesLink
+            .Where(x => x.State == workTemplateState)
+            .Select(x => x.WorkTemplate)
+            .ToList();
     }
 }

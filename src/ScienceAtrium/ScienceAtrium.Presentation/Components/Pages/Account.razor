@@ -1,0 +1,96 @@
+﻿@page "/account"
+@rendermode InteractiveServer
+@inject IMediator Mediator
+
+<link rel="stylesheet" href="css/profile.css" />
+
+<section id="cards" class="cards">
+
+    <container>
+
+        <div class="row">
+
+            <div class="column">
+
+                <div class="rec">
+
+                    <div class="rec-one">
+
+                        <img src="img/profile.png" width="80" height="80">
+                        <p style="font-weight: 600;">@_user?.Name</p>
+                        <div class="add-inf">
+                            <p>Электронная почта:<span>@_user?.Email</span></p>
+                        </div>
+
+                    </div>
+
+                    <div class="rec-two">
+
+                        <img src="img/paper.png" width="80" height="70">
+                        <p style="font-weight: 600;">Лист ожидания</p>
+                        <div class="add-inf">
+                            <p>Срок выполнения до:<span>@_deadlineDate</span></p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="column col-two" style="background-image: linear-gradient(180deg,hsl(36deg 9% 44%) 1%, hsl(41deg 9% 62%) 62%, hsl(47deg 15% 82%) 100%);">
+
+                <h2>Покупки</h2>
+
+                <div class="blocks-catalog">
+                    @foreach(var workTemplate in _workTemplates ?? Array.Empty<WorkTemplate>())
+                    {
+                        <div style="background-color: #C9C0B3;" class="ctlblock">
+                            <img src="img/title-page.png" width="100" height="130">
+                            <p style="white-space: normal;">@(workTemplate.Title ?? "Subject not found")</p>
+                            <p>₽ @workTemplate.Price</p>
+                        </div>
+                    }
+                </div>
+
+            </div>
+
+        </div>
+
+    </container>
+
+</section>
+
+@code {
+    private User _user;
+    private IEnumerable<Order> _orders;
+    private IEnumerable<WorkTemplate> _workTemplates;
+    private DateTime _deadlineDate = DateTime.Now;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _user = await Mediator.Send(new GetCachedCustomerQuery());
+
+        if (_user is null)
+        {
+            SetDefaults();
+            return;
+        }
+
+        _orders = _user
+                .Orders
+                .Where(x => x.Status != OrderStatus.Cancelled && x.Status != OrderStatus.Deferred);
+
+        _workTemplates = _orders
+            .SelectMany(x => x.WorkTemplates);
+
+        _deadlineDate = _orders.Select(x => x.OrderDate).Min();
+    }
+
+    private void SetDefaults()
+    {
+        _user = User.Default;
+        _orders = Enumerable.Empty<Order>();
+        _workTemplates = Enumerable.Empty<WorkTemplate>();
+    }
+}

@@ -1,10 +1,10 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@inject IMediator Mediator;
-@inject Serilog.ILogger Logger;
-@inject NavigationManager NavigationManager;
-@inject IReader<Customer> CustomerReader;
-@inject IMapper Mapper;
+@inject IMediator Mediator
+@inject Serilog.ILogger Logger
+@inject NavigationManager NavigationManager
+@inject IReader<Customer> CustomerReader
+@inject IMapper Mapper
 
 <section id="main" class="main">
 	<div class="container">
@@ -35,6 +35,8 @@
 
 <section id="work" class="work">
 
+	<h2>Выполняемые работы</h2>
+
 	<div class="fan-title">
 
 		<img class="title-one" src="img/title-page.png" width="350" height="500">
@@ -44,8 +46,6 @@
 		<img class="title-five" src="img/title-page.png" width="350" height="500">
 
 	</div>
-
-	<h2>Выполняемые работы</h2>
 
 	<div class="blok-work">
 
@@ -73,7 +73,7 @@
 
 <section id="stages-of-work" class="stages-of-work">
 
-	<h3 style="text-align: center;">Как проходит работа</h3>
+	<h3>Как проходит работа</h3>
 
 	<div class="blocks-stages">
 
@@ -103,18 +103,20 @@
 
 <section id="catalog" class="catalog">
 
-	<h4 style="text-align: center;">Каталог</h4>
+	<h4>Каталог</h4>
 
 	<div class="blocks-catalog">
+
 		@foreach (var workTemplate in _workTemplates)
 		{
 			<div style="background-color: #C9C0B3;" class="ctlblock">
 				<img src="img/title-page.png" width="80" height="100">
-				<p style="white-space: normal;max-width:150px;">@workTemplate.Title</p>
+				<p style="white-space: normal;">@workTemplate.Title</p>
 				<p>₽ @workTemplate.Price</p>
-				<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="button-order">Заказать</button>
+				<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
 			</div>
 		}
+
 	</div>
 
 </section>
@@ -122,15 +124,6 @@
 <section id="guarantees" class="guarantees">
 
 	<h5>Наши гарантии на все работы</h5>
-
-	<div class="fan-file">
-
-		<img class="file-four" src="img/file-4.png" width="350" height="500">
-		<img class="file-three" src="img/file-3.png" width="350" height="500">
-		<img class="file-two" src="img/file-2.png" width="350" height="500">
-		<img class="file-one" src="img/file-1.png" width="350" height="500">
-
-	</div>
 
 	<div class="block-guarantees">
 
@@ -148,6 +141,15 @@
 
 	</div>
 
+	<div class="fan-file">
+
+		<img class="file-four" src="img/file-4.png" width="350" height="500">
+		<img class="file-three" src="img/file-3.png" width="350" height="500">
+		<img class="file-two" src="img/file-2.png" width="350" height="500">
+		<img class="file-one" src="img/file-1.png" width="350" height="500">
+
+	</div>
+
 </section>
 
 @code {
@@ -158,8 +160,8 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await SetCachedCustomerAsync(_currentUser);
-		var list = await Mediator.Send(new GetWorkTemplateListQuery());
-		_workTemplates.AddRange(list);
+		var workTemplates = await Mediator.Send(new GetWorkTemplateListQuery());
+		_workTemplates.AddRange(workTemplates);
 		_currentUser = await Mediator.Send(new GetCachedCustomerQuery());
 		_currentOrder = await GetOrderAsync(_currentUser.Id);
 	}
@@ -170,7 +172,7 @@
 		await MakeOrderAsync(_currentOrder, _currentUser.Id);
 	}
 
-	[Obsolete("Change parameter of inside method's call")]
+	[Obsolete("Change parameter of inside method's call when auth service will be added")]
 	private async Task SetCachedCustomerAsync(Customer customer)
 	{
 		if (_currentOrder is null || _currentOrder.IsEmpty())
