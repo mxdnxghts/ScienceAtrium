@@ -33,7 +33,8 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
     }
     public IQueryable<TUser> All => Users
         .Include(x => x.Orders)
-		.ThenInclude(x => x.WorkTemplates)
+        .ThenInclude(x => x.WorkTemplatesLink)
+        .ThenInclude(x => x.WorkTemplate)
         .ThenInclude(x => x.Subject)
         .AsNoTracking();
 
