@@ -1,6 +1,3 @@
-let loginBtn = document.getElementById("loginBtn");
-let registerBtn = document.getElementById("registerBtn");
-
 setActiveLinks();
 console.log("Set active linkgs");
 

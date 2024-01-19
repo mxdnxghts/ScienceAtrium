@@ -353,8 +353,8 @@ h4{
   white-space: nowrap;
   word-break: break-all;
   color: #F7F8F1;
-  font-family: 'Montserrat Alternates', sans-serif;
-  margin-top: 20px;
+  font-family: 'Montserrat Alternates', sans-serif; 
+  margin-top: 40px; 
 }
 
 .ctlblock{
@@ -368,10 +368,12 @@ h4{
   border-radius: 10px;
   box-shadow: 0 0 15px 1px rgb(123, 115, 103, 24);
   transform: scale(1);
+  animation-duration: 01ms;
 }
 
 .ctlblock:hover{
-  transform: scale(1.03);
+  transform: scale(1.1);
+  transition: all 0.6s ease-in;
 }
 
 .blocks-catalog p{
@@ -414,7 +416,7 @@ h4{
   border: 3px solid #C9C0B3;  
 }
 
-/* .center {
+.center {
   display: flex;
   justify-content: left;
   align-items: self-start;
@@ -437,9 +439,9 @@ h4{
 }
 
 .setting-description {
-  background-color: #A89B89;
+  background-color: #A89B89; 
   border-radius: 10px 10px 0px 0px;
-
+  
   min-width: 231.5px;
   width: 100% !important;
   max-width: 480px;
@@ -573,7 +575,7 @@ svg {
   visibility: visible;
 
   border-radius: 10px;
-} */
+}
 
 .guarantees{
   margin-left: auto;
@@ -722,10 +724,6 @@ h6{
   white-space: nowrap;
   color: #F7F8F1;
   font-family: 'Montserrat Alternates', sans-serif;  
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
 }
 
 .button-collection{
@@ -766,7 +764,7 @@ h6{
   color: #F7F8F1;
 }
 
-@media(max-width: 1920px) {
+/* @media(max-width: 1920px) {
   .nav-logo p {
     font-size: 56px;
   }
@@ -802,25 +800,14 @@ h6{
     margin-left: 300px;
   }
 
-  .img-title-page img {
-    margin-top: 140px;
-  }
-
   h2, h3, h4, h5, h6 {
     font-size: 60px;
-    margin-left: 50%;
-    margin-right: 50%;
-  }
-
-  h6 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
   }
 
   h2 {
     margin-top: -120px;
+    margin-left: 50%;
+    margin-right: 50%;
   }
 
   .fan-title img{
@@ -893,6 +880,8 @@ h6{
 
   h3 {
     margin-top: 50px;
+    margin-left: 50%;
+    margin-right: 50%;
   }
 
   .stgblock {
@@ -905,6 +894,11 @@ h6{
   .stgblock img {
     width: 100px;
     height: 100px;
+  }
+
+  h4{
+    margin-left: 50%;
+    margin-right: 50%;
   }
 
   .blocks-catalog {
@@ -928,6 +922,11 @@ h6{
     width: 150px;
     height: 50px;
     font-size: 22px;
+  }
+
+  h5 {
+    margin-left: 50%;
+    margin-right: 50%;
   }
 
   .fan-file{
@@ -982,10 +981,6 @@ h6{
     font-size: 30px;
   }
 
-  .button-collection {
-    margin-top: 30px;
-  }
-
   .button-collection img {
     width: 40px;
     height: 40px;
@@ -1003,7 +998,9 @@ h6{
     width: 40px;
     height: 40px;
   }
-}
+
+
+} */
 
 @media(max-width: 992px) {
   .nav-button{
@@ -1014,7 +1011,7 @@ h6{
   }
   .nav-menu{
     position: absolute;
-    top: -870px;
+    top: -800px;
     display: flex;
     justify-content: center;
     background: rgba(145, 171, 162, 0.83);
@@ -1049,25 +1046,20 @@ h6{
     overflow-x: hidden;
   }
 
-  .work, .stages-of-work, .catalog, .guarantees {
-    height: auto;
-  }
-
   .text-main{
     font-size: 150px;
   }
 
   .right {
-    margin-top: -130px;
+    margin-top: -150px;
   }
   
   .left {
-    margin-top: 260px;
+    margin-top: 150px;
   }
 
   .mouse {
-    margin-left: 30px;
-    margin-top: 210px;
+    margin-left: 70px;
   }
 
   .keyboard {
@@ -1075,22 +1067,21 @@ h6{
   }
 
   .img-title-page img {
-    margin-top: 30px;
+    margin-top: -130px;
     width: 400px;
     height: 550px;
   }
 
   h2 {
-    margin-left: 50%;
-    margin-right: 50%;
+    margin-left: 70%;
+    margin-right: 30%;
     font-size: 42px;
-    margin-top: -150px;
+    margin-top: 30px;
   }
 
   .blok-work {
     font-size: 20px;
-    margin-top: -60px;
-    margin-bottom: 60px;
+    margin-top: 30px;
   }
 
   .blok-work p {
@@ -1102,35 +1093,8 @@ h6{
   }
 
   .fan-title img {
-    width: 230px;
-    height: 320px;
-  }
-
-  .title-one{
-    margin-top: 130px;
-    margin-left: -90px;
-  }
-
-  .title-two{
-    margin-left: -10px;
-    margin-top: 50px;
-  }
-
-  .title-three{
-    margin-left: 30px;
-    margin-top: -50px;
-
-  }
-
-  .title-four{
-    margin-left: -10px;
-    margin-top: -170px;
-
-  }
-
-  .title-five{
-    margin-left: -80px;
-    margin-top: -220px;
+    width: 250px;
+    height: 350px;
   }
 
   .lab {
@@ -1156,15 +1120,6 @@ h6{
     font-size: 20px;
   }
 
-  .blocks-stages {
-    margin-bottom: 80px;
-  }
-
-  .stgblock img {
-    width: 60px;
-    height: 60px;
-  }
-
   h4 {
     font-size: 42px;
     margin-top: 20px;
@@ -1175,19 +1130,10 @@ h6{
     height: 250px;
     margin: 20px;
     font-size: 14px;
-    margin-top: 180px;
   }
 
   .blocks-catalog button {
-    width: 70px;
-    height: 30px;
-    font-size: 12px;
     margin-top: 10px;
-  }
-
-  .blocks-catalog img {
-    width: 70px;
-    height: 90px;
   }
 
   .blocks-catalog p{
@@ -1200,8 +1146,8 @@ h6{
   }
 
   .fan-file img {
-    width: 260px;
-    height: 350px;
+    width: 300px;
+    height: 400px;
   }
 
   .guarantees {
@@ -1210,7 +1156,7 @@ h6{
 
   .block-guarantees {
     font-size: 20px;
-    margin-top: -80px;
+    margin-top: -110px;
   }
 
   .calblock {
@@ -1235,35 +1181,19 @@ h6{
 
   .file-one{
     margin-top: 260px;
-    margin-left: 260px;
   }
   
   .file-two{
     margin-top: 160px;
-    margin-left: 260px;
   }
   
   .file-three{
     margin-top: 60px;
-    margin-left: 290px;
   }
   
   .file-four{
-    margin-top: 5px;
-    margin-left: 370px;
-  }
-
-  h6 {
-    font-size: 38px;
-  }
-
-  .footer {
-    font-size: 30px;
-  }
-
-  .mailto img{
-    width: 30px;
-    height: 30px;
+    margin-top: -10px;
+    margin-left: 380px;
   }
   
 }
@@ -1271,10 +1201,6 @@ h6{
 @media(max-width: 576px) {
   body {
     overflow-x: hidden;
-  }
-
-  .work, .stages-of-work, .catalog, .guarantees {
-    height: auto;
   }
 
   .text-main{
@@ -1306,14 +1232,14 @@ h6{
 
   h2 {
     font-size: 34px;
-    margin-top: -150px;
-    text-align: center;
+    margin-top: 30px;
+    text-align: right;
     white-space: normal;
   }
 
   .blok-work {
     font-size: 16px;
-    margin-top: -30px;
+    margin-top: 30px;
     display: inline-block;
   }
 
@@ -1347,32 +1273,32 @@ h6{
   }
 
   .title-one{
-    margin-top: 200px;
-    margin-left: -90px;
+    margin-top: 310px;
+    margin-left: -70px;
   }
   
   .title-two{
     margin-left: -20px;
-    margin-top: 120px;
+    margin-top: 250px;
   }
   
   .title-three{
-    margin-left: 10px;
-    margin-top: 40px;
+    margin-left: -10px;
+    margin-top: 170px;
   
   }
   
   .title-four{
     margin-left: -20px;
-    margin-top: -80px;
+    margin-top: 40px;
   
   }
   
   .title-five{
     transform: rotate(30deg);
     position: absolute;
-    margin-left: -90px;
-    margin-top: -160px;
+    margin-left: -70px;
+    margin-top: -10px;
   }
 
   h3 {
@@ -1397,10 +1323,6 @@ h6{
   h4 {
     font-size: 34px;
     margin-top: 20px;
-  }
-
-  .blocks-catalog {
-    margin-top: 10px;
   }
 
   .ctlblock {
@@ -1474,14 +1396,6 @@ h6{
   
   .file-three{
     margin-top: 100px;
-  }
-
-  .button-collection {
-    font-size: 24px;
-  }
-
-  .mailto {
-    font-size: 24px;
   }
 
 }

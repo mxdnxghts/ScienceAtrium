@@ -175,7 +175,7 @@ h1 {
   border-radius: 10px;
 }
 
-.blocks-catalog{
+.catalogblk {
   max-width: 500px;
   max-height: 500px;
   display: grid;
@@ -188,7 +188,7 @@ h1 {
   font-family: 'Montserrat Alternates', sans-serif;  
 }
 
-.ctlblock{
+.blockctlg{
   width: 250px;
   height: 300px;
   background-size: cover;
@@ -200,24 +200,24 @@ h1 {
   transform: scale(1);
 }
 
-.ctlblock:hover{
-  transform: scale(1.1);
+.blockctlg:hover{
+  transform: scale(1.03);
 }
 
-.blocks-catalog p{
+.catalogblk p{
   margin-top: 30px;
 }
 
-.blocks-catalog::-webkit-scrollbar {
+.catalogblk::-webkit-scrollbar {
   width: 12px;
 }
 
-.blocks-catalog::-webkit-scrollbar-track {
+.catalogblk::-webkit-scrollbar-track {
   background: #C9C0B3;
   border-radius: 10px;
 }
 
-.blocks-catalog::-webkit-scrollbar-thumb {
+.catalogblk::-webkit-scrollbar-thumb {
   background-color: #A89B89;    
   border-radius: 10px;      
   border: 3px solid #C9C0B3;  
@@ -266,18 +266,98 @@ h2{
     height: 45px;
     font-size: 22px;  
   }
+
+  .rec-one {
+    max-width: 800px;
+    min-height: 300px;
+    margin-top: 150px;
+  }
+  
+  .rec-two {
+    max-width: 800px;
+    min-height: 300px;
+    margin-top: 120px;
+  }
+ 
+  .rec img {
+    margin-top: 20px;
+    margin-left: 20px;
+  }
+  
+  .rec p {
+    margin-top: 40px;
+    margin-left: 20px;
+    font-size: 34px;
+  }
+  
+  .rec span{
+    margin-left: 10px;
+  }
+  
+  .add-inf p, span {
+    margin-top: 60px;
+    font-size: 28px;
+  }
+  
+  h1 {
+    font-size: 36px;
+    font-weight: 400;
+  }
+  
+  .col-two {
+    width: 700px;
+    height: 730px;
+    margin-top: 150px;
+  }
+  
+  .catalogblk {
+    max-width: 690px;
+    max-height: 670px;
+    font-size: 24px;
+  }
+  
+  .blockctlg{
+    width: 350px;
+    height: 400px;
+  }
+
+  .blockctlg img {
+    width: 130px;
+    height: 160px;
+  }
+  
+  .catalogblk p{
+    margin-top: 40px;
+  }
+  
+  .footer{
+    font-size: 30px;
+  }
+  
+  h2{
+    text-align: center;
+    font-weight: 400;
+    font-size: 48px;
+  }
+
+  .mailto img {
+    width: 33px;
+    height: 33px;
+  }
 }
 
 @media(max-width: 992px) {
   .nav-button{
     display: none;
   }
+
   .nav-menu.responsive{
     top: 100px;
   }
+
   .nav-menu{
     position: absolute;
-    top: -800px;
+    top: -870px;
     display: flex;
     justify-content: center;
     background: rgba(145, 171, 162, 0.83);
@@ -286,14 +366,17 @@ h2{
     backdrop-filter: blur(900px);
     transition: .3s;
   }
+
   .nav-menu ul{
     flex-direction: column;
     text-align: center;
     font-size: 34px;
   }
+
   .nav-menu-btn{
     display: block;
   }
+
   .nav-menu-btn i{
     font-size: 25px;
     color: #F7F8F1;
@@ -304,6 +387,7 @@ h2{
     cursor: pointer;
     transition: .3s;
   }
+
   .nav-menu-btn i:hover{
     background: rgba(145, 171, 162, 0.83);
   }
@@ -329,12 +413,12 @@ h2{
   }
 
   .rec p {
-    font-size: 20px;
+    font-size: 24px;
     margin-left: 10px;
   }
 
   .rec span {
-    font-size: 18px;
+    font-size: 24px;
     margin-left: 5px;
     }
 
@@ -348,28 +432,33 @@ h2{
   }
 
   h1 {
-    font-size: 26px;
+    font-size: 28px;
   }
 
   .col-two {
     margin-top: 120px;
     width: 350px;
-    height: 540px;
+    height: 640px;
   }
 
-  .ctlblock{
+  .blockctlg{
     width: 200px;
     height: 250px;
     font-size: 16px;
   }
 
-  .ctlblock p {
+  .blockctlg p {
     margin-top: 10px;
   }
 
-  .blocks-catalog {
+  .blockctlg img {
+    height: 110px;
+    width: 80px;
+  }
+
+  .catalogblk {
     width: 350px;
-    height: 490px;
+    height: 590px;
     margin-right: 20px;
   }
 
@@ -399,14 +488,14 @@ h2{
   }
 
   .rec-one {
-    width: 280px;
+    width: 260px;
     height: 120px;
     margin-top: 120px;
     margin-left: 20px;
   }
   
   .rec-two {
-    width: 280px;
+    width: 260px;
     height: 120px;
     margin-top: 40px;
     margin-left: 20px;
@@ -439,42 +528,50 @@ h2{
   .col-two {
     margin-top: 120px;
     margin-left: 20px;
-    width: 300px;
-    height: 540px;
+    width: 250px;
+    height: 640px;
     margin-right: 20px;
   }
 
-  .ctlblock{
+  .blockctlg{
     width: 160px;
     height: 200px;
     font-size: 14px;
   }
 
-  .ctlblock:hover{
+  .blockctlg:hover{
     transform: scale(1.03);
   }
 
-  .ctlblock p {
+  .blockctlg p {
     margin-top: 10px;
   }
 
-  .blocks-catalog {
+  .catalogblk {
     width: 210px;
-    height: 500px;
+    height: 590px;
     overflow-x: hidden;
   }
 
-  .blocks-catalog p {
+  .catalogblk p {
     margin-top: 5px;
   }
 
-  .blocks-catalog img {
+  .catalogblk img {
     width: 70px;
     height: 90px;
   }
 
   .footer {
     margin-top: 210px;
+  }
+
+  h2 {
+    font-size: 34px;
+  }
+
+  .mailto {
+    font-size: 26px;
   }
 
 }

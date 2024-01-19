@@ -25,49 +25,7 @@ if (document.documentElement.clientWidth > 539) {
     });
   });
 
-}
-  
-  
-var colors = ['1abc9c', '2c3e50', '2980b9', '7f8c8d', 'f1c40f', 'd35400', '27ae60'];
-
-colors.each(function (color) {
-  $$('.color-picker')[0].insert(
-    '<div class="square" style="background: #' + color + '"></div>'
-  );
-});
-
-$$('.color-picker')[0].on('click', '.square', function(event, square) {
-  background = square.getStyle('background');
-  $$('.custom-dropdown select').each(function (dropdown) {
-    dropdown.setStyle({'background' : background});
-  });
-});
-
-
-
-
-
-let selectContainer = document.querySelector(".select-container");
-let select = document.querySelector(".select");
-let input = document.getElementById("input");
-let options = document.querySelectorAll(".select-container .option");
-
-select.onclick = () => {
-    selectContainer.classList.toggle("active");
 };
-
-options.forEach((e) => {
-    e.addEventListener("click", () => {
-        input.value = e.innerText;
-        selectContainer.classList.remove("active");
-        options.forEach((e) => {
-            e.classList.remove("selected");
-        });
-        e.classList.add("selected");
-    });
-});
-
-
 
 
 
@@ -131,5 +89,3 @@ function handleDropdown(dropdown, arrow, open) {
     dropdown.classList.remove("active");
   }
 }
-
-

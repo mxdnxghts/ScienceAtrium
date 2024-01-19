@@ -2,6 +2,7 @@
 let register = document.getElementById("register");
 
 setEventListenersToBtns();
+console.log("Set event listeners to buttons");
 
 function setEventListenersToBtns() {
     loginBtn.addEventListener("click", (e) => {
