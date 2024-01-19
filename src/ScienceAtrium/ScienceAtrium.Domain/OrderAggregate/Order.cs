@@ -121,7 +121,7 @@ public class Order : Entity
 
     public Order UpdateOrderDate(DateTime orderDate)
     {
-        if (OrderDate <= DateTime.UtcNow)
+        if (orderDate <= DateTime.UtcNow)
             return this;
         _orderDate = orderDate;
         return this;
