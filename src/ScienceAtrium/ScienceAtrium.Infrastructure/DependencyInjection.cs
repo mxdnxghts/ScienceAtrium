@@ -43,6 +43,8 @@ public static class DependencyInjection
 
         serviceCollection.AddReaders();
 
+        serviceCollection.AddTransient<ApplicationTransactionService>();
+
         return serviceCollection;
     }
 
