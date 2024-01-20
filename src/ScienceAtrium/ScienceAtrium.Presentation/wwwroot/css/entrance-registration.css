@@ -123,6 +123,10 @@ body {
     cursor: pointer;
 }
 
+#loginBtn:hover{
+    cursor: pointer;
+}
+
 .btn.white-btn {
     background: rgba(247, 248, 241, 0.7);
 }
