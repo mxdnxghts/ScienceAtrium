@@ -1,8 +1,9 @@
 ﻿@page "/basket"
 @rendermode InteractiveServer
-@inject IMediator Mediator;
-@inject Serilog.ILogger Logger;
+@inject IMediator Mediator
+@inject Serilog.ILogger Logger
 @inject NavigationManager NavigationManager
+@inject ApplicationTransactionService ApplicationTransactionService
 @using ScienceAtrium.Domain.Exceptions
 
 <link rel="stylesheet" href="css/basket.css" />
@@ -11,16 +12,16 @@
 
     <div class="container">
 
-        <div class="col-one" style="background-image: linear-gradient(180deg,hsl(36deg 9% 44%) 1%, hsl(41deg 9% 62%) 62%, hsl(47deg 15% 82%) 100%);">
+            <div class="col-one" style="background-image: linear-gradient(180deg,hsl(36deg 9% 44%) 1%, hsl(41deg 9% 62%) 62%, hsl(47deg 15% 82%) 100%);">
 
-                <h2>Корзина</h2>
+                <h1>Корзина</h1>
 
-                <div class="blocks-catalog">
+                <div class="catalog-block">
                     @if (_currentOrder?.WorkTemplates?.Count > 0)
                     {
                         @foreach (var workTemplate in _waitInBasketWorkTemplates)
                         {
-                            <div style="background-color: #C9C0B3;" class="ctlblock">
+                            <div style="background-color: #C9C0B3;" class="ctlgblock">
                                 <img src="img/title-page.png" width="100" height="130">
                                 <p style="white-space: normal;">@workTemplate.Title</p>
                                 <span class="price">@workTemplate.Price</span>
@@ -46,7 +47,7 @@
                 {
                     <span class="name-sub">
                         @workTemplate.Title
-                        <button @onclick="async () => await AddWorkTemplateToListAsync(workTemplate, WorkTemplateState.WaitInBasket, EntityState.Modified)" class="btn-shop">Убрать</button>
+                        <button @onclick="async () => await AddWorkTemplateToListAsync(workTemplate, WorkTemplateState.WaitInBasket, EntityState.Modified)" class="btn-shop delete-btn">Убрать</button>
                     </span>
                 }
 
@@ -64,7 +65,7 @@
     private Order _currentOrder;
     private Customer _currentUser;
     private decimal _totalPriceReadyToPayWorkTemplates;
-    private DateTime _orderDate = DateTime.Now;
+    private DateTime _orderDate = DateTime.Now.AddDays(1);
     private List<WorkTemplate> _waitInBasketWorkTemplates = [];
     private List<WorkTemplate> _readyToPayWorkTemplates = [];
 
@@ -80,13 +81,22 @@
 
     private async Task PayAsync()
     {
+        _currentOrder.UpdateOrderDate(_orderDate);
         if (!_currentOrder.IsReadyToPay)
         {
             // handle when the order isn't ready to be payed
             return;
         }
-        _currentOrder.UpdateStatus(OrderStatus.Pending).UpdateOrderDate(_orderDate);
-        await Mediator.Send(new UpdateOrderCommand(_currentOrder));
+        _currentOrder.UpdateStatus(OrderStatus.Pending);
+        _currentUser.UpdateOrder(x => x.Id == _currentOrder.Id, _currentOrder);
+
+        await ApplicationTransactionService
+            .BeginTransactionAsync(IsolationLevel.RepeatableRead, async () =>
+        {
+            await Mediator.Send(new UpdateOrderCommand(_currentOrder));
+            await Mediator.Send(new UpdateOrderWorkTemplateAfterPayingCommand(_currentOrder.Id));
+            await Mediator.Send(new SetCachedCustomerCommand(_currentUser));
+        });
 
         RefreshWorkTemplates(Order.Default);
         await Task.Delay(1000);
