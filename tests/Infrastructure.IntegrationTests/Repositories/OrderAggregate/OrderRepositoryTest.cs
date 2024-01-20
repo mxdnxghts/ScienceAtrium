@@ -90,9 +90,12 @@ public class OrderRepositoryTest
 	}
 
     [Test]
-    public void AddWorkTemplateToOrderTest()
+    public void CreateOrderWithSampleWorkTemplatesTest()
     {
-		var order = MapOrder();
+        _applicationContext = new ApplicationContext(GetDbContextOptions());
+        _orderRepository = new OrderRepository(_applicationContext, null);
+
+        var order = MapOrder();
 		_orderRepository.Create(order);
 
 		var workTemplate = _applicationContext.WorkTemplates
@@ -104,13 +107,8 @@ public class OrderRepositoryTest
 
         var s = _orderRepository.Get(x => x.Id == order.Id);
 
-		_applicationContext = new ApplicationContext(
-			new DbContextOptionsBuilder<ApplicationContext>()
-			//.UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=12844752;Include Error Detail=true")
-			.UseSqlServer("Server=localhost\\SQLEXPRESS;Data Source=maxim;Initial Catalog=Test;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False; Encrypt=True;TrustServerCertificate=True")
-			.Options);
-
-		_orderRepository = new OrderRepository(_applicationContext, null);
+		_applicationContext = new ApplicationContext(GetDbContextOptions());
+        _orderRepository = new OrderRepository(_applicationContext, null);
 
 		_orderRepository.Update(order);
 		Assert.That(_orderRepository.Get(x => x.Id == order.Id).WorkTemplates.Count,
@@ -194,7 +192,7 @@ public class OrderRepositoryTest
     {
         var order = _orderRepository.All
             .FirstOrDefault(x => x.CustomerId != null && x.ExecutorId != null);
-        order.UpdateStatus(Status.Expired);
+        order.UpdateStatus(OrderStatus.Expired);
 
         _orderRepository.Update(order);
 
@@ -207,7 +205,7 @@ public class OrderRepositoryTest
     {
         var order = _orderRepository.All
             .FirstOrDefault(x => x.CustomerId != null && x.ExecutorId != null);
-        order.UpdateStatus(Status.Expired);
+        order.UpdateStatus(OrderStatus.Expired);
 
         await _orderRepository.UpdateAsync(order);
 
