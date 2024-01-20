@@ -29,7 +29,14 @@
                         <img src="img/paper.png" width="80" height="70">
                         <p style="font-weight: 600;">Лист ожидания</p>
                         <div class="add-inf">
-                            <p>Срок выполнения до:<span>@_deadlineDate</span></p>
+                            @if (_deadlineDate != default)
+                            {
+                                <p>Срок выполнения до:<span>@_deadlineDate.ToShortDateString()</span></p>
+                            }
+                            else
+                            {
+                                <p>Срок выполнения до:<span>????</span></p>
+                            }
                         </div>
 
                     </div>
@@ -42,13 +49,14 @@
 
                 <h2>Покупки</h2>
 
-                <div class="blocks-catalog">
-                    @foreach(var workTemplate in _workTemplates ?? Array.Empty<WorkTemplate>())
+                <div class="catalogblk">
+                    @foreach(var workTemplateOrderStatus in _workTemplateOrderStatuses ?? Array.Empty<WorkTemplateOrderStatus>())
                     {
-                        <div style="background-color: #C9C0B3;" class="ctlblock">
+                        <div style="background-color: #C9C0B3;" class="blockctlg">
                             <img src="img/title-page.png" width="100" height="130">
-                            <p style="white-space: normal;">@(workTemplate.Title ?? "Subject not found")</p>
-                            <p>₽ @workTemplate.Price</p>
+                            <p style="white-space: normal;">@(workTemplateOrderStatus.WorkTemplate.Title ?? "Subject not found")</p>
+                            <p>₽ @workTemplateOrderStatus.WorkTemplate.Price</p>
+                            <p>Статус - @workTemplateOrderStatus.Status</p>
                         </div>
                     }
                 </div>
@@ -65,7 +73,8 @@
     private User _user;
     private IEnumerable<Order> _orders;
     private IEnumerable<WorkTemplate> _workTemplates;
-    private DateTime _deadlineDate = DateTime.Now;
+    private IEnumerable<WorkTemplateOrderStatus> _workTemplateOrderStatuses;
+    private DateTime _deadlineDate = default;
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,12 +88,18 @@
 
         _orders = _user
                 .Orders
-                .Where(x => x.Status != OrderStatus.Cancelled && x.Status != OrderStatus.Deferred);
+                .Where(x => x.Status != OrderStatus.Cancelled
+                    && x.Status != OrderStatus.Deferred
+                    && x.Status != OrderStatus.Fulfilled)
+                 .OrderBy(x => x.Status);
 
         _workTemplates = _orders
             .SelectMany(x => x.WorkTemplates);
+            
+        _workTemplateOrderStatuses = GetWorkTemplateOrderStatuses(_workTemplates);
 
-        _deadlineDate = _orders.Select(x => x.OrderDate).Min();
+        if (_orders.Count() > 0)
+            _deadlineDate = _orders.Select(x => x.OrderDate).Min();
     }
 
     private void SetDefaults()
@@ -92,5 +107,28 @@
         _user = User.Default;
         _orders = Enumerable.Empty<Order>();
         _workTemplates = Enumerable.Empty<WorkTemplate>();
+    }
+
+    private IEnumerable<WorkTemplateOrderStatus> GetWorkTemplateOrderStatuses(IEnumerable<WorkTemplate> workTemplates)
+    {
+        foreach (var workTemplate in _workTemplates)
+        {
+            var currentOrder = _orders
+                    .FirstOrDefault(x => x
+                        .WorkTemplates
+                            .FirstOrDefault(x => x.Id == workTemplate.Id) != null);
+
+            yield return new WorkTemplateOrderStatus()
+            {
+                WorkTemplate = workTemplate,
+                Status = currentOrder.Status,
+            };
+        }
+    }
+
+    class WorkTemplateOrderStatus
+    {
+        public WorkTemplate WorkTemplate { get; set; }
+        public OrderStatus Status { get; set; }
     }
 }
