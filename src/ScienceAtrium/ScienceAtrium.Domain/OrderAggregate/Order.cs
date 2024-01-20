@@ -23,7 +23,7 @@ public class Order : Entity
     public Order(Guid id) : base(id)
     {
 		_workTemplatesLink = new();
-        _status = OrderStatus.Deferred;
+        _status = OrderStatus.Delayed;
         _paymentMethod = Paymentmethod.YooMoney;
     }
 

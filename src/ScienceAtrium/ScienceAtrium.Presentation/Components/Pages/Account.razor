@@ -56,7 +56,7 @@
                             <img src="img/title-page.png" width="100" height="130">
                             <p style="white-space: normal;">@(workTemplateOrderStatus.WorkTemplate.Title ?? "Subject not found")</p>
                             <p>₽ @workTemplateOrderStatus.WorkTemplate.Price</p>
-                            <p>Статус - @workTemplateOrderStatus.Status</p>
+                            <p>Статус - @GetTranslatedStatus(workTemplateOrderStatus.Status)</p>
                         </div>
                     }
                 </div>
@@ -89,13 +89,13 @@
         _orders = _user
                 .Orders
                 .Where(x => x.Status != OrderStatus.Cancelled
-                    && x.Status != OrderStatus.Deferred
+                    && x.Status != OrderStatus.Delayed
                     && x.Status != OrderStatus.Fulfilled)
                  .OrderBy(x => x.Status);
 
         _workTemplates = _orders
             .SelectMany(x => x.WorkTemplates);
-            
+
         _workTemplateOrderStatuses = GetWorkTemplateOrderStatuses(_workTemplates);
 
         if (_orders.Count() > 0)
@@ -124,6 +124,26 @@
                 Status = currentOrder.Status,
             };
         }
+    }
+
+    private string GetTranslatedStatus(OrderStatus orderStatus)
+    {
+        if (orderStatus == OrderStatus.Pending)
+            return "В обработке";
+
+        if (orderStatus == OrderStatus.Fulfilled)
+            return "Завершен";
+
+        if (orderStatus == OrderStatus.Cancelled)
+            return "Отменен";
+
+        if (orderStatus == OrderStatus.Delayed)
+            return "Отложен";
+
+        if (orderStatus == OrderStatus.Expired)
+            return "Нарушены сроки";
+
+        return "???";
     }
 
     class WorkTemplateOrderStatus

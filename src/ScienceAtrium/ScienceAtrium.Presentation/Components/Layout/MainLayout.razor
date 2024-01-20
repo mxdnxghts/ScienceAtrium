@@ -17,8 +17,8 @@
 					</ul>
 				</div>
 				<div class="nav-button">
-					<button class="btn white-btn" id="loginBtn">Вход</button>
-					<button class="btn" id="registerBtn">Регистрация</button>
+					<button class="btn white-btn" id="loginBtn" onclick="redirectToAuth()">Вход</button>
+					<button class="btn" id="registerBtn" onclick="redirectToAuth()">Регистрация</button>
 				</div>
 				<div class="nav-menu-btn">
 					<i class="bx bx-menu" onclick="myMenuFunction()"></i>
@@ -38,6 +38,10 @@
 			} else {
 				i.className = "nav-menu";
 			}
+		}
+
+		function redirectToAuth(){
+			window.location.href = "/auth";
 		}
 
 	</script>
