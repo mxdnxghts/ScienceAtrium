@@ -47,6 +47,8 @@ body {
   height: 100px;
   line-height: 100px;
   background: linear-gradient(rgba(39,39,39, 0.6), transparent);
+  background-size: cover;
+  background-repeat: no-repeat;
   z-index: 50000;
 }
 .nav-logo p{
@@ -346,8 +348,36 @@ h4{
   font-family: 'Montserrat Alternates', sans-serif;  
 }
 
+.sublist {
+  float: left;
+  margin-left: 30px;
+  margin-right: auto;
+  margin-top: 20px;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+
+.sublist option {
+  color: #7B7367;
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-size: 24px;
+  margin-top: 5px;
+}
+
+.sublist select {
+  width: 400px;
+  height: 35px;
+  background-color: #C9C0B3;
+  border: none;
+  border-radius: 10px;
+  margin-left: 10px;
+  padding-left: 10px;
+  color: #F7F8F1;
+  font-size: 16px;
+  box-shadow: 0 0 15px 1px rgb(123, 115, 103, 24);
+}
+
 .blocks-catalog{
-  font-size: 20px;
+  font-size: 18px;
   overflow-y: hidden;
   overflow-x: scroll;
   white-space: nowrap;
@@ -390,13 +420,10 @@ h4{
   color: #7B7367;
 }
 
-.btn-shop:hover{
-  background-color: #B7B5B5;
+.btn-shop:hover {
+  background-color: rgba(183, 181, 181, 0.44);
   color: #F7F8F1;
-}
-
-.btn-shop:hover{
-  background-color: #B7B5B5;
+  box-shadow: 1px 5px 7px 1px rgba(123, 115, 103, 0.59);
 }
 
 .blocks-catalog::-webkit-scrollbar {
@@ -747,7 +774,9 @@ h6{
   }
 
   .blocks-catalog {
-    margin-top: -150px;
+    margin-top: -200px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
 
   .ctlblock{
@@ -755,6 +784,8 @@ h6{
     height: 400px;
     margin: 30px 30px 30px 0;
     font-size: 26px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
 
   .ctlblock img {
@@ -765,6 +796,21 @@ h6{
   .ctlblock button {
     margin-top: 10px;
     width: 150px;
+    height: 50px;
+    font-size: 22px;
+  }
+
+  .sublist {
+    margin-top: -130px;
+  }
+  
+  .sublist label {
+    color: #7B7367;
+    font-size: 36px;
+  }
+  
+  .sublist select {
+    width: 600px;
     height: 50px;
     font-size: 22px;
   }
@@ -882,6 +928,10 @@ h6{
   }
   .nav-menu-btn i:hover{
     background: rgba(145, 171, 162, 0.83);
+  }
+
+  .nav-logo p {
+    margin-left: -10px;
   }
 
   body {
@@ -1014,7 +1064,7 @@ h6{
     height: 250px;
     margin: 20px;
     font-size: 14px;
-    margin-top: 180px;
+    margin-top: 240px;
   }
 
   .blocks-catalog button {
@@ -1031,6 +1081,22 @@ h6{
 
   .blocks-catalog p{
     margin-top: 10px;
+  }
+
+  .sublist {
+    margin-top: 20px;
+    z-index: 2000;
+  }
+  
+  .sublist label {
+    color: #7B7367;
+    font-size: 24px;
+  }
+  
+  .sublist select {
+    width: 400px;
+    height: 35px;
+    font-size: 16px;
   }
 
   h5 {
@@ -1108,7 +1174,7 @@ h6{
 }
 
 @media(max-width: 576px) {
-  body {
+  body { 
     overflow-x: hidden;
   }
 
@@ -1255,6 +1321,22 @@ h6{
 
   .blocks-catalog p{
     margin-top: 10px;
+  }
+
+  .sublist {
+    margin-top: 20px;
+    z-index: 2000;
+  }
+  
+  .sublist label {
+    color: #7B7367;
+    font-size: 18px;
+  }
+  
+  .sublist select {
+    width: 230px;
+    height: 35px;
+    font-size: 16px;
   }
 
   h5 {
