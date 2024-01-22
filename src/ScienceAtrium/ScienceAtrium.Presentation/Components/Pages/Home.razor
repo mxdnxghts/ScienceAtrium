@@ -6,6 +6,8 @@
 @inject IReader<Customer> CustomerReader
 @inject IMapper Mapper
 
+<link rel="stylesheet" href="css/main.css" />
+
 <section id="main" class="main">
 	<div class="container">
 
@@ -109,7 +111,7 @@
 
 		@foreach (var workTemplate in _workTemplates)
 		{
-			<div style="background-color: #C9C0B3;" class="ctlblock">
+			<div style="background-color: #91ABA2;" class="ctlblock">
 				<img src="img/title-page.png" width="80" height="100">
 				<p style="white-space: normal;">@workTemplate.Title</p>
 				<p>₽ @workTemplate.Price</p>
@@ -156,6 +158,7 @@
 	private readonly List<WorkTemplate> _workTemplates = [];
 	private Customer _currentUser;
 	private Order _currentOrder;
+	private Guid _subjectFilterId = Guid.Empty;
 
 	protected override async Task OnInitializedAsync()
 	{

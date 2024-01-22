@@ -144,7 +144,7 @@ body {
 
 .img-title-page{
   position: absolute;
-  margin-top: 50px;
+  margin-top: 30px;
   display: flex;
   top: 45%;
   left: 50%;
@@ -163,6 +163,8 @@ body {
 
 h2{
   text-align: center;
+  margin-left: 50%;
+  margin-right: 50%;
   margin-top: 30px;
   margin-bottom: 0;
   font-weight: 400;
@@ -283,6 +285,8 @@ h2{
 
 h3{
   text-align: center;
+  margin-left: 50%;
+  margin-right: 50%;
   margin-top: 30px;
   font-weight: 400;
   color: #7B7367;
@@ -333,6 +337,8 @@ h3{
 h4{
   text-align: center;
   margin-top: 30px;
+  margin-left: 50%;
+  margin-right: 50%;
   font-weight: 400;
   color: #7B7367;
   font-size: 48px;
@@ -341,13 +347,14 @@ h4{
 }
 
 .blocks-catalog{
-  font-size: 18px;
+  font-size: 20px;
   overflow-y: hidden;
   overflow-x: scroll;
   white-space: nowrap;
   word-break: break-all;
   color: #F7F8F1;
-  font-family: 'Montserrat Alternates', sans-serif;  
+  font-family: 'Montserrat Alternates', sans-serif;
+  margin-top: 20px;
 }
 
 .ctlblock{
@@ -364,17 +371,17 @@ h4{
 }
 
 .ctlblock:hover{
-  transform: scale(1.1);
+  transform: scale(1.03);
 }
 
 .blocks-catalog p{
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 .blocks-catalog button{
   width: 100px;
   height: 30px;
-  margin-top: 30px;
+  margin-top: 20px;
   border-radius: 10px;
   background-color: #D9D9D9;
   border: none;
@@ -406,6 +413,167 @@ h4{
   border-radius: 10px;      
   border: 3px solid #C9C0B3;  
 }
+
+/* .center {
+  display: flex;
+  justify-content: left;
+  align-items: self-start;
+  width: 100%;
+  height: 100%;
+  transform: translateY(50%);
+  z-index: 5000;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+
+.cont {
+  align-items: center;
+  justify-content: center;
+  margin-top: -10px;
+  margin-left: 30px;
+  display: block;
+  min-width: 231.5px;
+  width: 100% !important;
+  max-width: 483px;
+}
+
+.setting-description {
+  background-color: #A89B89;
+  border-radius: 10px 10px 0px 0px;
+
+  min-width: 231.5px;
+  width: 100% !important;
+  max-width: 480px;
+  margin-bottom: -10px;
+  box-shadow: 0 0 15px 2px rgb(123, 115, 103, 24);
+}
+
+h10 {
+  font-size: 12px;
+  font-family: 'Montserrat Alternates', sans-serif;
+  color: #F7F8F1;
+  margin-left: 5px !important;
+  letter-spacing: 0.8px;
+  font-family: Arial !important;
+}
+
+.wrapper-dropdown {
+  position: relative;
+  display: inline-block;
+  min-width: 231.5px;
+  width: 100% !important;
+  max-width: 480px;
+  min-height: 44px;
+  border-radius: 0px 0px 10px 10px;
+  background: #A89B89;
+  text-align: left;
+  color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-size: 16px;
+  box-shadow: 0px 5px 13px 0px rgb(123, 115, 103, 24);
+}
+
+
+.scrollable-menu {
+  height: 150px;
+  max-height: 90px;
+  overflow-x: scroll;
+}
+
+.arrow {
+  margin-left: 10px;
+  margin-right: 10px;
+  float: right;
+  rotate: 180deg;
+}
+
+.selected-display {
+  margin-left: 20px;
+}
+
+svg {
+  transition: all 0.3s;
+}
+
+.wrapper-dropdown::before {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+
+  margin-top: -2px;
+
+  border-width: 6px 6px 0 6px;
+  border-style: solid;
+  border-color: #F7F8F1 transparent;
+}
+
+.rotated {
+  transform: rotate(-180deg);
+}
+
+.wrapper-dropdown .dropdown {
+  transition: 0.3s;
+
+  position: absolute;
+  top: 120%;
+  right: 0;
+  left: 0;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  z-index: 3000;
+
+  border-radius: 10px;
+  box-shadow: inherit;
+  background: inherit;
+
+  -webkit-transform-origin: top;
+  -moz-transform-origin: top;
+  -ms-transform-origin: top;
+  transform-origin: top;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  opacity: 0;
+  visibility: hidden;
+}
+
+.wrapper-dropdown .dropdown li {
+  padding: 0 15px;
+  line-height: 45px;
+  overflow: hidden;
+  z-index: 3000;
+}
+
+.wrapper-dropdown .dropdown li:last-child {
+  border-bottom: none;
+}
+
+.dropdown {
+  padding: 0.5rem !important;
+}
+
+.wrapper-dropdown .dropdown li:hover {
+  background-color: rgba(239, 200, 123, 1);
+  border-radius: 10px;
+}
+
+.wrapper-dropdown.active .dropdown {
+  opacity: 1;
+  visibility: visible;
+
+  border-radius: 10px;
+} */
 
 .guarantees{
   margin-left: auto;
@@ -448,6 +616,8 @@ h4{
 
 h5{
   text-align: center;
+  margin-left: 50%;
+  margin-right: 50%;
   margin-top: 30px;
   font-weight: 400;
   color: #7B7367;
@@ -546,10 +716,16 @@ h5{
 
 h6{
   font-weight: 400;
+  margin-left: 50%;
+  margin-right: 50%;
   font-size: 48px;
   white-space: nowrap;
   color: #F7F8F1;
   font-family: 'Montserrat Alternates', sans-serif;  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .button-collection{
@@ -626,14 +802,25 @@ h6{
     margin-left: 300px;
   }
 
+  .img-title-page img {
+    margin-top: 140px;
+  }
+
   h2, h3, h4, h5, h6 {
     font-size: 60px;
+    margin-left: 50%;
+    margin-right: 50%;
+  }
+
+  h6 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
   }
 
   h2 {
     margin-top: -120px;
-    margin-left: 50%;
-    margin-right: 50%;
   }
 
   .fan-title img{
@@ -706,8 +893,6 @@ h6{
 
   h3 {
     margin-top: 50px;
-    margin-left: 50%;
-    margin-right: 50%;
   }
 
   .stgblock {
@@ -743,11 +928,6 @@ h6{
     width: 150px;
     height: 50px;
     font-size: 22px;
-  }
-
-  h5 {
-    margin-left: 50%;
-    margin-right: 50%;
   }
 
   .fan-file{
@@ -802,6 +982,10 @@ h6{
     font-size: 30px;
   }
 
+  .button-collection {
+    margin-top: 30px;
+  }
+
   .button-collection img {
     width: 40px;
     height: 40px;
@@ -819,8 +1003,6 @@ h6{
     width: 40px;
     height: 40px;
   }
-
-
 }
 
 @media(max-width: 992px) {
@@ -832,7 +1014,7 @@ h6{
   }
   .nav-menu{
     position: absolute;
-    top: -800px;
+    top: -870px;
     display: flex;
     justify-content: center;
     background: rgba(145, 171, 162, 0.83);
@@ -867,20 +1049,25 @@ h6{
     overflow-x: hidden;
   }
 
+  .work, .stages-of-work, .catalog, .guarantees {
+    height: auto;
+  }
+
   .text-main{
     font-size: 150px;
   }
 
   .right {
-    margin-top: -150px;
+    margin-top: -130px;
   }
   
   .left {
-    margin-top: 150px;
+    margin-top: 260px;
   }
 
   .mouse {
-    margin-left: 70px;
+    margin-left: 30px;
+    margin-top: 210px;
   }
 
   .keyboard {
@@ -888,21 +1075,22 @@ h6{
   }
 
   .img-title-page img {
-    margin-top: -130px;
+    margin-top: 30px;
     width: 400px;
     height: 550px;
   }
 
   h2 {
-    margin-left: 70%;
-    margin-right: 30%;
+    margin-left: 50%;
+    margin-right: 50%;
     font-size: 42px;
-    margin-top: 30px;
+    margin-top: -150px;
   }
 
   .blok-work {
     font-size: 20px;
-    margin-top: 30px;
+    margin-top: -60px;
+    margin-bottom: 60px;
   }
 
   .blok-work p {
@@ -914,8 +1102,35 @@ h6{
   }
 
   .fan-title img {
-    width: 250px;
-    height: 350px;
+    width: 230px;
+    height: 320px;
+  }
+
+  .title-one{
+    margin-top: 130px;
+    margin-left: -90px;
+  }
+
+  .title-two{
+    margin-left: -10px;
+    margin-top: 50px;
+  }
+
+  .title-three{
+    margin-left: 30px;
+    margin-top: -50px;
+
+  }
+
+  .title-four{
+    margin-left: -10px;
+    margin-top: -170px;
+
+  }
+
+  .title-five{
+    margin-left: -80px;
+    margin-top: -220px;
   }
 
   .lab {
@@ -941,6 +1156,15 @@ h6{
     font-size: 20px;
   }
 
+  .blocks-stages {
+    margin-bottom: 80px;
+  }
+
+  .stgblock img {
+    width: 60px;
+    height: 60px;
+  }
+
   h4 {
     font-size: 42px;
     margin-top: 20px;
@@ -951,10 +1175,19 @@ h6{
     height: 250px;
     margin: 20px;
     font-size: 14px;
+    margin-top: 180px;
   }
 
   .blocks-catalog button {
+    width: 70px;
+    height: 30px;
+    font-size: 12px;
     margin-top: 10px;
+  }
+
+  .blocks-catalog img {
+    width: 70px;
+    height: 90px;
   }
 
   .blocks-catalog p{
@@ -967,8 +1200,8 @@ h6{
   }
 
   .fan-file img {
-    width: 300px;
-    height: 400px;
+    width: 260px;
+    height: 350px;
   }
 
   .guarantees {
@@ -977,7 +1210,7 @@ h6{
 
   .block-guarantees {
     font-size: 20px;
-    margin-top: -110px;
+    margin-top: -80px;
   }
 
   .calblock {
@@ -1002,19 +1235,35 @@ h6{
 
   .file-one{
     margin-top: 260px;
+    margin-left: 260px;
   }
   
   .file-two{
     margin-top: 160px;
+    margin-left: 260px;
   }
   
   .file-three{
     margin-top: 60px;
+    margin-left: 290px;
   }
   
   .file-four{
-    margin-top: -10px;
-    margin-left: 380px;
+    margin-top: 5px;
+    margin-left: 370px;
+  }
+
+  h6 {
+    font-size: 38px;
+  }
+
+  .footer {
+    font-size: 30px;
+  }
+
+  .mailto img{
+    width: 30px;
+    height: 30px;
   }
   
 }
@@ -1022,6 +1271,10 @@ h6{
 @media(max-width: 576px) {
   body {
     overflow-x: hidden;
+  }
+
+  .work, .stages-of-work, .catalog, .guarantees {
+    height: auto;
   }
 
   .text-main{
@@ -1053,14 +1306,14 @@ h6{
 
   h2 {
     font-size: 34px;
-    margin-top: 30px;
-    text-align: right;
+    margin-top: -150px;
+    text-align: center;
     white-space: normal;
   }
 
   .blok-work {
     font-size: 16px;
-    margin-top: 30px;
+    margin-top: -30px;
     display: inline-block;
   }
 
@@ -1094,32 +1347,32 @@ h6{
   }
 
   .title-one{
-    margin-top: 310px;
-    margin-left: -70px;
+    margin-top: 200px;
+    margin-left: -90px;
   }
   
   .title-two{
     margin-left: -20px;
-    margin-top: 250px;
+    margin-top: 120px;
   }
   
   .title-three{
-    margin-left: -10px;
-    margin-top: 170px;
+    margin-left: 10px;
+    margin-top: 40px;
   
   }
   
   .title-four{
     margin-left: -20px;
-    margin-top: 40px;
+    margin-top: -80px;
   
   }
   
   .title-five{
     transform: rotate(30deg);
     position: absolute;
-    margin-left: -70px;
-    margin-top: -10px;
+    margin-left: -90px;
+    margin-top: -160px;
   }
 
   h3 {
@@ -1144,6 +1397,10 @@ h6{
   h4 {
     font-size: 34px;
     margin-top: 20px;
+  }
+
+  .blocks-catalog {
+    margin-top: 10px;
   }
 
   .ctlblock {
@@ -1217,6 +1474,14 @@ h6{
   
   .file-three{
     margin-top: 100px;
+  }
+
+  .button-collection {
+    font-size: 24px;
+  }
+
+  .mailto {
+    font-size: 24px;
   }
 
 }

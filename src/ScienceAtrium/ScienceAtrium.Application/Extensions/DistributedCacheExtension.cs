@@ -42,6 +42,6 @@ public static class DistributedCacheExtensions
         if (data is null)
             return default;
 
-		return JsonConvert.DeserializeObject<TData>(data);
+		return JsonConvert.DeserializeObject<TData>(data, jsonSerializerSettings);
     }
 }

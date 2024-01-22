@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ScienceAtrium.Domain\ScienceAtrium.Domain.csproj" />
+    <ProjectReference Include="..\ScienceAtrium.Infrastructure\ScienceAtrium.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

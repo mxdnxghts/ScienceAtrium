@@ -1,4 +1,4 @@
-﻿@page "/signIn"
+﻿@page "/auth"
 @rendermode InteractiveServer
 
 <link rel="stylesheet" href="css/entrance-registration.css" />
@@ -8,7 +8,7 @@
 
         <div class="login-container" id="login">
             <div class="top">
-                <span>Нет аккаунта? <a id="registerBtn" href="/signIn">Зарегистрироваться</a></span>
+                <span>Нет аккаунта? <button id="registerBtn" onclick="register()">Зарегистрироваться</button></span>
                 <h1>Вход</h1>
             </div>
             <div class="input-box">
@@ -20,7 +20,7 @@
                 <i class="bx bx-lock-alt"></i>
             </div>
             <div class="input-box">
-                <button @onclick="SignInAsync" type="submit" class="submit" >Войти</button>
+                <button type="submit" @onclick="SignInAsync" class="submit">Войти</button>
             </div>
             <div class="two-col">
                 <div class="one">
@@ -34,10 +34,10 @@
         </div>
         <div class="register-container" id="register">
             <div class="top">
-                <span>Есть аккаунт? <a id="loginBtn" href="">Войти</a></span>
+                <span>Есть аккаунт? <button id="loginBtn" onclick="login()">Войти</button></span>
                 <h2>Регистрация</h2>
             </div>
-            <div class="two-forms">
+            <div class="input-box">
                 <div class="input-box">
                     <input @bind="_userName" type="text" class="input-field" placeholder="Ваше имя" required>
                     <i class="bx bx-user"></i>
@@ -52,7 +52,7 @@
                 <i class="bx bx-lock-alt"></i>
             </div>
             <div class="input-box">
-                <button @onclick="SignUpAsync" class="submit" value="Зарегистрироваться"></button>
+                <button type="submit" @onclick="SignUpAsync" class="submit">Зарегистрироваться</button>
             </div>
             <div class="two-col">
                 <div class="one">
@@ -65,6 +65,30 @@
     </div>
 
 </section>
+
+<script>
+    var a = document.getElementById("loginBtn");
+    var b = document.getElementById("registerBtn");
+    var x = document.getElementById("login");
+    var y = document.getElementById("register");
+
+    function login() {
+        x.style.left = "4px";
+        y.style.right = "-520px";
+        a.className += " white-btn";
+        b.className = "btn";
+        x.style.opacity = 1;
+        y.style.opacity = 0;
+    }
+    function register() {
+        x.style.left = "-510px";
+        y.style.right = "5px";
+        a.className = "btn";
+        b.className += " white-btn";
+        x.style.opacity = 0;
+        y.style.opacity = 1;
+    }
+</script>
 
 @code {
     private string _userName;

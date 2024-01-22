@@ -14,7 +14,7 @@ public class TestCustomerEntity
 	public void UpdateCurrentOrderTest()
 	{
 		var customer = new User(Guid.NewGuid(), UserType.Customer);
-		var order = new Order(Guid.NewGuid()).UpdateStatus(Status.Fulfilled);
+		var order = new Order(Guid.NewGuid()).UpdateStatus(OrderStatus.Fulfilled);
 		customer.AddOrder(order);
 		customer.UpdateOrder(x => x.Id == order.Id, new Order(Guid.Empty));
 

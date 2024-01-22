@@ -382,12 +382,17 @@ body {
     .two-col input {
         width: 30px;
         height: 30px;
+<<<<<<< HEAD
         margin-top: -1px;
+=======
+        margin-top: -2px;
+>>>>>>> c8bcf889f9ab21917c48dc92174978f799e72e05
     }
     
     .two-col .one {
         display: flex;
         gap: 5px;
+<<<<<<< HEAD
         font-size: 20px;
     }
 
@@ -407,6 +412,9 @@ body {
     .input-box label {
         margin-right: 10px;
     } */
+=======
+    }
+>>>>>>> c8bcf889f9ab21917c48dc92174978f799e72e05
 }
 
 @media(max-width: 992px){
