@@ -4,5 +4,5 @@ public enum WorkTemplateState
     WaitInBasket,
     ReadyToPay,
     Paid,
-    Deferred,
+    Delayed,
 }

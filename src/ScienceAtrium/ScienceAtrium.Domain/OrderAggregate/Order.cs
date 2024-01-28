@@ -69,8 +69,8 @@ public class Order : Entity
     public Guid? ExecutorId { get; private set; }
     public IReadOnlyCollection<WorkTemplate> WorkTemplates => GetWorkTemplates();
     public IReadOnlyCollection<OrderWorkTemplate> WorkTemplatesLink => _workTemplatesLink;
-    public bool IsReadyToPay =>
-        WorkTemplates?.Count > 1
+	public bool IsReadyToPay =>
+        WorkTemplates?.Count > 0
         && TotalCost > 0
         && OrderDate >= DateTime.UtcNow;
 

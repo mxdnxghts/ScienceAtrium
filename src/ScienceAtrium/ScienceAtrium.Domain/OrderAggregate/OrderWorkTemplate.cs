@@ -21,7 +21,7 @@ public class OrderWorkTemplate
     public Order Order { get; set; }
     public Guid? WorkTemplateId { get; set; }
     public WorkTemplate WorkTemplate { get; set; }
-    public WorkTemplateState State { get; set; } = WorkTemplateState.Deferred;
+    public WorkTemplateState State { get; set; } = WorkTemplateState.Delayed;
     public EntityState EntityState { get; set; } = EntityState.Detached;
 
     public override string ToString()

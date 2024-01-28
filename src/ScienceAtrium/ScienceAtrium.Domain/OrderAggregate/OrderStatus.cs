@@ -2,6 +2,7 @@
 public enum OrderStatus
 {
     Delayed,
+    PaymentWait,
     Pending,
     Fulfilled,
     Cancelled,
