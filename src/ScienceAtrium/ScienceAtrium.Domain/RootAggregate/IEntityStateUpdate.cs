@@ -9,7 +9,7 @@ public interface IEntityStateUpdate<TEntity, TResult>where TEntity : Entity
 	/// <param name="entity"></param>
 	/// <param name="entityState"></param>
 	/// <returns></returns>
-	TEntity UpdateState(TEntity entity, EntityState entityState);/// <summary>
+	TResult UpdateState(TEntity entity, EntityState entityState);/// <summary>
 	/// Update state of <paramref name="entity"/>
 	/// </summary>
 	/// <param name="entity"></param>

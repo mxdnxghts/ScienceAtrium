@@ -125,7 +125,7 @@ public class User : Entity
     public User UpdateOrder(Func<Order, bool> funcGetOrder, Order newOrder)
     {
         var order = _currentOrders.FirstOrDefault(funcGetOrder);
-        if (order?.IsEmpty() != false)
+        if (order?.IsEmpty() == false)
 			return this;
 
 		_currentOrders.Remove(order);
