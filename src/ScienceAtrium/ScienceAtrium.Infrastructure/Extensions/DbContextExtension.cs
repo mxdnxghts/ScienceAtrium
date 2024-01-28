@@ -18,7 +18,8 @@ public static class DbContextExtension
         {
             var changes = context.SaveChanges();
             transaction?.Commit();
-            return changes;
+			context.ChangeTracker.Clear();
+			return changes;
         }
         catch (Exception e) when (e is DbUpdateConcurrencyException or DbUpdateException)
         {
@@ -44,13 +45,14 @@ public static class DbContextExtension
             var changes = await context.SaveChangesAsync(cancellationToken);
             if (transaction is not null)
                 await transaction.CommitAsync(cancellationToken);
+            context.ChangeTracker.Clear();
             return changes;
         }
         catch (Exception e) when (e is DbUpdateConcurrencyException or DbUpdateException)
         {
             logger?.Error(e, e.Message);
             if (transaction is not null)
-             await transaction.RollbackAsync(cancellationToken);
+                await transaction.RollbackAsync(cancellationToken);
         }
         catch (Exception e)
         {
