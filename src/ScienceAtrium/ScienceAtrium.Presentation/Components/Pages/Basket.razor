@@ -32,7 +32,7 @@
 
                     else {
                         <div style="background-color: #C9C0B3;" class="ctlblock">
-                            <p style="white-space: normal;">Nothing to show</p>
+                            <span class="price">Nothing to show</span>
                         </div>
                     }
 
@@ -72,7 +72,8 @@
     protected override async Task OnInitializedAsync()
     {
         _currentUser = await Mediator.Send(new GetCachedCustomerQuery());
-        _currentOrder = await Mediator.Send(new GetOrderByCustomerIdQuery(_currentUser.Id));
+        _currentOrder = await Mediator.Send(
+            new GetOrderByCustomerIdWithStatusQuery(_currentUser.Id, OrderStatus.Delayed));
 
         RefreshWorkTemplates(_currentOrder);
 
@@ -87,18 +88,20 @@
             // handle when the order isn't ready to be payed
             return;
         }
-        _currentOrder.UpdateStatus(OrderStatus.Pending);
-        _currentUser.UpdateOrder(x => x.Id == _currentOrder.Id, _currentOrder);
+        _currentOrder.UpdateStatus(OrderStatus.PaymentWait);
 
         await ApplicationTransactionService
-            .BeginTransactionAsync(IsolationLevel.RepeatableRead, async () =>
+            .BeginTransactionScopeAsync(async () =>
         {
             await Mediator.Send(new UpdateOrderCommand(_currentOrder));
             await Mediator.Send(new UpdateOrderWorkTemplateAfterPayingCommand(_currentOrder.Id));
-            await Mediator.Send(new SetCachedCustomerCommand(_currentUser));
         });
 
-        RefreshWorkTemplates(Order.Default);
+        _currentUser = await Mediator.Send(new GetCustomerByIdQuery(_currentUser.Id));
+
+        await Mediator.Send(new SetCachedCustomerCommand(_currentUser));
+
+        RefreshWorkTemplates(_currentOrder);
         await Task.Delay(1000);
         NavigationManager.NavigateTo("/account");
     }
