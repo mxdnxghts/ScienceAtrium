@@ -30,7 +30,7 @@ public class UserRepositoryTests
             mc.CreateMap<User, Customer>();
             mc.CreateMap<User, Executor>();
         }).CreateMapper();
-		_userRepository = new UserRepository<Customer>(_applicationContext, null, mapper);
+		_userRepository = new UserRepository<Customer>(_applicationContext, null, mapper, null);
 
         _names = new List<string>
         {

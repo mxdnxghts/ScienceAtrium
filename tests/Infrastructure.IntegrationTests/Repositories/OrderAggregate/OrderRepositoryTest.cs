@@ -51,10 +51,10 @@ public class OrderRepositoryTest
             .UpdateUserType(user.UserType) as Executor);
         }).CreateMapper();
 
-        _customerBase = new UserRepository<Customer>(_applicationContext, null, _mapper);
-        _customerReader = new UserRepository<Customer>(_applicationContext, null, _mapper);
-        _executorBase = new UserRepository<Executor>(_applicationContext, null, _mapper);
-        _executorReader = new UserRepository<Executor>(_applicationContext, null, _mapper);
+        _customerBase = new UserRepository<Customer>(_applicationContext, null, _mapper, null);
+        _customerReader = new UserRepository<Customer>(_applicationContext, null, _mapper, null);
+        _executorBase = new UserRepository<Executor>(_applicationContext, null, _mapper, null);
+        _executorReader = new UserRepository<Executor>(_applicationContext, null, _mapper, null);
 
         _expression = x => x.Id != Guid.Empty;
 

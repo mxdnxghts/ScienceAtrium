@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using ScienceAtrium.Domain.Exceptions;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Infrastructure.Data;
@@ -22,13 +23,15 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
     private readonly ApplicationContext _context;
     private readonly ILogger _logger;
     private readonly IMapper _mapper;
+    private readonly IDistributedCache _cache;
     private DbSet<TUser> Users { get; }
 
-    public UserRepository(ApplicationContext context, ILogger logger, IMapper mapper)
+    public UserRepository(ApplicationContext context, ILogger logger, IMapper mapper, IDistributedCache cache)
     {
         _context = context;
         _logger = logger;
         _mapper = mapper;
+        _cache = cache;
         Users = _context.Set<TUser>();
     }
     public IQueryable<TUser> All => Users

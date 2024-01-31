@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
-namespace ScienceAtrium.Application.Extensions;
+namespace ScienceAtrium.Infrastructure.Extensions;
 public static class DistributedCacheExtensions
 {
     /// <summary>
