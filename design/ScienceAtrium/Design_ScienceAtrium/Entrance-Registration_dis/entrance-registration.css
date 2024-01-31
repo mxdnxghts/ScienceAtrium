@@ -228,6 +228,23 @@ body {
     font-family: 'Montserrat Alternates', sans-serif;
 }
 
+/* .input-box .check {
+    width: 15px;
+    height: 15px;
+    float: right;
+    margin-top: 2px;
+}
+
+.input-box .checkps {
+    float: right;
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+.input-box label {
+    margin-right: 10px;
+} */
+
 .submit {
     font-size: 15px;
     font-weight: 500;
@@ -261,6 +278,11 @@ body {
 .two-col .one {
     display: flex;
     gap: 5px;
+    font-size: 13px;
+}
+
+.two-col input {
+    margin-top: 2px;
 }
 
 .two label a {
@@ -360,13 +382,39 @@ body {
     .two-col input {
         width: 30px;
         height: 30px;
+<<<<<<< HEAD
+        margin-top: -1px;
+=======
         margin-top: -2px;
+>>>>>>> c8bcf889f9ab21917c48dc92174978f799e72e05
     }
     
     .two-col .one {
         display: flex;
         gap: 5px;
+<<<<<<< HEAD
+        font-size: 20px;
     }
+
+    /* .input-box .check {
+        width: 20px;
+        height: 20px;
+        float: right;
+        margin-top: 5px;
+    }
+    
+    .input-box .checkps {
+        float: right;
+        margin-top: 10px;
+        font-size: 20px;
+    }
+    
+    .input-box label {
+        margin-right: 10px;
+    } */
+=======
+    }
+>>>>>>> c8bcf889f9ab21917c48dc92174978f799e72e05
 }
 
 @media(max-width: 992px){

@@ -356,14 +356,14 @@ h4{
   font-family: 'Montserrat Alternates', sans-serif;
 }
 
-.sublist label {
+.sublist option {
   color: #7B7367;
   font-family: 'Montserrat Alternates', sans-serif;
   font-size: 24px;
   margin-top: 5px;
 }
 
-.sublist input {
+.sublist select {
   width: 400px;
   height: 35px;
   background-color: #C9C0B3;
@@ -809,7 +809,7 @@ h6{
     font-size: 36px;
   }
   
-  .sublist input {
+  .sublist select {
     width: 600px;
     height: 50px;
     font-size: 22px;
@@ -1093,7 +1093,7 @@ h6{
     font-size: 24px;
   }
   
-  .sublist input {
+  .sublist select {
     width: 400px;
     height: 35px;
     font-size: 16px;
@@ -1333,7 +1333,7 @@ h6{
     font-size: 18px;
   }
   
-  .sublist input {
+  .sublist select {
     width: 230px;
     height: 35px;
     font-size: 16px;
