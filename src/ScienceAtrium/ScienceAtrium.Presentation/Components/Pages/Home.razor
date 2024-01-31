@@ -107,6 +107,18 @@
 
 	<h4>Каталог</h4>
 
+	<div class="sublist">
+		
+		<label for="list-subjects">Выберите предмет:</label>
+		<select id="list-subjects" name="list-subjects" @bind="_workTemplateFilter">
+		@foreach(var workTemplate in _workTemplates)
+			{
+				<option value="@workTemplate.Id">@workTemplate.Title</option>
+			}
+		</select>
+
+	</div>
+
 	<div class="blocks-catalog">
 
 		@foreach (var workTemplate in _workTemplates)
@@ -159,14 +171,20 @@
 	private Customer _currentUser;
 	private Order _currentOrder;
 	private Guid _subjectFilterId = Guid.Empty;
+	private Guid _workTemplateFilter = Guid.Empty;
 
 	protected override async Task OnInitializedAsync()
 	{
-		await SetCachedCustomerAsync(_currentUser);
+		await Mediator.Send(new SetCachedCustomerCommand(await GetCustomerAsync()));
 		var workTemplates = await Mediator.Send(new GetWorkTemplateListQuery());
 		_workTemplates.AddRange(workTemplates);
 		_currentUser = await Mediator.Send(new GetCachedCustomerQuery());
 		_currentOrder = await GetOrderAsync(_currentUser.Id);
+	}
+
+	private async Task ApplyFilter()
+	{
+		// TODO: implement filtration of WorkTemplates by chosen _workTemplateFilter (i.e. by Subject)
 	}
 
 	private async Task AddWorkTemplateAsync(WorkTemplate workTemplate)
@@ -175,22 +193,14 @@
 		await MakeOrderAsync(_currentOrder, _currentUser.Id);
 	}
 
-	[Obsolete("Change parameter of inside method's call when auth service will be added")]
-	private async Task SetCachedCustomerAsync(Customer customer)
-	{
-		if (_currentOrder is null || _currentOrder.IsEmpty())
-			await Mediator.Send(new SetCachedCustomerCommand(await GetCustomerAsync()));
-	}
-
 	private async Task<Customer> GetCustomerAsync()
 	{
-		var results = await Mediator.Send(new GetCustomerListQuery());
-		return results.Find(x => x.Id != Guid.Empty) ?? Mapper.Map<Customer>(User.Default);
+		return await Mediator.Send(new GetCustomerByPredicateQuery(x => x.Id != Guid.Empty));
 	}
 
 	private async Task<Order> GetOrderAsync(Guid customerId)
 	{
-		var order = await Mediator.Send(new GetOrderByCustomerIdQuery(customerId));
+		var order = await Mediator.Send(new GetOrderByCustomerIdWithStatusQuery(customerId, OrderStatus.Delayed));
 		if (order.Equals(Order.Default))
 			return new Order(Guid.NewGuid()).UpdateCustomer(CustomerReader, _currentUser);
 		return order;
@@ -198,7 +208,7 @@
 
 	private async Task MakeOrderAsync(Order order, Guid customerId)
 	{
-		var dbOrder = await Mediator.Send(new GetOrderByCustomerIdQuery(customerId));
+		var dbOrder = await Mediator.Send(new GetOrderByCustomerIdWithStatusQuery(customerId, OrderStatus.Delayed));
 
 		// is not exists
 		if (dbOrder.IsEmpty())

@@ -47,6 +47,8 @@ body {
   height: 100px;
   line-height: 100px;
   background: linear-gradient(rgba(39,39,39, 0.6), transparent);
+  background-size: cover;
+  background-repeat: no-repeat;
   z-index: 50000;
 }
 .nav-logo p{
@@ -346,15 +348,43 @@ h4{
   font-family: 'Montserrat Alternates', sans-serif;  
 }
 
+.sublist {
+  float: left;
+  margin-left: 30px;
+  margin-right: auto;
+  margin-top: 20px;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+
+.sublist label {
+  color: #7B7367;
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-size: 24px;
+  margin-top: 5px;
+}
+
+.sublist input {
+  width: 400px;
+  height: 35px;
+  background-color: #C9C0B3;
+  border: none;
+  border-radius: 10px;
+  margin-left: 10px;
+  padding-left: 10px;
+  color: #F7F8F1;
+  font-size: 16px;
+  box-shadow: 0 0 15px 1px rgb(123, 115, 103, 24);
+}
+
 .blocks-catalog{
-  font-size: 20px;
+  font-size: 18px;
   overflow-y: hidden;
   overflow-x: scroll;
   white-space: nowrap;
   word-break: break-all;
   color: #F7F8F1;
-  font-family: 'Montserrat Alternates', sans-serif;
-  margin-top: 20px;
+  font-family: 'Montserrat Alternates', sans-serif; 
+  margin-top: 20px; 
 }
 
 .ctlblock{
@@ -390,13 +420,10 @@ h4{
   color: #7B7367;
 }
 
-.btn-shop:hover{
-  background-color: #B7B5B5;
+.btn-shop:hover {
+  background-color: rgba(183, 181, 181, 0.44);
   color: #F7F8F1;
-}
-
-.btn-shop:hover{
-  background-color: #B7B5B5;
+  box-shadow: 1px 5px 7px 1px rgba(123, 115, 103, 0.59);
 }
 
 .blocks-catalog::-webkit-scrollbar {
@@ -413,167 +440,6 @@ h4{
   border-radius: 10px;      
   border: 3px solid #C9C0B3;  
 }
-
-/* .center {
-  display: flex;
-  justify-content: left;
-  align-items: self-start;
-  width: 100%;
-  height: 100%;
-  transform: translateY(50%);
-  z-index: 5000;
-  font-family: 'Montserrat Alternates', sans-serif;
-}
-
-.cont {
-  align-items: center;
-  justify-content: center;
-  margin-top: -10px;
-  margin-left: 30px;
-  display: block;
-  min-width: 231.5px;
-  width: 100% !important;
-  max-width: 483px;
-}
-
-.setting-description {
-  background-color: #A89B89;
-  border-radius: 10px 10px 0px 0px;
-
-  min-width: 231.5px;
-  width: 100% !important;
-  max-width: 480px;
-  margin-bottom: -10px;
-  box-shadow: 0 0 15px 2px rgb(123, 115, 103, 24);
-}
-
-h10 {
-  font-size: 12px;
-  font-family: 'Montserrat Alternates', sans-serif;
-  color: #F7F8F1;
-  margin-left: 5px !important;
-  letter-spacing: 0.8px;
-  font-family: Arial !important;
-}
-
-.wrapper-dropdown {
-  position: relative;
-  display: inline-block;
-  min-width: 231.5px;
-  width: 100% !important;
-  max-width: 480px;
-  min-height: 44px;
-  border-radius: 0px 0px 10px 10px;
-  background: #A89B89;
-  text-align: left;
-  color: #F7F8F1;
-  font-family: 'Montserrat Alternates', sans-serif;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  font-size: 16px;
-  box-shadow: 0px 5px 13px 0px rgb(123, 115, 103, 24);
-}
-
-
-.scrollable-menu {
-  height: 150px;
-  max-height: 90px;
-  overflow-x: scroll;
-}
-
-.arrow {
-  margin-left: 10px;
-  margin-right: 10px;
-  float: right;
-  rotate: 180deg;
-}
-
-.selected-display {
-  margin-left: 20px;
-}
-
-svg {
-  transition: all 0.3s;
-}
-
-.wrapper-dropdown::before {
-  position: absolute;
-  top: 50%;
-  right: 16px;
-
-  margin-top: -2px;
-
-  border-width: 6px 6px 0 6px;
-  border-style: solid;
-  border-color: #F7F8F1 transparent;
-}
-
-.rotated {
-  transform: rotate(-180deg);
-}
-
-.wrapper-dropdown .dropdown {
-  transition: 0.3s;
-
-  position: absolute;
-  top: 120%;
-  right: 0;
-  left: 0;
-
-  margin: 0;
-  padding: 0;
-
-  list-style: none;
-
-  z-index: 3000;
-
-  border-radius: 10px;
-  box-shadow: inherit;
-  background: inherit;
-
-  -webkit-transform-origin: top;
-  -moz-transform-origin: top;
-  -ms-transform-origin: top;
-  transform-origin: top;
-
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-
-  opacity: 0;
-  visibility: hidden;
-}
-
-.wrapper-dropdown .dropdown li {
-  padding: 0 15px;
-  line-height: 45px;
-  overflow: hidden;
-  z-index: 3000;
-}
-
-.wrapper-dropdown .dropdown li:last-child {
-  border-bottom: none;
-}
-
-.dropdown {
-  padding: 0.5rem !important;
-}
-
-.wrapper-dropdown .dropdown li:hover {
-  background-color: rgba(239, 200, 123, 1);
-  border-radius: 10px;
-}
-
-.wrapper-dropdown.active .dropdown {
-  opacity: 1;
-  visibility: visible;
-
-  border-radius: 10px;
-} */
 
 .guarantees{
   margin-left: auto;
@@ -908,7 +774,9 @@ h6{
   }
 
   .blocks-catalog {
-    margin-top: -150px;
+    margin-top: -200px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
 
   .ctlblock{
@@ -916,6 +784,8 @@ h6{
     height: 400px;
     margin: 30px 30px 30px 0;
     font-size: 26px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
 
   .ctlblock img {
@@ -926,6 +796,21 @@ h6{
   .ctlblock button {
     margin-top: 10px;
     width: 150px;
+    height: 50px;
+    font-size: 22px;
+  }
+
+  .sublist {
+    margin-top: -130px;
+  }
+  
+  .sublist label {
+    color: #7B7367;
+    font-size: 36px;
+  }
+  
+  .sublist input {
+    width: 600px;
     height: 50px;
     font-size: 22px;
   }
@@ -1045,6 +930,10 @@ h6{
     background: rgba(145, 171, 162, 0.83);
   }
 
+  .nav-logo p {
+    margin-left: -10px;
+  }
+
   body {
     overflow-x: hidden;
   }
@@ -1110,24 +999,24 @@ h6{
     margin-top: 130px;
     margin-left: -90px;
   }
-
+  
   .title-two{
     margin-left: -10px;
     margin-top: 50px;
   }
-
+  
   .title-three{
     margin-left: 30px;
     margin-top: -50px;
-
+  
   }
-
+  
   .title-four{
     margin-left: -10px;
     margin-top: -170px;
-
+  
   }
-
+  
   .title-five{
     margin-left: -80px;
     margin-top: -220px;
@@ -1175,7 +1064,7 @@ h6{
     height: 250px;
     margin: 20px;
     font-size: 14px;
-    margin-top: 180px;
+    margin-top: 240px;
   }
 
   .blocks-catalog button {
@@ -1192,6 +1081,22 @@ h6{
 
   .blocks-catalog p{
     margin-top: 10px;
+  }
+
+  .sublist {
+    margin-top: 20px;
+    z-index: 2000;
+  }
+  
+  .sublist label {
+    color: #7B7367;
+    font-size: 24px;
+  }
+  
+  .sublist input {
+    width: 400px;
+    height: 35px;
+    font-size: 16px;
   }
 
   h5 {
@@ -1269,7 +1174,7 @@ h6{
 }
 
 @media(max-width: 576px) {
-  body {
+  body { 
     overflow-x: hidden;
   }
 
@@ -1416,6 +1321,22 @@ h6{
 
   .blocks-catalog p{
     margin-top: 10px;
+  }
+
+  .sublist {
+    margin-top: 20px;
+    z-index: 2000;
+  }
+  
+  .sublist label {
+    color: #7B7367;
+    font-size: 18px;
+  }
+  
+  .sublist input {
+    width: 230px;
+    height: 35px;
+    font-size: 16px;
   }
 
   h5 {

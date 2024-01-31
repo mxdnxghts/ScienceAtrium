@@ -148,9 +148,10 @@ h1 {
   font-family: 'Montserrat Alternates', sans-serif;  
 }
 
-.btn-shop:hover{
-  background-color: #B7B5B5;
+.btn-shop:hover {
+  background-color: rgba(183, 181, 181, 0.44);
   color: #F7F8F1;
+  box-shadow: 1px 5px 7px 1px rgba(123, 115, 103, 0.59);
 }
 
 .ctlgblock:hover{

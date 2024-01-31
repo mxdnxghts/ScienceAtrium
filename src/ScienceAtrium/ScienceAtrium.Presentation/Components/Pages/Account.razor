@@ -96,7 +96,14 @@
         _workTemplates = _orders
             .SelectMany(x => x.WorkTemplates);
 
-        _workTemplateOrderStatuses = GetWorkTemplateOrderStatuses(_workTemplates);
+        var s = _orders
+            .SelectMany(x => x.WorkTemplatesLink)
+            .ToList();
+
+        _workTemplateOrderStatuses = GetWorkTemplateOrderStatuses(_orders
+            .SelectMany(x => x.WorkTemplatesLink)
+            .Where(x => x.State == WorkTemplateState.Paid)
+            .Select(x => x.WorkTemplate));
 
         if (_orders.Count() > 0)
             _deadlineDate = _orders.Select(x => x.OrderDate).Min();
@@ -111,7 +118,7 @@
 
     private IEnumerable<WorkTemplateOrderStatus> GetWorkTemplateOrderStatuses(IEnumerable<WorkTemplate> workTemplates)
     {
-        foreach (var workTemplate in _workTemplates)
+        foreach (var workTemplate in workTemplates)
         {
             var currentOrder = _orders
                     .FirstOrDefault(x => x
@@ -128,6 +135,9 @@
 
     private string GetTranslatedStatus(OrderStatus orderStatus)
     {
+        if (orderStatus == OrderStatus.PaymentWait)
+            return "Ожидание оплаты";
+
         if (orderStatus == OrderStatus.Pending)
             return "В обработке";
 
