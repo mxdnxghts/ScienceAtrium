@@ -11,13 +11,13 @@ public class UpdateOrderWorkTemplateAfterPayingHandler(ApplicationContext _conte
     {
         var orderWorkTemplates = await _context
             .OrderWorkTemplates
-            .Where(x => x.OrderId == request.OrderId)
+            .Where(x => x.OrderId == request.OrderId && x.State == WorkTemplateState.ReadyToPay)
             .ToListAsync(cancellationToken: cancellationToken);
 
         foreach (var orderWorkTemplate in orderWorkTemplates)
-            orderWorkTemplate.State = WorkTemplateState.Paid;
+			orderWorkTemplate.State = WorkTemplateState.Paid;
 
-        _context.OrderWorkTemplates.UpdateRange(orderWorkTemplates);
+		_context.OrderWorkTemplates.UpdateRange(orderWorkTemplates);
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
 }
