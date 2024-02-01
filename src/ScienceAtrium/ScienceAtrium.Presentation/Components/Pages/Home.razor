@@ -175,10 +175,9 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await Mediator.Send(new SetCachedCustomerCommand(await GetCustomerAsync()));
 		var workTemplates = await Mediator.Send(new GetWorkTemplateListQuery());
 		_workTemplates.AddRange(workTemplates);
-		_currentUser = await Mediator.Send(new GetCachedCustomerQuery());
+		_currentUser = await Mediator.Send(new GetCustomerByPredicateQuery(x => x.Id != Guid.Empty));
 		_currentOrder = await GetOrderAsync(_currentUser.Id);
 	}
 

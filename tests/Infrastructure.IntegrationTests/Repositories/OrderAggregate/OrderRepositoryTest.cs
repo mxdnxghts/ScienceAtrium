@@ -33,7 +33,7 @@ public class OrderRepositoryTest
     {
         _applicationContext = new ApplicationContext(GetDbContextOptions());
 
-        _orderRepository = new OrderRepository(_applicationContext, null);
+        _orderRepository = new OrderRepository(_applicationContext, null, null);
         _mapper = new MapperConfiguration(mc =>
         {
             //AddUserMapper(mc);
@@ -73,7 +73,7 @@ public class OrderRepositoryTest
     {
 		_applicationContext = new ApplicationContext(GetDbContextOptions());
 		var customer = _customerReader
-            .Get(x => x.Id != Guid.Empty);
+            .Get(predicate: x => x.Id != Guid.Empty);
 
         var order = MapOrder(customer);
 		_orderRepository.Create(order);
@@ -85,7 +85,7 @@ public class OrderRepositoryTest
         {
 			_orderRepository.Create(newOrder);
 		}
-		Assert.That(_orderRepository.Get(x => x.Id == order.Id),
+		Assert.That(_orderRepository.Get(order.Id),
 			Is.Not.EqualTo(Order.Default));
 	}
 
@@ -93,7 +93,7 @@ public class OrderRepositoryTest
     public void CreateOrderWithSampleWorkTemplatesTest()
     {
         _applicationContext = new ApplicationContext(GetDbContextOptions());
-        _orderRepository = new OrderRepository(_applicationContext, null);
+        _orderRepository = new OrderRepository(_applicationContext, null, null);
 
         var order = MapOrder();
 		_orderRepository.Create(order);
@@ -105,32 +105,32 @@ public class OrderRepositoryTest
         var count = order.WorkTemplates.ToList().Count;
 		order.AddWorkTemplate(workTemplate);
 
-        var s = _orderRepository.Get(x => x.Id == order.Id);
+        var s = _orderRepository.Get(order.Id);
 
 		_applicationContext = new ApplicationContext(GetDbContextOptions());
-        _orderRepository = new OrderRepository(_applicationContext, null);
+        _orderRepository = new OrderRepository(_applicationContext, null, null);
 
 		_orderRepository.Update(order);
-		Assert.That(_orderRepository.Get(x => x.Id == order.Id).WorkTemplates.Count,
+		Assert.That(_orderRepository.Get(order.Id).WorkTemplates.Count,
 			Is.AtLeast(count + 1));
 	}
 
     [Test]
     public void RemoveWorkTemplateTest()
     {
-        var order = _orderRepository.Get(x => x.Id != Guid.Empty);
+        var order = _orderRepository.Get(predicate: x => x.Id != Guid.Empty);
         var count = order.WorkTemplates.ToList().Count;
         order.RemoveWorkTemplate(x => x.Id != Guid.Empty);
         _orderRepository.Update(order);
 
-        Assert.That(_orderRepository.Get(x => x.Id == order.Id).WorkTemplates.Count,
+        Assert.That(_orderRepository.Get(order.Id).WorkTemplates.Count,
             Is.AtMost(count - 1));
     }
 
     [Test]
     public void GetOrderTest()
     {
-        var order = _orderRepository.Get(x =>
+        var order = _orderRepository.Get(predicate: x =>
             x.Id != Guid.Empty);
 
         Assert.That(order,
@@ -140,7 +140,7 @@ public class OrderRepositoryTest
     [Test]
     public async Task GetOrderAsyncTest()
     {
-        var order = await _orderRepository.GetAsync(x =>
+        var order = await _orderRepository.GetAsync(predicate: x =>
             x.Id != Guid.Empty);
 
         Assert.That(order,
@@ -152,7 +152,7 @@ public class OrderRepositoryTest
     {
         var order = MapOrder();
         _orderRepository.Create(order);
-        Assert.That(_orderRepository.Get(x => x.Id == order.Id),
+        Assert.That(_orderRepository.Get(order.Id),
             Is.Not.EqualTo(Order.Default));
     }
 
@@ -161,7 +161,7 @@ public class OrderRepositoryTest
     {
         var order = MapOrder();
         await _orderRepository.CreateAsync(order);
-        Assert.That(_orderRepository.Get(x => x.Id == order.Id),
+        Assert.That(_orderRepository.Get(order.Id),
             Is.Not.EqualTo(Order.Default));
     }
 
@@ -172,7 +172,7 @@ public class OrderRepositoryTest
             .FirstOrDefault(x => x.CustomerId != null && x.ExecutorId != null);
 
         _orderRepository.Delete(order);
-        Assert.That(_orderRepository.Get(x => x.Id == order.Id),
+        Assert.That(_orderRepository.Get(order.Id),
             Is.EqualTo(Order.Default));
     }
 
@@ -183,7 +183,7 @@ public class OrderRepositoryTest
             .FirstOrDefault(x => x.CustomerId != null && x.ExecutorId != null);
 
         await _orderRepository.DeleteAsync(order);
-        Assert.That(_orderRepository.Get(x => x.Id == order.Id),
+        Assert.That(_orderRepository.Get(order.Id),
             Is.EqualTo(Order.Default));
     }
 
@@ -196,7 +196,7 @@ public class OrderRepositoryTest
 
         _orderRepository.Update(order);
 
-        Assert.That(_orderRepository.Get(x => x.Id == order.Id).Status,
+        Assert.That(_orderRepository.Get(order.Id).Status,
             Is.Not.EqualTo(Order.Default.Status));
     }
 
@@ -209,7 +209,7 @@ public class OrderRepositoryTest
 
         await _orderRepository.UpdateAsync(order);
 
-        Assert.That(_orderRepository.Get(x => x.Id == order.Id).Status,
+        Assert.That(_orderRepository.Get(order.Id).Status,
             Is.Not.EqualTo(Order.Default.Status));
     }
 
@@ -250,9 +250,9 @@ public class OrderRepositoryTest
 
     private Order MapOrder(Customer? customer = null)
     {
-        customer ??= _customerReader.Get(x => x.UserType == UserType.Customer);
+        customer ??= _customerReader.Get(predicate: x => x.UserType == UserType.Customer);
 
-        var executor = _executorReader.Get(x => x.UserType == UserType.Executor);
+        var executor = _executorReader.Get(predicate: x => x.UserType == UserType.Executor);
 
 		return GetOrderEntity(customer, executor);
     }

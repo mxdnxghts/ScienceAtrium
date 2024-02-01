@@ -71,7 +71,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _currentUser = await Mediator.Send(new GetCachedCustomerQuery());
+        _currentUser = await Mediator.Send(new GetCustomerByPredicateQuery(x => x.Id != Guid.Empty));
         _currentOrder = await Mediator.Send(
             new GetOrderByCustomerIdWithStatusQuery(_currentUser.Id, OrderStatus.Delayed));
 

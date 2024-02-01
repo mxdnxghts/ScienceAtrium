@@ -92,7 +92,7 @@ public class UserRepositoryTests
     [Test]
     public void GetUserTest()
     {
-        var user = _userRepository.Get(x =>
+        var user = _userRepository.Get(predicate: x =>
             x.Id != Guid.Empty);
 
         Assert.That(user,
@@ -105,7 +105,7 @@ public class UserRepositoryTests
         var user = GetCustomerEntity();
 
         _userRepository.Create(user);
-        Assert.That(_userRepository.Get(x => x.Id == user.Id),
+        Assert.That(_userRepository.Get(predicate: x => x.Id == user.Id),
             Is.Not.EqualTo(User.Default));
     }
 
@@ -115,7 +115,7 @@ public class UserRepositoryTests
         var user = _userRepository.All.ToList()[0];
 
         _userRepository.Delete(user);
-        Assert.That(_userRepository.Get(x => x.Id == user.Id),
+        Assert.That(_userRepository.Get(predicate: x => x.Id == user.Id),
             Is.EqualTo(User.Default));
     }
 
@@ -128,7 +128,7 @@ public class UserRepositoryTests
 
         _userRepository.Update(user);
 
-        Assert.That(_userRepository.Get(x => x.Id == user.Id).Name,
+        Assert.That(_userRepository.Get(predicate: x => x.Id == user.Id).Name,
             Is.Not.EqualTo(oldUser.Name));
     }
 
