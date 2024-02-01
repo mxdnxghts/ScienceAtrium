@@ -39,7 +39,6 @@ public static class DependencyInjection
         serviceCollection.AddScoped<IOrderRepository<Order>, OrderRepository>();
         serviceCollection.AddScoped<IUserRepository<Customer>, UserRepository<Customer>>();
         serviceCollection.AddScoped<IUserRepository<Executor>, UserRepository<Executor>>();
-        serviceCollection.AddScoped<IWorkTemplateRepository<WorkTemplate>, WorkTemplateRepository>();
 
         serviceCollection.AddReaders();
 
