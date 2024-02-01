@@ -47,7 +47,7 @@ public abstract class Entity : IEqualityComparer<Entity>, IEquatable<Entity>, IE
     {
         if (reader is null)
             return true;
-        return reader.Exist(func);
+        return reader.Exist(predicate: func);
     }
 
     public bool IsValid<TReaderEntity>(IReader<TReaderEntity> reader)

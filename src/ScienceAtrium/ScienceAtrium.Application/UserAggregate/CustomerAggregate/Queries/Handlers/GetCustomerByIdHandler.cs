@@ -8,6 +8,6 @@ public class GetCustomerByIdHandler(IUserRepository<Customer> _userRepository)
 {
     public async Task<Customer> Handle(GetCustomerByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _userRepository.GetAsync(x => x.Id == request.CustomerId, cancellationToken);
+        return await _userRepository.GetAsync(request.CustomerId, cancellationToken: cancellationToken);
     }
 }

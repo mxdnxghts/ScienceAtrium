@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using ScienceAtrium.Domain.Exceptions;
+using ScienceAtrium.Domain.RootAggregate.Interfaces;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
@@ -49,7 +50,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
                 new ArgumentNullException(nameof(entity)));
         }
 
-        if (Exist(x => x.Id == entity.Id))
+        if (Exist(entity.Id))
             throw new CreationException(entity.Id);
 
         Users.Add(entity);
@@ -67,7 +68,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
                 new ArgumentNullException(nameof(entity)));
         }
 
-        if (await ExistAsync(x => x.Id == entity.Id, cancellationToken))
+        if (await ExistAsync(entity.Id, cancellationToken: cancellationToken))
             throw new CreationException(entity.Id);
 
         Users.Add(entity);
@@ -110,14 +111,20 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         _context?.Dispose();
     }
 
-    public bool Exist(Expression<Func<TUser, bool>> predicate)
-    {
-        return All.Any(predicate);
+    public bool Exist(Guid? id = null, Expression<Func<TUser, bool>>? predicate = null)
+	{
+		if (IsInvalidGetExpression(id, predicate))
+			return false;
+
+        return All.Any(predicate ?? (x => x.Id == id));
     }
 
-    public async Task<bool> ExistAsync(Expression<Func<TUser, bool>> predicate, CancellationToken cancellationToken = default)
-    {
-        return await All.AnyAsync(predicate, cancellationToken);
+    public async Task<bool> ExistAsync(Guid? id = null, Expression<Func<TUser, bool>>? predicate = null, CancellationToken cancellationToken = default)
+	{
+        if (IsInvalidGetExpression(id, predicate))
+            return false;
+
+        return await All.AnyAsync(predicate ?? (x => x.Id == id), cancellationToken);
     }
 
     public bool FitsConditions(TUser? entity)
@@ -125,7 +132,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         if (entity is null)
             return false;
 
-        if (!Exist(x => x.Id == entity.Id))
+        if (!Exist(entity.Id))
             return false;
 
         return true;
@@ -136,20 +143,45 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         if (entity is null)
             return false;
 
-        if (!await ExistAsync(x => x.Id == entity.Id, cancellationToken))
+        if (!await ExistAsync(entity.Id, cancellationToken: cancellationToken))
             return false;
 
         return true;
     }
 
-    public TUser Get(Expression<Func<TUser, bool>> predicate)
+    public TUser Get(Guid? id = null, Expression<Func<TUser, bool>>? predicate = null)
     {
-        return All.FirstOrDefault(predicate) ?? _mapper.Map<TUser>(User.Default);
+		if (IsInvalidGetExpression(id, predicate))
+            return _mapper.Map<TUser>(User.Default);
+
+		var cached = _cache.GetRecord<TUser>($"UserCached_{id}");
+		if (cached is not null)
+            return cached;
+
+        var user = All.FirstOrDefault(predicate ?? (x => x.Id == id))
+            ?? _mapper.Map<TUser>(User.Default);
+
+        if (!user.IsEmpty())
+            _cache.SetRecord($"UserCached_{user.Id}", user);
+        return user;
     }
 
-    public async Task<TUser> GetAsync(Expression<Func<TUser, bool>> predicate, CancellationToken cancellationToken = default)
-    {
-        return await All.FirstOrDefaultAsync(predicate, cancellationToken) ?? _mapper.Map<TUser>(User.Default);
+    public async Task<TUser> GetAsync(Guid? id = null, Expression<Func<TUser, bool>>? predicate = null, CancellationToken cancellationToken = default)
+	{
+		if (IsInvalidGetExpression(id, predicate))
+			return _mapper.Map<TUser>(User.Default);
+
+		var cached = await _cache.GetRecordAsync<TUser>($"UserCached_{id}", cancellationToken: cancellationToken);
+		if (cached is not null)
+            return cached;
+
+        var user = await All.FirstOrDefaultAsync(predicate ?? (x => x.Id == id), cancellationToken)
+            ?? _mapper.Map<TUser>(User.Default);
+
+        if (!user.IsEmpty())
+            await _cache.SetRecordAsync($"UserCached_{user.Id}", user, cancellationToken: cancellationToken);
+
+        return user;
     }
 
     public int Update(TUser entity)
@@ -176,14 +208,19 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
             _context.Orders.UpdateRange(entity.Orders);
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
-    }
+	}
 
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="user"></param>
-    /// <returns>count of iterations - count of <see cref="User.Orders"/></returns>
-    private int RemoveUserFromOrders(ref TUser user)
+	private bool IsInvalidGetExpression(Guid? id = null, Expression<Func<TUser, bool>>? predicate = null)
+    {
+        return (id == Guid.Empty || id is null) && predicate is null;
+	}
+
+	/// <summary>
+	///
+	/// </summary>
+	/// <param name="user"></param>
+	/// <returns>count of iterations - count of <see cref="User.Orders"/></returns>
+	private int RemoveUserFromOrders(ref TUser user)
     {
         foreach (var order in user.Orders)
         {

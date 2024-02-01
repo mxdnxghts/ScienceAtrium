@@ -6,6 +6,6 @@ public class DeleteOrderHandler(IOrderRepository<Order> _orderRepository) : IReq
 {
     public async Task<int> Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
     {
-        return await _orderRepository.DeleteAsync(await _orderRepository.GetAsync(x => x.Id == request.OrderId, cancellationToken), cancellationToken);
+        return await _orderRepository.DeleteAsync(await _orderRepository.GetAsync(request.OrderId, cancellationToken: cancellationToken), cancellationToken);
     }
 }

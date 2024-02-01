@@ -8,6 +8,6 @@ public class GetCustomerByPredicateHandler(IUserRepository<Customer> _userReposi
 {
     public async Task<Customer> Handle(GetCustomerByPredicateQuery request, CancellationToken cancellationToken)
     {
-        return await _userRepository.GetAsync(request.Predicate, cancellationToken);
+        return await _userRepository.GetAsync(predicate: request.Predicate, cancellationToken: cancellationToken);
     }
 }
