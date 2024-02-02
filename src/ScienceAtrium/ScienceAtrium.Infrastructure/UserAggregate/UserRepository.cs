@@ -50,7 +50,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
                 new ArgumentNullException(nameof(entity)));
         }
 
-        if (Exist(entity.Id))
+        if (Exist(predicate: x => x.Id == entity.Id))
             throw new CreationException(entity.Id);
 
         Users.Add(entity);
@@ -68,7 +68,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
                 new ArgumentNullException(nameof(entity)));
         }
 
-        if (await ExistAsync(entity.Id, cancellationToken: cancellationToken))
+        if (await ExistAsync(predicate: x => x.Id == entity.Id, cancellationToken: cancellationToken))
             throw new CreationException(entity.Id);
 
         Users.Add(entity);
@@ -132,7 +132,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         if (entity is null)
             return false;
 
-        if (!Exist(entity.Id))
+        if (!Exist(predicate: x => x.Id == entity.Id))
             return false;
 
         return true;
@@ -143,7 +143,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         if (entity is null)
             return false;
 
-        if (!await ExistAsync(entity.Id, cancellationToken: cancellationToken))
+        if (!await ExistAsync(predicate: x => x.Id == entity.Id, cancellationToken: cancellationToken))
             return false;
 
         return true;
