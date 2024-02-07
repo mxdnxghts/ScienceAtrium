@@ -78,7 +78,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _user = await Mediator.Send(new GetCachedCustomerQuery());
+        _user = await Mediator.Send(new GetCustomerQuery(Predicate: x => x.Id != Guid.Empty));
 
         if (_user is null)
         {
