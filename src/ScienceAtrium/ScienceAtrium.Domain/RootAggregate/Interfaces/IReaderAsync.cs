@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+﻿using ScienceAtrium.Domain.RootAggregate.Options;
 
 namespace ScienceAtrium.Domain.RootAggregate.Interfaces;
 
@@ -9,18 +9,16 @@ public interface IReaderAsync<TEntity> where TEntity : Entity
 	/// if you'll pass only a predicate, it will return an entity from the database
 	/// and 'll skip check in cache
 	/// </summary>
-	/// <param name="id">entity id</param>
-	/// <param name="predicate">predicate for function expression</param>
+	/// <param name="entityFindOptions"></param>
 	/// <returns></returns>
-	Task<TEntity> GetAsync(Guid? id = null, Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default);
+	Task<TEntity> GetAsync(EntityFindOptions<TEntity> entityFindOptions, CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// returns true or false depending exists entity in the database or not
-    /// </summary>
-    /// <param name="id">entity id</param>
-    /// <param name="predicate">predicate for function expression</param>
-    /// <returns></returns>
-    Task<bool> ExistAsync(Guid? id = null, Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default);
+	/// <summary>
+	/// returns true or false depending exists entity in the database or not
+	/// </summary>
+	/// <param name="entityFindOptions"></param>
+	/// <returns></returns>
+	Task<bool> ExistAsync(EntityFindOptions<TEntity> entityFindOptions, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// checks if the passed entity meets the conditions

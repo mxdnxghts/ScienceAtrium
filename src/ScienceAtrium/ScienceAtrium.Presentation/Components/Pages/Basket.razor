@@ -73,7 +73,9 @@
     {
         _currentUser = await Mediator.Send(new GetCustomerByPredicateQuery(x => x.Id != Guid.Empty));
         _currentOrder = await Mediator.Send(
-            new GetOrderByCustomerIdWithStatusQuery(_currentUser.Id, OrderStatus.Delayed));
+            new GetOrderQuery(
+                new EntityFindOptions<Order>(predicate: x => x.CustomerId == _currentUser.Id
+                                        && x.Status == OrderStatus.Delayed)));
 
         RefreshWorkTemplates(_currentOrder);
 

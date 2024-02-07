@@ -7,6 +7,6 @@ public class GetCustomerHandler(IUserRepository<Customer> _userRepository) : IRe
 {
 	public async Task<Customer> Handle(GetCustomerQuery request, CancellationToken cancellationToken)
 	{
-		return await _userRepository.GetAsync(request.CustomerId, request.Predicate, cancellationToken);
+		return await _userRepository.GetAsync(request.EntityFindOptions, cancellationToken);
 	}
 }
