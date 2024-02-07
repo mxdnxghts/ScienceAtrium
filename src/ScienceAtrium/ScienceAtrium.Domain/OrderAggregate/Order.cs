@@ -84,7 +84,7 @@ public class Order : Entity
         {
             _workTemplatesLink.Add(new OrderWorkTemplate(this, workTemplate)
             {
-                State = WorkTemplateState.WaitInBasket,
+                Status = OrderWorkTemplateStatus.WaitInBasket,
                 EntityState = EntityState.Added,
             });
         }

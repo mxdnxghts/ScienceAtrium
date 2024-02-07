@@ -177,7 +177,9 @@
 	{
 		var workTemplates = await Mediator.Send(new GetWorkTemplateListQuery());
 		_workTemplates.AddRange(workTemplates);
-		_currentUser = await Mediator.Send(new GetCustomerByPredicateQuery(x => x.Id != Guid.Empty));
+		_currentUser = await Mediator.Send(
+			new GetCustomerQuery(
+				new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)));
 		_currentOrder = await GetOrderAsync(_currentUser.Id);
 	}
 

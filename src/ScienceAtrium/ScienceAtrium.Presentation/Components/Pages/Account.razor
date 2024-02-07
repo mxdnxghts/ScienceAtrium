@@ -100,7 +100,7 @@
 
         _workTemplateOrderStatuses = GetWorkTemplateOrderStatuses(_orders
             .SelectMany(x => x.WorkTemplatesLink)
-            .Where(x => x.State == WorkTemplateState.Paid)
+            .Where(x => x.Status == OrderWorkTemplateStatus.Paid)
             .Select(x => x.WorkTemplate));
 
         if (_orders.Count() > 0)
