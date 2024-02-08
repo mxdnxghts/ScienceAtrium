@@ -6,13 +6,13 @@ using ScienceAtrium.Domain.RootAggregate.Options;
 using ScienceAtrium.Infrastructure.Data;
 
 namespace ScienceAtrium.Application.OrderAggregate.Commands.Handlers;
-public class PayOrderHandler(ApplicationTransactionService _applicationTransactionService, IMediator _mediator) : IRequestHandler<PayOrderCommand>
+public class PayOrderHandler(ApplicationTransactionService _applicationTransactionService, IMediator _mediator) : IRequestHandler<PayOrderCommand, bool>
 {
-    public async Task Handle(PayOrderCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(PayOrderCommand request, CancellationToken cancellationToken)
     {
         request.Order.UpdateOrderDate(request.OrderDate);
         if (!request.Order.IsReadyToPay)
-            return;
+            return false;
 
         request.Order.UpdateStatus(OrderStatus.PaymentWait);
 
@@ -23,13 +23,15 @@ public class PayOrderHandler(ApplicationTransactionService _applicationTransacti
                 await _mediator.Send(new UpdateOrderWorkTemplateAfterPayingCommand(request.Order.Id), cancellationToken);
             }, cancellationToken: cancellationToken);
 
-        var order = await _mediator.Send(
+        var updatedOrder = await _mediator.Send(
             new GetOrderQuery(
                 new EntityFindOptions<Order>(predicate: x => x.Id == request.Order.Id)),
             cancellationToken);
 
-        await _mediator.Send(new MoveUnpaidWorkTemplatesCommand(order), cancellationToken);
+        await _mediator.Send(new MoveUnpaidWorkTemplatesCommand(updatedOrder), cancellationToken);
 
         await _mediator.Send(new SetCachedCustomerCommand(request.Customer), cancellationToken);
+
+        return true;
     }
 }

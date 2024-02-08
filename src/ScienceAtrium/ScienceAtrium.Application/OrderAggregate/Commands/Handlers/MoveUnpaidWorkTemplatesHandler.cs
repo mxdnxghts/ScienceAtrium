@@ -4,7 +4,7 @@ using ScienceAtrium.Domain.RootAggregate.Interfaces;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Infrastructure.Data;
 
-namespace ScienceAtrium.Application.OrderAggregate.Commands;
+namespace ScienceAtrium.Application.OrderAggregate.Commands.Handlers;
 public class MoveUnpaidWorkTemplatesHandler(
     IOrderRepository<Order> _orderRepository,
     IReader<Customer> _reader,

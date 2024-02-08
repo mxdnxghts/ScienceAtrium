@@ -87,7 +87,15 @@
 
     private async Task PayAsync()
     {
-        await Mediator.Send(new PayOrderCommand(_currentUser, _currentOrder, _orderDate));
+        try
+        {
+            await Mediator.Send(new PayOrderCommand(_currentUser, _currentOrder, _orderDate));
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, ex.Message);
+            return;
+        }
 
         _currentUser = await Mediator.Send(new GetCustomerByIdQuery(_currentUser.Id));
 
