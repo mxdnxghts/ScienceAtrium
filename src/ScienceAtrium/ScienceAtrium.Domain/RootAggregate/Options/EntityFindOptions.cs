@@ -11,9 +11,14 @@ public sealed class EntityFindOptions<TEntity>(Guid? entityId = null, Expression
 
     public EntityFindOptions<TEntity> TryFindDatabase()
     {
-        if (Predicate is not null)
+        if (Predicate is not null || IsValidEntityId())
             _onlyDatabaseFind = true;
 
         return this;
     }
+
+    private bool IsValidEntityId()
+    {
+        return EntityId != null && EntityId != Guid.Empty;
+	}
 }
