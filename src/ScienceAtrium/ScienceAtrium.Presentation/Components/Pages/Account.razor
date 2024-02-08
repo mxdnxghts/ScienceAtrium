@@ -78,7 +78,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _user = await Mediator.Send(new GetCachedCustomerQuery());
+        _user = await Mediator.Send(
+            new GetCustomerQuery(
+                new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)));
 
         if (_user is null)
         {
@@ -91,18 +93,14 @@
                 .Where(x => x.Status != OrderStatus.Cancelled
                     && x.Status != OrderStatus.Delayed
                     && x.Status != OrderStatus.Fulfilled)
-                 .OrderBy(x => x.Status);
+                .OrderBy(x => x.Status);
 
         _workTemplates = _orders
             .SelectMany(x => x.WorkTemplates);
 
-        var s = _orders
-            .SelectMany(x => x.WorkTemplatesLink)
-            .ToList();
-
         _workTemplateOrderStatuses = GetWorkTemplateOrderStatuses(_orders
             .SelectMany(x => x.WorkTemplatesLink)
-            .Where(x => x.State == WorkTemplateState.Paid)
+            .Where(x => x.Status == OrderWorkTemplateStatus.Paid)
             .Select(x => x.WorkTemplate));
 
         if (_orders.Count() > 0)

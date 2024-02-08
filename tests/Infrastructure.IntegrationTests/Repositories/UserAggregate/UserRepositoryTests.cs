@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Infrastructure.IntegrationTests.Extensions;
 using Microsoft.EntityFrameworkCore;
+using ScienceAtrium.Domain.RootAggregate.Options;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
@@ -92,8 +93,8 @@ public class UserRepositoryTests
     [Test]
     public void GetUserTest()
     {
-        var user = _userRepository.Get(x =>
-            x.Id != Guid.Empty);
+        var user = _userRepository.Get(
+            new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty));
 
         Assert.That(user,
             Is.Not.EqualTo(User.Default));
@@ -105,7 +106,8 @@ public class UserRepositoryTests
         var user = GetCustomerEntity();
 
         _userRepository.Create(user);
-        Assert.That(_userRepository.Get(x => x.Id == user.Id),
+        Assert.That(_userRepository.Get(
+            new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)),
             Is.Not.EqualTo(User.Default));
     }
 
@@ -115,7 +117,8 @@ public class UserRepositoryTests
         var user = _userRepository.All.ToList()[0];
 
         _userRepository.Delete(user);
-        Assert.That(_userRepository.Get(x => x.Id == user.Id),
+        Assert.That(_userRepository.Get(
+            new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)),
             Is.EqualTo(User.Default));
     }
 
@@ -128,7 +131,8 @@ public class UserRepositoryTests
 
         _userRepository.Update(user);
 
-        Assert.That(_userRepository.Get(x => x.Id == user.Id).Name,
+        Assert.That(_userRepository.Get(
+            new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)).Name,
             Is.Not.EqualTo(oldUser.Name));
     }
 

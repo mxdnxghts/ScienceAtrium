@@ -1,4 +1,5 @@
 ﻿using ScienceAtrium.Domain.RootAggregate.Interfaces;
+using ScienceAtrium.Domain.RootAggregate.Options;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
@@ -47,7 +48,7 @@ public abstract class Entity : IEqualityComparer<Entity>, IEquatable<Entity>, IE
     {
         if (reader is null)
             return true;
-        return reader.Exist(func);
+        return reader.Exist(new EntityFindOptions<TReaderEntity>(predicate: func));
     }
 
     public bool IsValid<TReaderEntity>(IReader<TReaderEntity> reader)

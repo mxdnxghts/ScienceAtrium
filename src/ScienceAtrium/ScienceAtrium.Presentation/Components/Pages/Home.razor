@@ -175,10 +175,11 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await Mediator.Send(new SetCachedCustomerCommand(await GetCustomerAsync()));
 		var workTemplates = await Mediator.Send(new GetWorkTemplateListQuery());
 		_workTemplates.AddRange(workTemplates);
-		_currentUser = await Mediator.Send(new GetCachedCustomerQuery());
+		_currentUser = await Mediator.Send(
+			new GetCustomerQuery(
+				new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)));
 		_currentOrder = await GetOrderAsync(_currentUser.Id);
 	}
 
@@ -195,12 +196,17 @@
 
 	private async Task<Customer> GetCustomerAsync()
 	{
-		return await Mediator.Send(new GetCustomerByPredicateQuery(x => x.Id != Guid.Empty));
+		return await Mediator.Send(
+			new GetCustomerQuery(
+				new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)));
 	}
 
 	private async Task<Order> GetOrderAsync(Guid customerId)
 	{
-		var order = await Mediator.Send(new GetOrderByCustomerIdWithStatusQuery(customerId, OrderStatus.Delayed));
+		var order = await Mediator.Send(
+			new GetOrderQuery(
+				new EntityFindOptions<Order>(predicate: x => x.CustomerId == _currentUser.Id
+										&& x.Status == OrderStatus.Delayed)));
 		if (order.Equals(Order.Default))
 			return new Order(Guid.NewGuid()).UpdateCustomer(CustomerReader, _currentUser);
 		return order;
@@ -208,7 +214,10 @@
 
 	private async Task MakeOrderAsync(Order order, Guid customerId)
 	{
-		var dbOrder = await Mediator.Send(new GetOrderByCustomerIdWithStatusQuery(customerId, OrderStatus.Delayed));
+		var dbOrder = await Mediator.Send(
+			new GetOrderQuery(
+				new EntityFindOptions<Order>(predicate: x => x.CustomerId == _currentUser.Id
+										&& x.Status == OrderStatus.Delayed)));
 
 		// is not exists
 		if (dbOrder.IsEmpty())
