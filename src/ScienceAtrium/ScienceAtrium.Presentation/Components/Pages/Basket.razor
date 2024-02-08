@@ -87,24 +87,17 @@
 
     private async Task PayAsync()
     {
-        _currentOrder.UpdateOrderDate(_orderDate);
-        if (!_currentOrder.IsReadyToPay)
+        try
         {
-            // handle when the order isn't ready to be payed
+            await Mediator.Send(new PayOrderCommand(_currentUser, _currentOrder, _orderDate));
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, ex.Message);
             return;
         }
-        _currentOrder.UpdateStatus(OrderStatus.PaymentWait);
-
-        await ApplicationTransactionService
-            .BeginTransactionScopeAsync(async () =>
-        {
-            await Mediator.Send(new UpdateOrderCommand(_currentOrder));
-            await Mediator.Send(new UpdateOrderWorkTemplateAfterPayingCommand(_currentOrder.Id));
-        });
 
         _currentUser = await Mediator.Send(new GetCustomerByIdQuery(_currentUser.Id));
-
-        await Mediator.Send(new SetCachedCustomerCommand(_currentUser));
 
         RefreshWorkTemplates(_currentOrder);
         await Task.Delay(1000);
