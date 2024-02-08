@@ -1,4 +1,6 @@
-﻿using ScienceAtrium.Domain.Constants;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using ScienceAtrium.Domain.Constants;
 using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Domain.RootAggregate.Interfaces;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
@@ -13,39 +15,82 @@ public class Order : Entity
     public static readonly Order Default = new(Guid.Empty);
 
     private readonly List<OrderWorkTemplate> _workTemplatesLink;
-    private Status _status;
+    private OrderStatus _status;
     private Paymentmethod _paymentMethod;
     private decimal _totalCost;
+    private DateTime _orderDate = DateTime.UtcNow;
 
     public Order(Guid id) : base(id)
     {
 		_workTemplatesLink = new();
-        _status = Status.Pending;
+        _status = OrderStatus.Delayed;
         _paymentMethod = Paymentmethod.YooMoney;
     }
 
-    public Order(Guid id, Status status, Paymentmethod paymentMethod) : base(id)
+    public Order(Guid id, OrderStatus status, Paymentmethod paymentMethod) : base(id)
     {
 		_workTemplatesLink = new();
 		_status = status;
         _paymentMethod = paymentMethod;
     }
-    public DateTime OrderDate { get; } = DateTime.UtcNow;
+
+    [JsonConstructor]
+    protected Order(
+        Guid id,
+        List<OrderWorkTemplate> workTemplatesLink,
+        OrderStatus status,
+        Paymentmethod paymentMethod,
+        decimal totalCost,
+        DateTime orderDate,
+        Customer? customer,
+        Guid? customerId,
+        Executor? executor,
+        Guid? executorId)
+        : base(id)
+    {
+        _workTemplatesLink = workTemplatesLink;
+        _status = status;
+        _paymentMethod = paymentMethod;
+        _totalCost = totalCost;
+        _orderDate = orderDate;
+        Customer = customer;
+        CustomerId = customerId;
+        Executor = executor;
+        ExecutorId = executorId;
+    }
+
+    public DateTime OrderDate => _orderDate;
     public decimal TotalCost => _totalCost;
     public Paymentmethod PaymentMethod => _paymentMethod;
-    public Status Status => _status;
+    public OrderStatus Status => _status;
     public Customer? Customer { get; private set; }
     public Guid? CustomerId { get; private set; }
     public Executor? Executor { get; private set; }
     public Guid? ExecutorId { get; private set; }
-    public IReadOnlyCollection<WorkTemplate> WorkTemplates => WorkTemplatesLink.Select(x => x.WorkTemplate).ToList();
+    public IReadOnlyCollection<WorkTemplate> WorkTemplates => GetWorkTemplates();
     public IReadOnlyCollection<OrderWorkTemplate> WorkTemplatesLink => _workTemplatesLink;
+	public bool IsReadyToPay =>
+        WorkTemplates?.Count > 0
+        && TotalCost > 0
+        && OrderDate >= DateTime.UtcNow;
 
-    public Order AddWorkTemplate(WorkTemplate workTemplate)
+	public Order AddWorkTemplate(WorkTemplate workTemplate)
     {
-        if (ThrowIfHasIncorrectValue(workTemplate))
+        if (ThrowIfWorkTemplateHasIncorrectValue(workTemplate))
             return this;
-        _workTemplatesLink.Add(new OrderWorkTemplate(this, workTemplate));
+
+        var workTemplateLink = _workTemplatesLink.FirstOrDefault(x => x.WorkTemplateId == workTemplate.Id);
+        if (workTemplateLink is null)
+        {
+            _workTemplatesLink.Add(new OrderWorkTemplate(this, workTemplate)
+            {
+                Status = OrderWorkTemplateStatus.WaitInBasket,
+                EntityState = EntityState.Added,
+            });
+        }
+        else
+            workTemplateLink.EntityState = EntityState.Modified;
+
         _totalCost = GetTotal();
         return this;
     }
@@ -60,17 +105,29 @@ public class Order : Entity
 
     public Order RemoveWorkTemplate(Func<WorkTemplate, bool> funcGetWorkTemplate)
     {
-        var workTemplate = _workTemplatesLink.Select(x => x.WorkTemplate)
+        var workTemplate = _workTemplatesLink
+            .Select(x => x.WorkTemplate)
             .FirstOrDefault(funcGetWorkTemplate);
-        if (ThrowIfHasIncorrectValue(workTemplate))
+
+        if (ThrowIfWorkTemplateHasIncorrectValue(workTemplate))
             return this;
-        _workTemplatesLink.Remove(_workTemplatesLink
-            .FirstOrDefault(x => x.WorkTemplateId == workTemplate.Id));
+
+        _workTemplatesLink
+            .FirstOrDefault(x => x.WorkTemplateId == workTemplate.Id).EntityState = EntityState.Deleted;
+
         _totalCost = GetTotal();
         return this;
     }
 
-    public Order UpdateStatus(Status status)
+    public Order UpdateOrderDate(DateTime orderDate)
+    {
+        if (orderDate <= DateTime.UtcNow)
+            return this;
+        _orderDate = orderDate;
+        return this;
+    }
+
+    public Order UpdateStatus(OrderStatus status)
     {
         _status = status;
         return this;
@@ -117,9 +174,17 @@ public class Order : Entity
 		Executor = null;
 		ExecutorId = null;
 		return this;
-	}
+    }
 
-	private bool ThrowIfHasIncorrectValue(WorkTemplate workTemplate)
+    private IReadOnlyCollection<WorkTemplate> GetWorkTemplates()
+    {
+        return _workTemplatesLink
+            .Where(x => x.EntityState != EntityState.Deleted)
+            .Select(x => x.WorkTemplate)
+            .ToList();
+    }
+
+	private bool ThrowIfWorkTemplateHasIncorrectValue(WorkTemplate workTemplate)
     {
         if (workTemplate is null || workTemplate.IsEmpty())
         {
@@ -127,18 +192,18 @@ public class Order : Entity
             return true;
         }
 
-        var existingWorkTemplate = _workTemplatesLink.Select(x => x.WorkTemplate)
-            .FirstOrDefault(x => x.Id == workTemplate.Id);
+        var existingWorkTemplate = WorkTemplates.FirstOrDefault(x => x.Id == workTemplate.Id);
         if (existingWorkTemplate?.IsEmpty() == true)
         {
             Debug.Fail(DebugExceptions.EntityWithSameKey(nameof(WorkTemplate), existingWorkTemplate.Id));
             return true;
         }
+
         return false;
     }
 
     private decimal GetTotal()
     {
-        return _workTemplatesLink.Select(x => x.WorkTemplate).Sum(x => x.Price);
+        return WorkTemplates.Sum(x => x.Price);
 	}
 }

@@ -1,65 +1,61 @@
 ﻿@inherits LayoutComponentBase
-
 <body>
-    <header id="header" class="header">
+	<header id="header" class="header">
 
 		<div class="container">
 
-			<div class="nav">
-
-				<h1>ScienceAtrium</h1>
-
-				<ul class="menu">
-					<li>
-						<a href="#">
-							Профиль
-						</a>
-					</li>
-					<li>
-						<a href="#">
-							Каталог
-						</a>
-					</li>
-					<li>
-						<a href="#">
-							Корзина
-						</a>
-					</li>
-					<li>
-						<a href="#">
-							Войти
-						</a>
-					</li>
-				</ul>
-
-			</div>
+			<nav class="nav">
+				<div class="nav-logo">
+					<p>ScienceAtrium</p>
+				</div>
+				<div class="nav-menu" id="navMenu">
+					<ul>
+						<li><a href="/" class="link">Главная</a></li>
+						<li><a href="account" class="link">Профиль</a></li>
+						<li><a href="basket" class="link">Корзина</a></li>
+						<li><a href="#catalog" class="link">Каталог</a></li>
+					</ul>
+				</div>
+				<div class="nav-button">
+					<button class="btn white-btn" id="loginBtn" onclick="redirectToAuth()">Вход</button>
+					<button class="btn" id="registerBtn" onclick="redirectToAuth()">Регистрация</button>
+				</div>
+				<div class="nav-menu-btn">
+					<i class="bx bx-menu" onclick="myMenuFunction()"></i>
+				</div>
+			</nav>
 
 		</div>
+
 	</header>
+
+	<script>
+
+		function myMenuFunction() {
+			var i = document.getElementById("navMenu");
+			if (i.className === "nav-menu") {
+				i.className += " responsive";
+			} else {
+				i.className = "nav-menu";
+			}
+		}
+
+		function redirectToAuth(){
+			window.location.href = "/auth";
+		}
+
+	</script>
+
     @Body
-    <footer id="footer" class="footer">
 
-        <h6 style="text-align: center;">ScienceAtrium</h6>
+	<footer id="footer" class="footer">
 
-        <div class="button-collection">
+		<h3 class="align-content-center">ScienceAtrium</h3>
 
-            <div class="check-in">
+		<a href="mailto:info.scienceatrium@gmail.com" class="mailto">
+			<img src="img/envelope.png" width="25" height="25">
+			info.scienceatrium@gmail.com
+		</a>
 
-                <button class="but-check-in"><img src="img/check-in.png">Войти</button>
-
-            </div>
-
-            <div class="check-out">
-
-                <button class="but-check-out"><img src="img/check-out.png">Выйти</button>
-
-            </div>
-
-        </div>
-
-        <a href="mailto:info.scienceatrium@gmail.com" class="mailto"><img src="img/envelope.png" width="25" height="25">
-            info.scienceatrium@gmail.com
-        </a>
-
-    </footer>
+	</footer>
 </body>

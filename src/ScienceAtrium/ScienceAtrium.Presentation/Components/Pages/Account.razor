@@ -1,0 +1,162 @@
+﻿@page "/account"
+@rendermode InteractiveServer
+@inject IMediator Mediator
+
+<link rel="stylesheet" href="css/profile.css" />
+
+<section id="cards" class="cards">
+
+    <container>
+
+        <div class="row">
+
+            <div class="column">
+
+                <div class="rec">
+
+                    <div class="rec-one">
+
+                        <img src="img/profile.png" width="80" height="80">
+                        <p style="font-weight: 600;">@_user?.Name</p>
+                        <div class="add-inf">
+                            <p>Электронная почта:<span>@_user?.Email</span></p>
+                        </div>
+
+                    </div>
+
+                    <div class="rec-two">
+
+                        <img src="img/paper.png" width="80" height="70">
+                        <p style="font-weight: 600;">Лист ожидания</p>
+                        <div class="add-inf">
+                            @if (_deadlineDate != default)
+                            {
+                                <p>Срок выполнения до:<span>@_deadlineDate.ToShortDateString()</span></p>
+                            }
+                            else
+                            {
+                                <p>Срок выполнения до:<span>????</span></p>
+                            }
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="column col-two" style="background-image: linear-gradient(180deg,hsl(36deg 9% 44%) 1%, hsl(41deg 9% 62%) 62%, hsl(47deg 15% 82%) 100%);">
+
+                <h2>Покупки</h2>
+
+                <div class="catalogblk">
+                    @foreach(var workTemplateOrderStatus in _workTemplateOrderStatuses ?? Array.Empty<WorkTemplateOrderStatus>())
+                    {
+                        <div style="background-color: #C9C0B3;" class="blockctlg">
+                            <img src="img/title-page.png" width="100" height="130">
+                            <p style="white-space: normal;">@(workTemplateOrderStatus.WorkTemplate.Title ?? "Subject not found")</p>
+                            <p>₽ @workTemplateOrderStatus.WorkTemplate.Price</p>
+                            <p>Статус - @GetTranslatedStatus(workTemplateOrderStatus.Status)</p>
+                        </div>
+                    }
+                </div>
+
+            </div>
+
+        </div>
+
+    </container>
+
+</section>
+
+@code {
+    private User _user;
+    private IEnumerable<Order> _orders;
+    private IEnumerable<WorkTemplate> _workTemplates;
+    private IEnumerable<WorkTemplateOrderStatus> _workTemplateOrderStatuses;
+    private DateTime _deadlineDate = default;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _user = await Mediator.Send(
+            new GetCustomerQuery(
+                new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty).TryFindDatabase()));
+
+        if (_user is null)
+        {
+            SetDefaults();
+            return;
+        }
+
+        _orders = _user
+                .Orders
+                .Where(x => x.Status != OrderStatus.Cancelled
+                    && x.Status != OrderStatus.Delayed
+                    && x.Status != OrderStatus.Fulfilled)
+                .OrderBy(x => x.Status);
+
+        _workTemplates = _orders
+            .SelectMany(x => x.WorkTemplates);
+
+        _workTemplateOrderStatuses = GetWorkTemplateOrderStatuses(_orders
+            .SelectMany(x => x.WorkTemplatesLink)
+            .Where(x => x.Status == OrderWorkTemplateStatus.Paid)
+            .Select(x => x.WorkTemplate));
+
+        if (_orders.Count() > 0)
+            _deadlineDate = _orders.Select(x => x.OrderDate).Min();
+    }
+
+    private void SetDefaults()
+    {
+        _user = User.Default;
+        _orders = Enumerable.Empty<Order>();
+        _workTemplates = Enumerable.Empty<WorkTemplate>();
+    }
+
+    private IEnumerable<WorkTemplateOrderStatus> GetWorkTemplateOrderStatuses(IEnumerable<WorkTemplate> workTemplates)
+    {
+        foreach (var workTemplate in workTemplates)
+        {
+            var currentOrder = _orders
+                    .FirstOrDefault(x => x
+                        .WorkTemplates
+                            .FirstOrDefault(x => x.Id == workTemplate.Id) != null);
+
+            yield return new WorkTemplateOrderStatus()
+            {
+                WorkTemplate = workTemplate,
+                Status = currentOrder.Status,
+            };
+        }
+    }
+
+    private string GetTranslatedStatus(OrderStatus orderStatus)
+    {
+        if (orderStatus == OrderStatus.PaymentWait)
+            return "Ожидание оплаты";
+
+        if (orderStatus == OrderStatus.Pending)
+            return "В обработке";
+
+        if (orderStatus == OrderStatus.Fulfilled)
+            return "Завершен";
+
+        if (orderStatus == OrderStatus.Cancelled)
+            return "Отменен";
+
+        if (orderStatus == OrderStatus.Delayed)
+            return "Отложен";
+
+        if (orderStatus == OrderStatus.Expired)
+            return "Нарушены сроки";
+
+        return "???";
+    }
+
+    class WorkTemplateOrderStatus
+    {
+        public WorkTemplate WorkTemplate { get; set; }
+        public OrderStatus Status { get; set; }
+    }
+}

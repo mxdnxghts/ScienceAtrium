@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using ScienceAtrium.Domain.Exceptions;
+using ScienceAtrium.Domain.RootAggregate;
+using ScienceAtrium.Domain.RootAggregate.Interfaces;
+using ScienceAtrium.Domain.RootAggregate.Options;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
@@ -22,19 +26,23 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
     private readonly ApplicationContext _context;
     private readonly ILogger _logger;
     private readonly IMapper _mapper;
+    private readonly IDistributedCache _cache;
     private DbSet<TUser> Users { get; }
 
-    public UserRepository(ApplicationContext context, ILogger logger, IMapper mapper)
+    public UserRepository(ApplicationContext context, ILogger logger, IMapper mapper, IDistributedCache cache)
     {
         _context = context;
         _logger = logger;
         _mapper = mapper;
+        _cache = cache;
         Users = _context.Set<TUser>();
     }
     public IQueryable<TUser> All => Users
         .Include(x => x.Orders)
-        .ThenInclude(x => x.WorkTemplates)
-        .ThenInclude(x => x.Subject).AsNoTracking();
+        .ThenInclude(x => x.WorkTemplatesLink)
+        .ThenInclude(x => x.WorkTemplate)
+        .ThenInclude(x => x.Subject)
+        .AsNoTracking();
 
     public int Create(TUser entity)
     {
@@ -44,7 +52,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
                 new ArgumentNullException(nameof(entity)));
         }
 
-        if (Exist(x => x.Id == entity.Id))
+        if (Exist(new EntityFindOptions<TUser>(entity.Id)))
             throw new CreationException(entity.Id);
 
         Users.Add(entity);
@@ -62,7 +70,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
                 new ArgumentNullException(nameof(entity)));
         }
 
-        if (await ExistAsync(x => x.Id == entity.Id, cancellationToken))
+        if (await ExistAsync(new EntityFindOptions<TUser>(entity.Id),cancellationToken: cancellationToken))
             throw new CreationException(entity.Id);
 
         Users.Add(entity);
@@ -105,14 +113,21 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         _context?.Dispose();
     }
 
-    public bool Exist(Expression<Func<TUser, bool>> predicate)
-    {
-        return All.Any(predicate);
+    public bool Exist(EntityFindOptions<TUser> entityFindOptions)
+	{
+		if (IsInvalidGetExpression(entityFindOptions))
+			return false;
+
+        return All.Any(entityFindOptions.Predicate ?? (x => x.Id == entityFindOptions.EntityId));
     }
 
-    public async Task<bool> ExistAsync(Expression<Func<TUser, bool>> predicate, CancellationToken cancellationToken = default)
-    {
-        return await All.AnyAsync(predicate, cancellationToken);
+    public async Task<bool> ExistAsync(EntityFindOptions<TUser> entityFindOptions, CancellationToken cancellationToken = default)
+	{
+        if (IsInvalidGetExpression(entityFindOptions))
+            return false;
+
+        return await All.AnyAsync(entityFindOptions.Predicate
+            ?? (x => x.Id == entityFindOptions.EntityId), cancellationToken);
     }
 
     public bool FitsConditions(TUser? entity)
@@ -120,7 +135,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         if (entity is null)
             return false;
 
-        if (!Exist(x => x.Id == entity.Id))
+        if (!Exist(new EntityFindOptions<TUser>(entity.Id)))
             return false;
 
         return true;
@@ -131,20 +146,55 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         if (entity is null)
             return false;
 
-        if (!await ExistAsync(x => x.Id == entity.Id, cancellationToken))
-            return false;
+		if (!await ExistAsync(new EntityFindOptions<TUser>(entity.Id), cancellationToken))
+			return false;
 
         return true;
     }
 
-    public TUser Get(Expression<Func<TUser, bool>> predicate)
+    public TUser Get(EntityFindOptions<TUser> entityFindOptions)
     {
-        return All.FirstOrDefault(predicate) ?? _mapper.Map<TUser>(User.Default);
+		if (IsInvalidGetExpression(entityFindOptions))
+            return _mapper.Map<TUser>(User.Default);
+        
+        if (!entityFindOptions.OnlyDatabaseFind)
+		{
+			var cached = _cache.GetRecord<TUser>($"UserCached_{entityFindOptions.EntityId}");
+			if (cached is not null)
+				return cached;
+		}
+
+        var user = All.FirstOrDefault(entityFindOptions.Predicate ?? (x => x.Id == entityFindOptions.EntityId))
+            ?? _mapper.Map<TUser>(User.Default);
+
+        if (!user.IsEmpty())
+            _cache.SetRecord($"UserCached_{user.Id}", user);
+
+        return user;
     }
 
-    public async Task<TUser> GetAsync(Expression<Func<TUser, bool>> predicate, CancellationToken cancellationToken = default)
-    {
-        return await All.FirstOrDefaultAsync(predicate, cancellationToken) ?? _mapper.Map<TUser>(User.Default);
+    public async Task<TUser> GetAsync(EntityFindOptions<TUser> entityFindOptions, CancellationToken cancellationToken = default)
+	{
+		if (IsInvalidGetExpression(entityFindOptions))
+			return _mapper.Map<TUser>(User.Default);
+
+		if (!entityFindOptions.OnlyDatabaseFind)
+        {
+			var cached = await _cache.GetRecordAsync<TUser>($"UserCached_{entityFindOptions.EntityId}",
+			    cancellationToken: cancellationToken);
+
+			if (cached is not null)
+				return cached;
+		}
+
+        var user = await All.FirstOrDefaultAsync(entityFindOptions.Predicate ?? (x => x.Id == entityFindOptions.EntityId),
+            cancellationToken)
+            ?? _mapper.Map<TUser>(User.Default);
+
+        if (!user.IsEmpty())
+            await _cache.SetRecordAsync($"UserCached_{user.Id}", user, cancellationToken: cancellationToken);
+
+        return user;
     }
 
     public int Update(TUser entity)
@@ -171,14 +221,20 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
             _context.Orders.UpdateRange(entity.Orders);
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
-    }
+	}
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="user"></param>
-    /// <returns>count of iterations - count of <see cref="User.Orders"/></returns>
-    private int RemoveUserFromOrders(ref TUser user)
+	private bool IsInvalidGetExpression(EntityFindOptions<TUser> entityFindOptions)
+    {
+        return (entityFindOptions?.EntityId == Guid.Empty || entityFindOptions?.EntityId is null)
+            && entityFindOptions?.Predicate is null;
+	}
+
+	/// <summary>
+	///
+	/// </summary>
+	/// <param name="user"></param>
+	/// <returns>count of iterations - count of <see cref="User.Orders"/></returns>
+	private int RemoveUserFromOrders(ref TUser user)
     {
         foreach (var order in user.Orders)
         {

@@ -1,0 +1,107 @@
+﻿@page "/auth"
+@rendermode InteractiveServer
+
+<link rel="stylesheet" href="css/entrance-registration.css" />
+
+<section id="form-box" class="form-box">
+    <div class="container">
+
+        <div class="login-container" id="login">
+            <div class="top">
+                <span>Нет аккаунта? <button id="registerBtn" onclick="register()">Зарегистрироваться</button></span>
+                <h1>Вход</h1>
+            </div>
+            <div class="input-box">
+                <input @bind="_userEmail" type="text" class="input-field" placeholder="Электронная почта" required>
+                <i class="bx bx-user"></i>
+            </div>
+            <div class="input-box">
+                <input @bind="_userPassword" type="password" class="input-field" placeholder="Пароль" required>
+                <i class="bx bx-lock-alt"></i>
+            </div>
+            <div class="input-box">
+                <button type="submit" @onclick="SignInAsync" class="submit">Войти</button>
+            </div>
+            <div class="two-col">
+                <div class="one">
+                    <input type="checkbox" id="login-check">
+                    <label for="login-check">Запомнить</label>
+                </div>
+                <div class="two">
+                    <label><a href="#">Забыли пароль?</a></label>
+                </div>
+            </div>
+        </div>
+        <div class="register-container" id="register">
+            <div class="top">
+                <span>Есть аккаунт? <button id="loginBtn" onclick="login()">Войти</button></span>
+                <h2>Регистрация</h2>
+            </div>
+            <div class="input-box">
+                <div class="input-box">
+                    <input @bind="_userName" type="text" class="input-field" placeholder="Ваше имя" required>
+                    <i class="bx bx-user"></i>
+                </div>
+            </div>
+            <div class="input-box">
+                <input @bind="_userEmail" type="text" class="input-field" placeholder="Электронная почта" required>
+                <i class="bx bx-envelope"></i>
+            </div>
+            <div class="input-box">
+                <input @bind="_userPassword" type="password" class="input-field" placeholder="Пароль" required>
+                <i class="bx bx-lock-alt"></i>
+            </div>
+            <div class="input-box">
+                <button type="submit" @onclick="SignUpAsync" class="submit">Зарегистрироваться</button>
+            </div>
+            <div class="two-col">
+                <div class="one">
+                    <input type="checkbox" id="register-check">
+                    <label for="register-check">Запомнить</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<script>
+    var a = document.getElementById("loginBtn");
+    var b = document.getElementById("registerBtn");
+    var x = document.getElementById("login");
+    var y = document.getElementById("register");
+
+    function login() {
+        x.style.left = "4px";
+        y.style.right = "-520px";
+        a.className += " white-btn";
+        b.className = "btn";
+        x.style.opacity = 1;
+        y.style.opacity = 0;
+    }
+    function register() {
+        x.style.left = "-510px";
+        y.style.right = "5px";
+        a.className = "btn";
+        b.className += " white-btn";
+        x.style.opacity = 0;
+        y.style.opacity = 1;
+    }
+</script>
+
+@code {
+    private string _userName;
+    private string _userEmail;
+    private string _userPassword;
+
+    private async Task SignInAsync()
+    {
+
+    }
+
+    private async Task SignUpAsync()
+    {
+
+    }
+}

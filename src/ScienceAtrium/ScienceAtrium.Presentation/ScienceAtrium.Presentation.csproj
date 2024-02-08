@@ -16,8 +16,4 @@
     <ProjectReference Include="..\ScienceAtrium.Infrastructure\ScienceAtrium.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\scripts\" />
-  </ItemGroup>
-
 </Project>

@@ -21,6 +21,7 @@ public class ApplicationContext : DbContext
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
         optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        optionsBuilder.LogTo(Console.WriteLine);
 		base.OnConfiguring(optionsBuilder);
 	}
 

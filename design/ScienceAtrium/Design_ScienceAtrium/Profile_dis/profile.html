@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>ScienceAtrium</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@200;400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet" type="text/css" href="profile.css">
+	<script src="profile-js.js"></script>
+</head>
+
+<body>
+	<header id="header" class="header">
+
+		<div class="container">
+
+			<nav class="nav">
+				<div class="nav-logo">
+					<p>ScienceAtrium</p>
+				</div>
+				<div class="nav-menu" id="navMenu">
+					<ul>
+						<li><a href="#" class="link">Главная</a></li>
+						<li><a href="#" class="link">Профиль</a></li>
+						<li><a href="#" class="link active">Корзина</a></li>
+						<li><a href="#" class="link">Каталог</a></li>
+					</ul>
+				</div>
+				<div class="nav-button">
+					<button class="btn white-btn" id="exitBtn" onclick="exit()">Выйти</button>
+				</div>
+				<div class="nav-menu-btn">
+					<i class="bx bx-menu" onclick="myMenuFunction()"></i>
+				</div>
+			</nav>
+
+		</div>
+			
+	</header>
+
+	<script>
+   
+		function myMenuFunction() {
+		 var i = document.getElementById("navMenu");
+		 if(i.className === "nav-menu") {
+			 i.className += " responsive";
+		 } else {
+			 i.className = "nav-menu";
+		 }
+		}
+	  
+	 </script>
+	 <script>
+		 var a = document.getElementById("exitBtn");
+		 var x = document.getElementById("exit");
+		 function exit() {
+			 x.style.left = "4px";
+			 y.style.right = "-520px";
+			 a.className += " white-btn";
+			 b.className = "btn";
+			 x.style.opacity = 1;
+			 y.style.opacity = 0;
+		 }
+
+	 </script>
+
+<section id="cards" class="cards">
+
+	<container>
+
+	  <div class="row">
+
+		<div class="column">
+
+		  <div class="rec">
+
+			<div class="rec-one">
+
+			  <img src="img/profile.png" width="80" height="80">
+			  <p style="font-weight: 600;">Name</p>
+			  <div class="add-inf">
+				<p>Электронная почта:<span>krakozabra4000@gmail.com</span></p>
+			  </div>
+  
+			</div>
+  
+			<div class="rec-two">
+  
+			  <img src="img/paper.png" width="80" height="70">
+			  <p style="font-weight: 600;">Лист ожидания</p>
+			  <div class="add-inf">
+				<p>Срок выполнения до:<span>10.02.2024</span></p>
+			  </div>
+  
+			</div>
+
+		  </div>
+
+		</div>
+
+		<div class="column col-two" style="background-image: linear-gradient(180deg,hsl(36deg 9% 44%) 1%, hsl(41deg 9% 62%) 62%, hsl(47deg 15% 82%) 100%);">
+
+		  <h1>Покупки</h1>
+
+		  <div class="catalogblk">
+
+			<div style="background-color: #C9C0B3;" class="blockctlg">
+			  <img src="img/title-page.png" width="100" height="130">
+			  <p style="white-space: normal;">Инструментальные средства разработки ПО</p>
+			  <p>₽ 2000</p>
+			  <p class="st">Статус -</p>
+			</div>
+	  
+			<div style="background-color: #91ABA2;" class="blockctlg">
+			  <img src="img/title-page.png" width="100" height="130">
+			  <p style="white-space: normal;">Операционные системы и среды</p>
+			  <p>₽ 2000</p>
+			  <p class="st">Статус -</p>
+			</div>
+	  
+			<div style="background-color: #EFC87B;" class="blockctlg">
+			  <img src="img/title-page.png" width="100" height="130">
+			  <p style="white-space: normal;">Технология разработки ПО</p>
+			  <p>₽ 2000</p>
+			  <p class="st">Статус -</p>
+			</div>
+	  
+			<div style="background-color: #C9C0B3;" class="blockctlg">
+			  <img src="img/title-page.png" width="100" height="130">
+			  <p style="white-space: normal;">Дополнительный блок для предмета</p>
+			  <p>₽ 2000</p>
+			  <p class="st">Статус -</p>
+			</div>
+	  
+			<div style="background-color: #91ABA2;" class="blockctlg">
+			  <img src="img/title-page.png" width="100" height="130">
+			  <p style="white-space: normal;">Дополнительный блок для предмета</p>
+			  <p>₽ 2000</p>
+			  <p class="st">Статус -</p>
+			</div>
+	  
+			<div style="background-color: #EFC87B;" class="blockctlg">
+			  <img src="img/title-page.png" width="100" height="130">
+			  <p style="white-space: normal;">Дополнительный блок для предмета</p>
+			  <p>₽ 2000</p>
+			  <p class="st">Статус -</p>
+			</div>
+	  
+		  </div>
+
+		</div>
+
+	  </div>
+
+	</div>
+	
+  </section>
+
+  <footer id="footer" class="footer">
+
+	<h2>ScienceAtrium</h2>
+
+	<a href="mailto:info.scienceatrium@gmail.com" class="mailto"><img src="img/envelope.png" width="25" height="25">
+	  info.scienceatrium@gmail.com
+	</a>
+
+  </footer>
+
+</body>
+
+</html>

@@ -20,7 +20,7 @@ public class ApplicationContextTests
     {
         _applicationContext = new ApplicationContext(new DbContextOptionsBuilder<ApplicationContext>()
             .UseNpgsql("Server=localhost;Port=5432;Database=ScienceAtrium;User Id=postgres;Password=;Include Error Detail=true").Options);
-        _userReader = new UserRepository<User>(_applicationContext, null, null);
+        _userReader = new UserRepository<User>(_applicationContext, null, null, null);
         _names = new List<string>
         {
             "Nick",

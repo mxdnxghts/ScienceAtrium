@@ -18,26 +18,26 @@ public class TestManageUserOrders
     [Test]
     public void TestUpdateOrder()
     {
-        var order = new Order(Guid.NewGuid()).UpdateStatus(Status.Pending);
+        var order = new Order(Guid.NewGuid()).UpdateStatus(OrderStatus.Pending);
         var customer = new User(Guid.NewGuid(), UserType.Customer).AddOrder(order);
         var executor = new User(Guid.NewGuid(), UserType.Executor).AddOrder(order);
 
-        customer.UpdateOrder(o => o.Status == Status.Pending, new Order(order.Id).UpdateStatus(Status.Cancelled));
-        executor.UpdateOrder(o => o.Status == Status.Pending, new Order(order.Id).UpdateStatus(Status.Cancelled));
+        customer.UpdateOrder(o => o.Status == OrderStatus.Pending, new Order(order.Id).UpdateStatus(OrderStatus.Cancelled));
+        executor.UpdateOrder(o => o.Status == OrderStatus.Pending, new Order(order.Id).UpdateStatus(OrderStatus.Cancelled));
 
-        Assert.That(customer.Orders.FirstOrDefault().Status, Is.EqualTo(Status.Cancelled));
-        Assert.That(executor.Orders.FirstOrDefault().Status, Is.EqualTo(Status.Cancelled));
+        Assert.That(customer.Orders.FirstOrDefault().Status, Is.EqualTo(OrderStatus.Cancelled));
+        Assert.That(executor.Orders.FirstOrDefault().Status, Is.EqualTo(OrderStatus.Cancelled));
     }
 
     [Test]
     public void TestDeleteOrder()
     {
-        var order = new Order(Guid.NewGuid()).UpdateStatus(Status.Pending);
+        var order = new Order(Guid.NewGuid()).UpdateStatus(OrderStatus.Pending);
         var customer = new User(Guid.NewGuid(), UserType.Customer).AddOrder(order);
         var executor = new User(Guid.NewGuid(), UserType.Executor).AddOrder(order);
 
-        customer.RemoveOrder(o => o.Status == Status.Pending);
-        executor.RemoveOrder(o => o.Status == Status.Pending);
+        customer.RemoveOrder(o => o.Status == OrderStatus.Pending);
+        executor.RemoveOrder(o => o.Status == OrderStatus.Pending);
 
         Assert.That(customer.Orders.FirstOrDefault(), Is.Null);
         Assert.That(executor.Orders.FirstOrDefault(), Is.Null);

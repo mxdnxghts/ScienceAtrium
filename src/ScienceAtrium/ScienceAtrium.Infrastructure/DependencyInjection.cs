@@ -21,20 +21,28 @@ public static class DependencyInjection
         serviceCollection.AddDbContext<ApplicationContext>(o
             => o.UseSqlServer(configuration.GetConnectionString("MSSQL")));
 
-        serviceCollection.AddSerilog(o => o.MinimumLevel.Warning().WriteTo.Console());
+        serviceCollection.AddSerilog(o =>
+        {
+            o.MinimumLevel.Warning().WriteTo.Console()
+                .WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogInfo").Value);
 
-        serviceCollection.AddScoped<IOrderRepository<Order>, OrderRepository>();
-        serviceCollection.AddScoped<IUserRepository<Customer>, UserRepository<Customer>>();
-        serviceCollection.AddScoped<IUserRepository<Executor>, UserRepository<Executor>>();
-        serviceCollection.AddScoped<IWorkTemplateRepository<WorkTemplate>, WorkTemplateRepository>();
-
-        serviceCollection.AddReaders();
+            o.MinimumLevel.Information().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogInfo").Value);
+            o.MinimumLevel.Error().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogError").Value);
+        });
 
         serviceCollection.AddStackExchangeRedisCache(options =>
         {
             options.InstanceName = "ScienceAtriumCache_";
             options.Configuration = configuration.GetConnectionString("ScienceAtriumRedisCache");
         });
+
+        serviceCollection.AddScoped<IOrderRepository<Order>, OrderRepository>();
+        serviceCollection.AddScoped<IUserRepository<Customer>, UserRepository<Customer>>();
+        serviceCollection.AddScoped<IUserRepository<Executor>, UserRepository<Executor>>();
+
+        serviceCollection.AddReaders();
+
+        serviceCollection.AddTransient<ApplicationTransactionService>();
 
         return serviceCollection;
     }
