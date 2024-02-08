@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using ScienceAtrium.Domain.Exceptions;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.RootAggregate;
+using ScienceAtrium.Domain.RootAggregate.Options;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
@@ -22,8 +23,8 @@ public sealed class OrderRepository(ApplicationContext _context, IDistributedCac
         if (entity?.Customer is null)
             throw new ValidationException();
 
-        if (Exist(predicate: x => x.Id == entity.Id))
-            throw new EntityNotFoundException();
+		if (Exist(new EntityFindOptions<Order>(entity.Id)))
+			throw new EntityNotFoundException();
 
         UpdateState(entity, EntityState.Added);
 
@@ -35,8 +36,8 @@ public sealed class OrderRepository(ApplicationContext _context, IDistributedCac
         if (entity?.Customer is null)
             throw new ValidationException();
 
-        if (await ExistAsync(predicate: x => x.Id == entity.Id, cancellationToken: cancellationToken))
-            throw new EntityNotFoundException();
+		if (await ExistAsync(new EntityFindOptions<Order>(entity.Id), cancellationToken: cancellationToken))
+			throw new EntityNotFoundException();
 
         UpdateState(entity, EntityState.Added);
 
@@ -68,15 +69,22 @@ public sealed class OrderRepository(ApplicationContext _context, IDistributedCac
         _context?.Dispose();
     }
 
-    public bool Exist(Guid? id = null, Expression<Func<Order, bool>>? predicate = null)
-    {
-        return All.Any(predicate);
-    }
+    public bool Exist(EntityFindOptions<Order> entityFindOptions)
+	{
+		if (IsInvalidGetExpression(entityFindOptions))
+			return false;
 
-    public async Task<bool> ExistAsync(Guid? id = null, Expression<Func<Order, bool>>? predicate = null, CancellationToken cancellationToken = default)
-    {
-        return await All.AnyAsync(predicate, cancellationToken);
-    }
+		return All.Any(entityFindOptions.Predicate ?? (x => x.Id == entityFindOptions.EntityId));
+	}
+
+    public async Task<bool> ExistAsync(EntityFindOptions<Order> entityFindOptions, CancellationToken cancellationToken = default)
+	{
+		if (IsInvalidGetExpression(entityFindOptions))
+			return false;
+
+		return await All.AnyAsync(entityFindOptions.Predicate ?? (x => x.Id == entityFindOptions.EntityId),
+			cancellationToken: cancellationToken);
+	}
 
     public bool FitsConditions(Order? entity)
     {
@@ -86,8 +94,8 @@ public sealed class OrderRepository(ApplicationContext _context, IDistributedCac
         if (entity.IsEmpty())
             return false;
 
-        if (!Exist(predicate: x => x.Id == entity.Id))
-            return false;
+		if (!Exist(new EntityFindOptions<Order>(entity.Id)))
+			return false;
 
         return true;
     }
@@ -100,38 +108,46 @@ public sealed class OrderRepository(ApplicationContext _context, IDistributedCac
         if (entity.IsEmpty())
             return false;
 
-        if (!await ExistAsync(predicate: x => x.Id == entity.Id, cancellationToken: cancellationToken))
-            return false;
+		if (!await ExistAsync(new EntityFindOptions<Order>(entity.Id), cancellationToken))
+			return false;
 
         return true;
     }
 
-    public Order Get(Guid? id = null, Expression<Func<Order, bool>>? predicate = null)
-    {
-		if (IsInvalidGetExpression(id, predicate))
+    public Order Get(EntityFindOptions<Order> entityFindOptions)
+	{
+		if (IsInvalidGetExpression(entityFindOptions))
 			return Order.Default;
 
-		var cached = _cache.GetRecord<Order>($"OrderCached_{id}");
-		if (cached is not null)
-			return cached;
+		if (!entityFindOptions.OnlyDatabaseFind)
+		{
+			var cached = _cache.GetRecord<Order>($"OrderCached_{entityFindOptions.EntityId}");
+			if (cached is not null)
+				return cached;
+		}
 
-		var order = All.FirstOrDefault(predicate ?? (x => x.Id == id)) ?? Order.Default;
+		var order = All.FirstOrDefault(entityFindOptions.Predicate ?? (x => x.Id == entityFindOptions.EntityId)) ?? Order.Default;
 		if (!order.IsEmpty())
 			_cache.SetRecord($"OrderCached_{order.Id}", order);
 
 		return order;
 	}
 
-    public async Task<Order> GetAsync(Guid? id = null, Expression<Func<Order, bool>>? predicate = null, CancellationToken cancellationToken = default)
-    {
-        if (IsInvalidGetExpression(id, predicate))
-            return Order.Default;
+    public async Task<Order> GetAsync(EntityFindOptions<Order> entityFindOptions, CancellationToken cancellationToken = default)
+	{
+		if (IsInvalidGetExpression(entityFindOptions))
+			return Order.Default;
 
-		var cached = await _cache.GetRecordAsync<Order>($"OrderCached_{id}", cancellationToken: cancellationToken);
-		if (cached is not null)
-			return cached;
+		if (!entityFindOptions.OnlyDatabaseFind)
+		{
+			var cached = await _cache.GetRecordAsync<Order>($"OrderCached_{entityFindOptions.EntityId}",
+			cancellationToken: cancellationToken);
+			if (cached is not null)
+				return cached;
+		}
 
-		var order = await All.FirstOrDefaultAsync(predicate ?? (x => x.Id == id), cancellationToken) ?? Order.Default;
+		var order = await All.FirstOrDefaultAsync(entityFindOptions.Predicate ?? (x => x.Id == entityFindOptions.EntityId),
+			cancellationToken) ?? Order.Default;
         if (!order.IsEmpty())
             await _cache.SetRecordAsync($"OrderCached_{order.Id}", order, cancellationToken: cancellationToken);
 
@@ -240,8 +256,9 @@ public sealed class OrderRepository(ApplicationContext _context, IDistributedCac
 			orderWorkTemplate.EntityState = EntityState.Detached;
 	}
 
-	private bool IsInvalidGetExpression(Guid? id = null, Expression<Func<Order, bool>>? predicate = null)
+	private bool IsInvalidGetExpression(EntityFindOptions<Order> entityFindOptions)
 	{
-		return (id == Guid.Empty || id is null) && predicate is null;
+		return (entityFindOptions?.EntityId == Guid.Empty || entityFindOptions?.EntityId is null)
+			&& entityFindOptions?.Predicate is null;
 	}
 }

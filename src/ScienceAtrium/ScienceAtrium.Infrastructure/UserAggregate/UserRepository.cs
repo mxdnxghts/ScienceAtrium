@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using ScienceAtrium.Domain.Exceptions;
+using ScienceAtrium.Domain.RootAggregate;
 using ScienceAtrium.Domain.RootAggregate.Interfaces;
+using ScienceAtrium.Domain.RootAggregate.Options;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
@@ -50,7 +52,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
                 new ArgumentNullException(nameof(entity)));
         }
 
-        if (Exist(predicate: x => x.Id == entity.Id))
+        if (Exist(new EntityFindOptions<TUser>(entity.Id)))
             throw new CreationException(entity.Id);
 
         Users.Add(entity);
@@ -68,7 +70,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
                 new ArgumentNullException(nameof(entity)));
         }
 
-        if (await ExistAsync(predicate: x => x.Id == entity.Id, cancellationToken: cancellationToken))
+        if (await ExistAsync(new EntityFindOptions<TUser>(entity.Id),cancellationToken: cancellationToken))
             throw new CreationException(entity.Id);
 
         Users.Add(entity);
@@ -111,20 +113,21 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         _context?.Dispose();
     }
 
-    public bool Exist(Guid? id = null, Expression<Func<TUser, bool>>? predicate = null)
+    public bool Exist(EntityFindOptions<TUser> entityFindOptions)
 	{
-		if (IsInvalidGetExpression(id, predicate))
+		if (IsInvalidGetExpression(entityFindOptions))
 			return false;
 
-        return All.Any(predicate ?? (x => x.Id == id));
+        return All.Any(entityFindOptions.Predicate ?? (x => x.Id == entityFindOptions.EntityId));
     }
 
-    public async Task<bool> ExistAsync(Guid? id = null, Expression<Func<TUser, bool>>? predicate = null, CancellationToken cancellationToken = default)
+    public async Task<bool> ExistAsync(EntityFindOptions<TUser> entityFindOptions, CancellationToken cancellationToken = default)
 	{
-        if (IsInvalidGetExpression(id, predicate))
+        if (IsInvalidGetExpression(entityFindOptions))
             return false;
 
-        return await All.AnyAsync(predicate ?? (x => x.Id == id), cancellationToken);
+        return await All.AnyAsync(entityFindOptions.Predicate
+            ?? (x => x.Id == entityFindOptions.EntityId), cancellationToken);
     }
 
     public bool FitsConditions(TUser? entity)
@@ -132,7 +135,7 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         if (entity is null)
             return false;
 
-        if (!Exist(predicate: x => x.Id == entity.Id))
+        if (!Exist(new EntityFindOptions<TUser>(entity.Id)))
             return false;
 
         return true;
@@ -143,39 +146,49 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         if (entity is null)
             return false;
 
-        if (!await ExistAsync(predicate: x => x.Id == entity.Id, cancellationToken: cancellationToken))
-            return false;
+		if (!await ExistAsync(new EntityFindOptions<TUser>(entity.Id), cancellationToken))
+			return false;
 
         return true;
     }
 
-    public TUser Get(Guid? id = null, Expression<Func<TUser, bool>>? predicate = null)
+    public TUser Get(EntityFindOptions<TUser> entityFindOptions)
     {
-		if (IsInvalidGetExpression(id, predicate))
+		if (IsInvalidGetExpression(entityFindOptions))
             return _mapper.Map<TUser>(User.Default);
+        
+        if (!entityFindOptions.OnlyDatabaseFind)
+		{
+			var cached = _cache.GetRecord<TUser>($"UserCached_{entityFindOptions.EntityId}");
+			if (cached is not null)
+				return cached;
+		}
 
-		var cached = _cache.GetRecord<TUser>($"UserCached_{id}");
-		if (cached is not null)
-            return cached;
-
-        var user = All.FirstOrDefault(predicate ?? (x => x.Id == id))
+        var user = All.FirstOrDefault(entityFindOptions.Predicate ?? (x => x.Id == entityFindOptions.EntityId))
             ?? _mapper.Map<TUser>(User.Default);
 
         if (!user.IsEmpty())
             _cache.SetRecord($"UserCached_{user.Id}", user);
+
         return user;
     }
 
-    public async Task<TUser> GetAsync(Guid? id = null, Expression<Func<TUser, bool>>? predicate = null, CancellationToken cancellationToken = default)
+    public async Task<TUser> GetAsync(EntityFindOptions<TUser> entityFindOptions, CancellationToken cancellationToken = default)
 	{
-		if (IsInvalidGetExpression(id, predicate))
+		if (IsInvalidGetExpression(entityFindOptions))
 			return _mapper.Map<TUser>(User.Default);
 
-		var cached = await _cache.GetRecordAsync<TUser>($"UserCached_{id}", cancellationToken: cancellationToken);
-		if (cached is not null)
-            return cached;
+		if (!entityFindOptions.OnlyDatabaseFind)
+        {
+			var cached = await _cache.GetRecordAsync<TUser>($"UserCached_{entityFindOptions.EntityId}",
+			    cancellationToken: cancellationToken);
 
-        var user = await All.FirstOrDefaultAsync(predicate ?? (x => x.Id == id), cancellationToken)
+			if (cached is not null)
+				return cached;
+		}
+
+        var user = await All.FirstOrDefaultAsync(entityFindOptions.Predicate ?? (x => x.Id == entityFindOptions.EntityId),
+            cancellationToken)
             ?? _mapper.Map<TUser>(User.Default);
 
         if (!user.IsEmpty())
@@ -210,9 +223,10 @@ public sealed class UserRepository<TUser> : IUserRepository<TUser>
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
 	}
 
-	private bool IsInvalidGetExpression(Guid? id = null, Expression<Func<TUser, bool>>? predicate = null)
+	private bool IsInvalidGetExpression(EntityFindOptions<TUser> entityFindOptions)
     {
-        return (id == Guid.Empty || id is null) && predicate is null;
+        return (entityFindOptions?.EntityId == Guid.Empty || entityFindOptions?.EntityId is null)
+            && entityFindOptions?.Predicate is null;
 	}
 
 	/// <summary>

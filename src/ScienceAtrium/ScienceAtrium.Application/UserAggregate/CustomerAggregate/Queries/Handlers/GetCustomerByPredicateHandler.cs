@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using ScienceAtrium.Domain.RootAggregate.Options;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 
@@ -8,6 +9,7 @@ public class GetCustomerByPredicateHandler(IUserRepository<Customer> _userReposi
 {
     public async Task<Customer> Handle(GetCustomerByPredicateQuery request, CancellationToken cancellationToken)
     {
-        return await _userRepository.GetAsync(predicate: request.Predicate, cancellationToken: cancellationToken);
+        return await _userRepository.GetAsync(new EntityFindOptions<Customer>(predicate: request.Predicate),
+            cancellationToken: cancellationToken);
     }
 }

@@ -21,11 +21,11 @@ public class OrderWorkTemplate
     public Order Order { get; set; }
     public Guid? WorkTemplateId { get; set; }
     public WorkTemplate WorkTemplate { get; set; }
-    public WorkTemplateState State { get; set; } = WorkTemplateState.Delayed;
+    public OrderWorkTemplateStatus Status { get; set; } = OrderWorkTemplateStatus.Delayed;
     public EntityState EntityState { get; set; } = EntityState.Detached;
 
     public override string ToString()
     {
-        return $"{nameof(OrderId)}: {OrderId}\n{nameof(WorkTemplateId)}: {WorkTemplateId}\n{nameof(State)}: {State}";
+        return $"{nameof(OrderId)}: {OrderId}\n{nameof(WorkTemplateId)}: {WorkTemplateId}\n{nameof(Status)}: {Status}";
     }
 }

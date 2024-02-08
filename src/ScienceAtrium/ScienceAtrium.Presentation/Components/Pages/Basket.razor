@@ -25,7 +25,7 @@
                                 <img src="img/title-page.png" width="100" height="130">
                                 <p style="white-space: normal;">@workTemplate.Title</p>
                                 <span class="price">@workTemplate.Price</span>
-                                <button @onclick="async () => await AddWorkTemplateToListAsync(workTemplate, WorkTemplateState.ReadyToPay, EntityState.Modified)" class="btn-shop">Добавить</button>
+                                <button @onclick="async () => await AddWorkTemplateToListAsync(workTemplate, OrderWorkTemplateStatus.ReadyToPay, EntityState.Modified)" class="btn-shop">Добавить</button>
                             </div>
                         }
                     }
@@ -47,7 +47,7 @@
                 {
                     <span class="name-sub">
                         @workTemplate.Title
-                        <button @onclick="async () => await AddWorkTemplateToListAsync(workTemplate, WorkTemplateState.WaitInBasket, EntityState.Modified)" class="btn-shop delete-btn">Убрать</button>
+                        <button @onclick="async () => await AddWorkTemplateToListAsync(workTemplate, OrderWorkTemplateStatus.WaitInBasket, EntityState.Modified)" class="btn-shop delete-btn">Убрать</button>
                     </span>
                 }
 
@@ -71,9 +71,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _currentUser = await Mediator.Send(new GetCustomerByPredicateQuery(x => x.Id != Guid.Empty));
+        _currentUser = await Mediator.Send(
+            new GetCustomerQuery(
+                new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)));
+
         _currentOrder = await Mediator.Send(
-            new GetOrderByCustomerIdWithStatusQuery(_currentUser.Id, OrderStatus.Delayed));
+            new GetOrderQuery(
+                new EntityFindOptions<Order>(predicate: x => x.CustomerId == _currentUser.Id
+                                        && x.Status == OrderStatus.Delayed)));
 
         RefreshWorkTemplates(_currentOrder);
 
@@ -107,7 +112,7 @@
     }
 
     private async Task AddWorkTemplateToListAsync(WorkTemplate workTemplate,
-        WorkTemplateState workTemplateState,
+        OrderWorkTemplateStatus workTemplateState,
         EntityState entityState)
     {
         var orderWorkTemplate = _currentOrder.WorkTemplatesLink.FirstOrDefault(x => x.WorkTemplateId == workTemplate.Id);
@@ -117,7 +122,7 @@
                 $"OrderWorkTemplate with Id {{{orderWorkTemplate.WorkTemplateId}}} wasn't found");
             return;
         }
-        orderWorkTemplate.State = workTemplateState;
+        orderWorkTemplate.Status = workTemplateState;
         orderWorkTemplate.EntityState = entityState;
 
         var changes = await Mediator.Send(new UpdateOrderCommand(_currentOrder));
@@ -131,21 +136,21 @@
     private decimal CalculateTotalPriceReadyToPayWorkTemplates(Order order)
     {
         return order.WorkTemplatesLink
-            .Where(x => x.State == WorkTemplateState.ReadyToPay)
+            .Where(x => x.Status == OrderWorkTemplateStatus.ReadyToPay)
             .Select(x => x.WorkTemplate.Price)
             .Sum();
     }
 
     private void RefreshWorkTemplates(Order order)
     {
-        _waitInBasketWorkTemplates = GetWorkTemplatesWithState(_currentOrder, WorkTemplateState.WaitInBasket);
-        _readyToPayWorkTemplates = GetWorkTemplatesWithState(_currentOrder, WorkTemplateState.ReadyToPay);
+        _waitInBasketWorkTemplates = GetWorkTemplatesWithState(_currentOrder, OrderWorkTemplateStatus.WaitInBasket);
+        _readyToPayWorkTemplates = GetWorkTemplatesWithState(_currentOrder, OrderWorkTemplateStatus.ReadyToPay);
     }
 
-    private List<WorkTemplate> GetWorkTemplatesWithState(Order order, WorkTemplateState workTemplateState)
+    private List<WorkTemplate> GetWorkTemplatesWithState(Order order, OrderWorkTemplateStatus workTemplateState)
     {
         return order.WorkTemplatesLink
-            .Where(x => x.State == workTemplateState)
+            .Where(x => x.Status == workTemplateState)
             .Select(x => x.WorkTemplate)
             .ToList();
     }

@@ -1,5 +1,5 @@
 ﻿namespace ScienceAtrium.Domain.OrderAggregate;
-public enum WorkTemplateState
+public enum OrderWorkTemplateStatus
 {
     WaitInBasket,
     ReadyToPay,
