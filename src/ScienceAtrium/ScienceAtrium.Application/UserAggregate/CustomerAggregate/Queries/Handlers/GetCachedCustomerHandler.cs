@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
-using ScienceAtrium.Application.Extensions;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
+using ScienceAtrium.Infrastructure.Extensions;
 
 namespace ScienceAtrium.Application.UserAggregate.CustomerAggregate.Queries.Handlers;
 public class GetCachedCustomerHandler(IDistributedCache _cache) : IRequestHandler<GetCachedCustomerQuery, Customer>
