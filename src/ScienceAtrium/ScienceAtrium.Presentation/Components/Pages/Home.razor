@@ -127,7 +127,14 @@
 				<img src="img/title-page.png" width="80" height="100">
 				<p style="white-space: normal;">@workTemplate.Title</p>
 				<p>₽ @workTemplate.Price</p>
-				<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
+				@if (!_currentOrder.WorkTemplates.Any(x => x.Id == workTemplate.Id))
+				{
+					<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
+				}
+				else
+				{
+					<button @onclick="async () => await RemoveWorkTemplateAsync(workTemplate)" class="btn-shop">Убрать</button>
+				}
 			</div>
 		}
 
@@ -191,7 +198,13 @@
 	private async Task AddWorkTemplateAsync(WorkTemplate workTemplate)
 	{
 		_currentOrder.AddWorkTemplate(workTemplate);
-		await MakeOrderAsync(_currentOrder, _currentUser.Id);
+		await UpdateOrderAsync(_currentOrder, _currentUser.Id);
+	}
+
+	private async Task RemoveWorkTemplateAsync(WorkTemplate workTemplate)
+	{
+		_currentOrder.RemoveWorkTemplate(x => x.Id == workTemplate.Id);
+		await Mediator.Send(new UpdateOrderCommand(_currentOrder));
 	}
 
 	private async Task<Customer> GetCustomerAsync()
@@ -212,7 +225,7 @@
 		return order;
 	}
 
-	private async Task MakeOrderAsync(Order order, Guid customerId)
+	private async Task UpdateOrderAsync(Order order, Guid customerId)
 	{
 		var dbOrder = await Mediator.Send(
 			new GetOrderQuery(
