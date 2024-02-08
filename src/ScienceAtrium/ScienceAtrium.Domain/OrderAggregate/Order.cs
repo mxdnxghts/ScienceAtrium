@@ -18,7 +18,7 @@ public class Order : Entity
     private OrderStatus _status;
     private Paymentmethod _paymentMethod;
     private decimal _totalCost;
-    private DateTime _orderDate = DateTime.UtcNow;
+    private DateTime _orderDate = DateTime.Now;
 
     public Order(Guid id) : base(id)
     {
@@ -116,6 +116,14 @@ public class Order : Entity
             .FirstOrDefault(x => x.WorkTemplateId == workTemplate.Id).EntityState = EntityState.Deleted;
 
         _totalCost = GetTotal();
+        return this;
+    }
+
+    public Order RemoveWorkTemplates(params WorkTemplate[] workTemplates)
+    {
+        foreach (var workTemplate in workTemplates)
+            RemoveWorkTemplate(x => x.Id == workTemplate.Id);
+
         return this;
     }
 
