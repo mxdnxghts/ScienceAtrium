@@ -30,7 +30,7 @@ public class PayOrderHandler(ApplicationTransactionService _applicationTransacti
 
         await _mediator.Send(new MoveUnpaidWorkTemplatesCommand(updatedOrder), cancellationToken);
 
-        await _mediator.Send(new SetCachedCustomerCommand(request.Customer), cancellationToken);
+        await _mediator.Send(new UpdateCachedCustomerCommand(request.Customer), cancellationToken);
 
         return true;
     }
