@@ -1,4 +1,10 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Google
+@using ScienceAtrium.Presentation.Components.Account.Shared
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inherits LayoutComponentBase
+@inject SignInManager<ApplicationUser> SignInManager
 <body>
 	<header id="header" class="header">
 
@@ -16,13 +22,17 @@
 						<li><a href="#catalog" class="link">Каталог</a></li>
 					</ul>
 				</div>
-				<div class="nav-button">
-					<button class="btn white-btn" id="loginBtn" onclick="redirectToAuth()">Вход</button>
-					<button class="btn" id="registerBtn" onclick="redirectToAuth()">Регистрация</button>
-				</div>
-				<div class="nav-menu-btn">
-					<i class="bx bx-menu" onclick="myMenuFunction()"></i>
-				</div>
+				<AuthorizeView>
+					<Authorized>
+
+					</Authorized>
+					<NotAuthorized>
+						<div class="nav-button">
+							<ExternalLoginPicker />
+						</div>
+					</NotAuthorized>
+				</AuthorizeView>
+				
 			</nav>
 
 		</div>
@@ -59,3 +69,11 @@
 
 	</footer>
 </body>
+
+@code{
+	IEnumerable<AuthenticationScheme> _externalSchemes;
+	protected override async Task OnInitializedAsync()
+	{
+		_externalSchemes = await SignInManager.GetExternalAuthenticationSchemesAsync();
+	}
+}
