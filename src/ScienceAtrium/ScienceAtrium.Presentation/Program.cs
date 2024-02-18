@@ -1,14 +1,24 @@
-using ScienceAtrium.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 using ScienceAtrium.Application;
+using ScienceAtrium.Infrastructure;
+using ScienceAtrium.Infrastructure.Data;
+using ScienceAtrium.Presentation;
 using ScienceAtrium.Presentation.Components;
+using ScienceAtrium.Presentation.Components.Account;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents()
+builder.Services
+    .AddRazorComponents()
     .AddInteractiveServerComponents();
-builder.Services.AddInfrastructure(builder.Configuration)
-    .AddApplication();
+
+builder.Services
+    .AddInfrastructure(builder.Configuration)
+    .AddApplication()
+    .AddPresentationAuthentication(builder.Configuration);
+
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
 
@@ -25,7 +35,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
+app.UseAuthentication();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.MapAdditionalIdentityEndpoints();
+app.MapHealthChecks("/health");
 
 app.Run();
