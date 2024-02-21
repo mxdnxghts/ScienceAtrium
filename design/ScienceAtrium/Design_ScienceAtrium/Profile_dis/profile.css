@@ -204,7 +204,6 @@ h1 {
   transform: scale(1.03);
 }
 
-<<<<<<< HEAD
 .blockctlg p{
   margin-top: 10px;
 }
@@ -213,12 +212,6 @@ h1 {
   color: #7B7367;
 }
 
-=======
-.catalogblk p{
-  margin-top: 30px;
-}
-
->>>>>>> c8bcf889f9ab21917c48dc92174978f799e72e05
 .catalogblk::-webkit-scrollbar {
   width: 12px;
 }
@@ -337,13 +330,8 @@ h2{
     height: 160px;
   }
   
-<<<<<<< HEAD
   .blockctlg p{
     margin-top: 25px;
-=======
-  .catalogblk p{
-    margin-top: 40px;
->>>>>>> c8bcf889f9ab21917c48dc92174978f799e72e05
   }
   
   .footer{
@@ -464,11 +452,7 @@ h2{
   }
 
   .blockctlg p {
-<<<<<<< HEAD
     margin-top: 5px;
-=======
-    margin-top: 10px;
->>>>>>> c8bcf889f9ab21917c48dc92174978f799e72e05
   }
 
   .blockctlg img {
@@ -564,11 +548,7 @@ h2{
   }
 
   .blockctlg p {
-<<<<<<< HEAD
     margin-top: 3px;
-=======
-    margin-top: 10px;
->>>>>>> c8bcf889f9ab21917c48dc92174978f799e72e05
   }
 
   .catalogblk {
@@ -577,13 +557,6 @@ h2{
     overflow-x: hidden;
   }
 
-<<<<<<< HEAD
-=======
-  .catalogblk p {
-    margin-top: 5px;
-  }
-
->>>>>>> c8bcf889f9ab21917c48dc92174978f799e72e05
   .catalogblk img {
     width: 70px;
     height: 90px;
@@ -596,20 +569,6 @@ h2{
   h2 {
     font-size: 34px;
   }
-<<<<<<< HEAD
-=======
-
-  .mailto {
-    font-size: 26px;
-  }
-
-}
-
-
-
-
-
->>>>>>> c8bcf889f9ab21917c48dc92174978f799e72e05
 
   .mailto {
     font-size: 26px;

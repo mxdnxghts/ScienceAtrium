@@ -1,0 +1,91 @@
+.container {
+  display: flex;
+  margin: 0 auto; 
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  overflow-x: hidden;
+  margin: 0;
+  background-color: #F7F8F1;
+  font-family: 'Montserrat Alternates', sans-serif;  
+  background-size: 100%;
+  position: relative;
+}
+
+.eror-block {
+  font-size: 42px;
+  color: #7B7367;
+  text-align: center;
+  display: flex;
+  margin-left: 45%;
+  margin-right: 55%;
+  margin-top: 300px;
+  height: auto;
+}
+
+.eror-block img {
+  width: 350px;
+  height: 350px;
+}
+
+
+@media (max-width: 1440px) {
+  .eror-block {
+    font-size: 36px;
+    margin-left: 40%;
+    margin-right: 60%;
+    margin-top: 280px;
+  }
+  
+  .eror-block img {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .eror-block {
+    font-size: 36px;
+    margin-left: 40%;
+    margin-right: 60%;
+    margin-top: 280px;
+  }
+  
+  .eror-block img {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+@media(max-width: 992px) {
+  .eror-block {
+    font-size: 32px;
+    margin-left: 40%;
+    margin-right: 60%;
+    margin-top: 280px;
+  }
+  
+  .eror-block img {
+    width: 270px;
+    height: 270px;
+  }
+}
+
+@media (max-width: 575px) {
+  .eror-block {
+    font-size: 20px;
+    margin-left: 30%;
+    margin-right: 70%;
+    margin-top: 350px;
+  }
+  
+  .eror-block img {
+    width: 270px;
+    height: 270px;
+  }
+}

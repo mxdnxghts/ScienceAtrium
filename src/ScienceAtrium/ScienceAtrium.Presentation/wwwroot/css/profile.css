@@ -204,8 +204,12 @@ h1 {
   transform: scale(1.03);
 }
 
-.catalogblk p{
-  margin-top: 30px;
+.blockctlg p{
+  margin-top: 10px;
+}
+
+.blockctlg .st {
+  color: #7B7367;
 }
 
 .catalogblk::-webkit-scrollbar {
@@ -326,8 +330,8 @@ h2{
     height: 160px;
   }
   
-  .catalogblk p{
-    margin-top: 40px;
+  .blockctlg p{
+    margin-top: 25px;
   }
   
   .footer{
@@ -448,7 +452,7 @@ h2{
   }
 
   .blockctlg p {
-    margin-top: 10px;
+    margin-top: 5px;
   }
 
   .blockctlg img {
@@ -536,7 +540,7 @@ h2{
   .blockctlg{
     width: 160px;
     height: 200px;
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .blockctlg:hover{
@@ -544,17 +548,13 @@ h2{
   }
 
   .blockctlg p {
-    margin-top: 10px;
+    margin-top: 3px;
   }
 
   .catalogblk {
     width: 210px;
     height: 590px;
     overflow-x: hidden;
-  }
-
-  .catalogblk p {
-    margin-top: 5px;
   }
 
   .catalogblk img {
@@ -575,10 +575,3 @@ h2{
   }
 
 }
-
-
-
-
-
-
-
