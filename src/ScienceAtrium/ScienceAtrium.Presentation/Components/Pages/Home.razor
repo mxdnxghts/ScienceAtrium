@@ -1,5 +1,9 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Authentication.Google
+@using Microsoft.AspNetCore.Authorization
+
 @inject IMediator Mediator
 @inject Serilog.ILogger Logger
 @inject NavigationManager NavigationManager
@@ -127,13 +131,20 @@
 				<img src="img/title-page.png" width="80" height="100">
 				<p style="white-space: normal;">@workTemplate.Title</p>
 				<p>₽ @workTemplate.Price</p>
-				@if (!_currentOrder.WorkTemplates.Any(x => x.Id == workTemplate.Id))
+				@if (_currentOrder is not null && !_currentOrder.IsEmpty())
 				{
-					<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
+					@if (!_currentOrder.WorkTemplates.Any(x => x.Id == workTemplate.Id))
+					{
+						<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
+					}
+					else
+					{
+						<button @onclick="async () => await RemoveWorkTemplateAsync(workTemplate)" class="btn-shop">Убрать</button>
+					}
 				}
 				else
 				{
-					<button @onclick="async () => await RemoveWorkTemplateAsync(workTemplate)" class="btn-shop">Убрать</button>
+					<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
 				}
 			</div>
 		}
@@ -180,13 +191,19 @@
 	private Order _currentOrder;
 	private Guid _workTemplateFilter = Guid.Empty;
 
+	[SupplyParameterFromQuery]
+	public Guid CustomerId { get; set; }
+
 	protected override async Task OnInitializedAsync()
 	{
 		var workTemplates = _filteredWorkTemplates = await Mediator.Send(new GetWorkTemplateListQuery());
 		_workTemplates.AddRange(workTemplates);
 		_currentUser = await Mediator.Send(
 			new GetCustomerQuery(
-				new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)));
+				new EntityFindOptions<Customer>(CustomerId)));
+		if (_currentUser.IsEmpty())
+			return;
+
 		_currentOrder = await GetOrderAsync(_currentUser.Id);
 	}
 
@@ -217,7 +234,7 @@
 	{
 		return await Mediator.Send(
 			new GetCustomerQuery(
-				new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)));
+				new EntityFindOptions<Customer>(CustomerId)));
 	}
 
 	private async Task<Order> GetOrderAsync(Guid customerId)

@@ -80,7 +80,7 @@
     {
         _user = await Mediator.Send(
             new GetCustomerQuery(
-                new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty).TryFindDatabase()));
+                new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty).ForceDatabaseSearch()));
 
         if (_user is null)
         {

@@ -69,16 +69,21 @@
     private List<WorkTemplate> _waitInBasketWorkTemplates = [];
     private List<WorkTemplate> _readyToPayWorkTemplates = [];
 
+    [SupplyParameterFromQuery]
+    public Guid CustomerId { get; set; } = Guid.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         _currentUser = await Mediator.Send(
             new GetCustomerQuery(
-                new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)));
+                new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)
+            .ForceDatabaseSearch()));
 
         _currentOrder = await Mediator.Send(
             new GetOrderQuery(
                 new EntityFindOptions<Order>(predicate: x => x.CustomerId == _currentUser.Id
-                                        && x.Status == OrderStatus.Delayed)));
+                                        && x.Status == OrderStatus.Delayed)
+            .ForceDatabaseSearch()));
 
         RefreshWorkTemplates(_currentOrder);
 
