@@ -1,10 +1,12 @@
 ﻿@page "/basket"
 @rendermode InteractiveServer
+
+@using ScienceAtrium.Domain.Exceptions
+
 @inject IMediator Mediator
 @inject Serilog.ILogger Logger
 @inject NavigationManager NavigationManager
 @inject ApplicationTransactionService ApplicationTransactionService
-@using ScienceAtrium.Domain.Exceptions
 
 <link rel="stylesheet" href="css/basket.css" />
 
@@ -30,7 +32,8 @@
                         }
                     }
 
-                    else {
+                    else 
+                    {
                         <div style="background-color: #C9C0B3;" class="ctlblock">
                             <span class="price">Nothing to show</span>
                         </div>
@@ -76,7 +79,7 @@
     {
         _currentUser = await Mediator.Send(
             new GetCustomerQuery(
-                new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)
+                new EntityFindOptions<Customer>(CustomerId)
             .ForceDatabaseSearch()));
 
         _currentOrder = await Mediator.Send(

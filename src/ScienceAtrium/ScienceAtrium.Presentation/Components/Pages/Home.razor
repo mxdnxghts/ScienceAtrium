@@ -1,14 +1,16 @@
-﻿@page "/"
+﻿@page "/home"
 @rendermode InteractiveServer
 
 @using Microsoft.AspNetCore.Authentication.Google
 @using Microsoft.AspNetCore.Authorization
+@using ScienceAtrium.Presentation.Components.Account
 
 @inject IMediator Mediator
 @inject Serilog.ILogger Logger
-@inject NavigationManager NavigationManager
+@inject IdentityRedirectManager NavigationManager
 @inject IReader<Customer> CustomerReader
 @inject IMapper Mapper
+@inject IHttpClientFactory HttpClientFactory
 
 <link rel="stylesheet" href="css/main.css" />
 
@@ -131,20 +133,29 @@
 				<img src="img/title-page.png" width="80" height="100">
 				<p style="white-space: normal;">@workTemplate.Title</p>
 				<p>₽ @workTemplate.Price</p>
-				@if (_currentOrder is not null && !_currentOrder.IsEmpty())
-				{
-					@if (!_currentOrder.WorkTemplates.Any(x => x.Id == workTemplate.Id))
+				@{
+					if (CustomerId != Guid.Empty)
 					{
-						<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
+						if (_currentOrder is not null && !_currentOrder.IsEmpty())
+						{
+							if (!_currentOrder.WorkTemplates.Any(x => x.Id == workTemplate.Id))
+							{
+								<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
+							}
+							else
+							{
+								<button @onclick="async () => await RemoveWorkTemplateAsync(workTemplate)" class="btn-shop">Убрать</button>
+							}
+						}
+						else
+						{
+							<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
+						}
 					}
 					else
 					{
-						<button @onclick="async () => await RemoveWorkTemplateAsync(workTemplate)" class="btn-shop">Убрать</button>
+						<button @onclick="SignInRedirectAsync" class="btn-shop">Войти</button>
 					}
-				}
-				else
-				{
-					<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
 				}
 			</div>
 		}
@@ -230,6 +241,20 @@
 		await Mediator.Send(new UpdateOrderCommand(_currentOrder));
 	}
 
+	private async Task SignInRedirectAsync()
+	{
+		var httpClient = HttpClientFactory.CreateClient("AccountLoginClient");
+		var requestUri = "/Account/PerformExternalLoginFromQuery?ReturnUrl=&Action=LoginCallback&Provider=Google";
+		var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+		var response = await httpClient.SendAsync(httpRequestMessage);
+		if (!response.IsSuccessStatusCode)
+		{
+			Logger.Error("Request to \"{0}\" returned {1}", requestUri, response.StatusCode);
+			return;
+		}
+
+	}
+
 	private async Task<Customer> GetCustomerAsync()
 	{
 		return await Mediator.Send(
@@ -255,7 +280,6 @@
 				new EntityFindOptions<Order>(predicate: x => x.CustomerId == _currentUser.Id
 										&& x.Status == OrderStatus.Delayed)));
 
-		// is not exists
 		if (dbOrder.IsEmpty())
 		{
 			await Mediator.Send(new CreateOrderCommand(order));

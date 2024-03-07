@@ -76,11 +76,14 @@
     private IEnumerable<WorkTemplateOrderStatus> _workTemplateOrderStatuses;
     private DateTime _deadlineDate = default;
 
+    [SupplyParameterFromQuery]
+    public Guid CustomerId { get; set; } = Guid.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         _user = await Mediator.Send(
             new GetCustomerQuery(
-                new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty).ForceDatabaseSearch()));
+                new EntityFindOptions<Customer>(CustomerId).ForceDatabaseSearch()));
 
         if (_user is null)
         {
