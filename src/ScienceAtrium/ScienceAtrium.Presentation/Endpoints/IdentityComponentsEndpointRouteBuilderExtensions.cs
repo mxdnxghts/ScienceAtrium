@@ -1,16 +1,11 @@
 using AutoMapper;
-using Blazored.LocalStorage;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using ScienceAtrium.Application.UserAggregate.CustomerAggregate.Commands;
 using ScienceAtrium.Application.UserAggregate.CustomerAggregate.Queries;
@@ -20,7 +15,6 @@ using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Presentation.Components.Account;
 using ScienceAtrium.Presentation.Components.Account.Pages.Manage;
 using System.Security.Claims;
-using System.Security.Cryptography.Xml;
 using System.Text.Json;
 
 namespace Microsoft.AspNetCore.Routing;

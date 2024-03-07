@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ScienceAtrium.Infrastructure.Data;
@@ -11,9 +13,23 @@ namespace ScienceAtrium.Presentation;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddPresentationAuthentication(this IServiceCollection serviceCollection, IConfiguration configuration)
+    public static IServiceCollection AddPresentation(this IServiceCollection serviceCollection, IConfiguration configuration)
+    {
+        serviceCollection.AddAppAuthentication(configuration);
+        serviceCollection.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+        serviceCollection.AddHttpClient("AccountLoginClient", o =>
+        {
+            o.BaseAddress = new Uri(configuration.GetRequiredSection("Clients:AccountLoginClient")?.Value
+                ?? throw new ArgumentNullException("AcountLoginClient"));
+        });
+
+        return serviceCollection;
+    }
+
+    private static IServiceCollection AddAppAuthentication(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddCascadingAuthenticationState();
+        serviceCollection.AddDataProtection();
         serviceCollection.AddScoped<IdentityUserAccessor>();
         serviceCollection.AddScoped<IdentityRedirectManager>();
         serviceCollection.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
@@ -25,12 +41,22 @@ public static class DependencyInjection
         serviceCollection.AddAuthentication(o =>
         {
             o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            o.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
         })
+            .AddCookie(o =>
+            {
+                o.Cookie = new CookieBuilder()
+                {
+                    //MaxAge = TimeSpan.FromDays(360),
+                    MaxAge = TimeSpan.FromSeconds(60),
+                    SameSite = SameSiteMode.Strict,
+                    Name = "ScienceAtriumCookies"
+                };
+            })
             .AddGoogle(googleOptions =>
             {
                 googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
                 googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-                //googleOptions.SignInScheme = IdentityConstants.ExternalScheme;
                 googleOptions.SaveTokens = true;
                 googleOptions.Events = new OAuthEvents
                 {

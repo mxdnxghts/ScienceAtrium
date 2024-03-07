@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Identity;
 using ScienceAtrium.Application;
 using ScienceAtrium.Infrastructure;
-using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Presentation;
 using ScienceAtrium.Presentation.Components;
-using ScienceAtrium.Presentation.Components.Account;
+using ScienceAtrium.Presentation.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +14,9 @@ builder.Services
 builder.Services
     .AddInfrastructure(builder.Configuration)
     .AddApplication()
-    .AddPresentationAuthentication(builder.Configuration);
+    .AddPresentation(builder.Configuration);
 
 builder.Services.AddHealthChecks();
-
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
 
@@ -39,10 +35,12 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.MapAdditionalIdentityEndpoints();
+app.MapRewroteEndpoints();
 
 app.Run();
