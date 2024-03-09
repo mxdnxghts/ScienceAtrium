@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
+﻿using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
 namespace ScienceAtrium.Presentation.Endpoints;
@@ -9,23 +12,36 @@ internal static class CustomRedirectionEndpointRouteBuilderExtension
 	{
 		var home = endpoints.MapGroup("/");
 		
-		home.MapGet("/home-redirect", async (context) => DefaultRedirect(context, "/home"));
-		home.MapGet("/account-redirect", async (context) => DefaultRedirect(context, "/account"));
-		home.MapGet("/basket-redirect", async (context) => DefaultRedirect(context, "/basket"));
+		home.MapGet("/home-redirect", async (
+			HttpContext context,
+			[FromServices] IDataProtectionProvider idp)
+			=> DefaultRedirect(context, idp, "/home"));
+
+		home.MapGet("/account-redirect", async (
+			HttpContext context,
+			[FromServices] IDataProtectionProvider idp)
+			=> DefaultRedirect(context, idp, "/account"));
+
+		home.MapGet("/basket-redirect", async (
+			HttpContext context,
+			[FromServices] IDataProtectionProvider idp)
+			=> DefaultRedirect(context, idp, "/basket"));
 
 		return home;
 	}
 
-	private static void DefaultRedirect(HttpContext context, PathString path)
+	public static void DefaultRedirect(HttpContext context, IDataProtectionProvider idp, PathString path)
     {
-        IEnumerable<KeyValuePair<string, StringValues>> query = [
-					new ("CustomerId", context.Request.Cookies["CustomerId"] ?? Guid.Empty.ToString())
+		var protector = idp.CreateProtector("customer_id");
+
+		IEnumerable<KeyValuePair<string, StringValues>> query = [
+					new ("customer_id", context.Request.Cookies["customer_id"]
+					?? protector.Protect(Guid.Empty.ToString()))
 				];
 		var redirectUrl = UriHelper.BuildRelative(GetOriginalPath(context.Request.PathBase), path, QueryString.Create(query));
 		context.Response.Redirect(redirectUrl);
 		
 	}
-
 
     private static string GetOriginalPath(PathString redirectPathString)
 	{

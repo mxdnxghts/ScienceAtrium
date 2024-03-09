@@ -56,6 +56,7 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
 		accountGroup.MapGet("/ExternalLogin", async (
             HttpContext context,
             [FromServices] SignInManager<ApplicationUser> signInManager,
+			[FromServices] IDataProtectionProvider idp,
             [FromServices] IMediator mediator,
             [FromServices] Serilog.ILogger logger,
             [FromServices] IMapper mapper,
@@ -92,20 +93,18 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
 			}
 
 			await OnLoginCallbackAsync(mediator, logger, mapper, info);
-			IEnumerable<KeyValuePair<string, StringValues>> query = [
-				new(nameof(CustomerId), CustomerId.ToString())];
 
-			context.Response.Cookies.Append(nameof(CustomerId), CustomerId.ToString(),
-				new CookieOptions()
-				{
-					SameSite = SameSiteMode.Strict,
-					IsEssential = true,
-					MaxAge = DateTime.UtcNow.Subtract(DateTime.UtcNow.AddYears(1))
-				});
+			var protector = idp.CreateProtector("customer_id");
+            
+			context.Response.Cookies.Append("customer_id", protector.Protect(CustomerId.ToString()));
 
-			var redirectUrl = UriHelper.BuildRelative(context.Request.PathBase, "/home", QueryString.Create(query));
-			context.Response.Redirect(redirectUrl);
-		});
+            IEnumerable<KeyValuePair<string, StringValues>> query = [
+                new("customer_id", protector.Protect(CustomerId.ToString()))
+                ];
+
+            var redirectUrl = UriHelper.BuildRelative(context.Request.PathBase, "/home", QueryString.Create(query));
+            context.Response.Redirect(redirectUrl);
+        });
 
         accountGroup.MapPost("/Logout", async (
             ClaimsPrincipal user,

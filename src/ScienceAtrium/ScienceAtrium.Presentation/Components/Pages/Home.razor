@@ -3,6 +3,7 @@
 
 @using Microsoft.AspNetCore.Authentication.Google
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.DataProtection
 @using ScienceAtrium.Presentation.Components.Account
 
 @inject IMediator Mediator
@@ -11,6 +12,7 @@
 @inject IReader<Customer> CustomerReader
 @inject IMapper Mapper
 @inject IHttpClientFactory HttpClientFactory
+@inject IDataProtectionProvider DataProtectionProvider
 
 <link rel="stylesheet" href="css/main.css" />
 
@@ -202,12 +204,15 @@
 	private Order _currentOrder;
 	private Guid _workTemplateFilter = Guid.Empty;
 
-	[SupplyParameterFromQuery]
+	[SupplyParameterFromQuery(Name = "customer_id")]
+	public string ProtectedCustomerId { get; set; }
+
 	public Guid CustomerId { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
 		var workTemplates = _filteredWorkTemplates = await Mediator.Send(new GetWorkTemplateListQuery());
+		CustomerId = GetUnprotectedCustomerId();
 		_workTemplates.AddRange(workTemplates);
 		_currentUser = await Mediator.Send(
 			new GetCustomerQuery(
@@ -216,6 +221,14 @@
 			return;
 
 		_currentOrder = await GetOrderAsync(_currentUser.Id);
+	}
+
+	private Guid GetUnprotectedCustomerId()
+	{
+		if (ProtectedCustomerId is null)
+			return Guid.Empty;
+		var protector = DataProtectionProvider.CreateProtector("customer_id");
+		return Guid.Parse(protector.Unprotect(ProtectedCustomerId));
 	}
 
 	private async Task ApplyFilter()
