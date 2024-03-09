@@ -1,6 +1,7 @@
 ﻿@page "/account"
 @rendermode InteractiveServer
 @inject IMediator Mediator
+@inject IDataProtectionProvider DataProtectionProvider
 
 <link rel="stylesheet" href="css/profile.css" />
 
@@ -76,11 +77,14 @@
     private IEnumerable<WorkTemplateOrderStatus> _workTemplateOrderStatuses;
     private DateTime _deadlineDate = default;
 
-    [SupplyParameterFromQuery]
-    public Guid CustomerId { get; set; } = Guid.Empty;
+    [SupplyParameterFromQuery(Name = "customer_id")]
+    public string ProtectedCustomerId { get; set; }
+
+    public Guid CustomerId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        CustomerId = GetUnprotectedCustomerId();
         _user = await Mediator.Send(
             new GetCustomerQuery(
                 new EntityFindOptions<Customer>(CustomerId).ForceDatabaseSearch()));
@@ -108,6 +112,14 @@
 
         if (_orders.Count() > 0)
             _deadlineDate = _orders.Select(x => x.OrderDate).Min();
+    }
+
+    private Guid GetUnprotectedCustomerId()
+    {
+        if (ProtectedCustomerId is null)
+            return Guid.Empty;
+        var protector = DataProtectionProvider.CreateProtector("customer_id");
+        return Guid.Parse(protector.Unprotect(ProtectedCustomerId));
     }
 
     private void SetDefaults()

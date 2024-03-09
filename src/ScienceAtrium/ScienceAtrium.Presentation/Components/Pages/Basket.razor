@@ -7,6 +7,7 @@
 @inject Serilog.ILogger Logger
 @inject NavigationManager NavigationManager
 @inject ApplicationTransactionService ApplicationTransactionService
+@inject IDataProtectionProvider DataProtectionProvider
 
 <link rel="stylesheet" href="css/basket.css" />
 
@@ -72,11 +73,14 @@
     private List<WorkTemplate> _waitInBasketWorkTemplates = [];
     private List<WorkTemplate> _readyToPayWorkTemplates = [];
 
-    [SupplyParameterFromQuery]
-    public Guid CustomerId { get; set; } = Guid.Empty;
+    [SupplyParameterFromQuery(Name = "customer_id")]
+    public string ProtectedCustomerId { get; set; }
+
+    public Guid CustomerId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        CustomerId = GetUnprotectedCustomerId();
         _currentUser = await Mediator.Send(
             new GetCustomerQuery(
                 new EntityFindOptions<Customer>(CustomerId)
@@ -91,6 +95,14 @@
         RefreshWorkTemplates(_currentOrder);
 
         _totalPriceReadyToPayWorkTemplates = CalculateTotalPriceReadyToPayWorkTemplates(_currentOrder);
+    }
+
+    private Guid GetUnprotectedCustomerId()
+    {
+        if (ProtectedCustomerId is null)
+            return Guid.Empty;
+        var protector = DataProtectionProvider.CreateProtector("customer_id");
+        return Guid.Parse(protector.Unprotect(ProtectedCustomerId));
     }
 
     private async Task PayAsync()
