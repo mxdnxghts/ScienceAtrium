@@ -47,8 +47,7 @@ public static class DependencyInjection
             {
                 o.Cookie = new CookieBuilder()
                 {
-                    //MaxAge = TimeSpan.FromDays(360),
-                    MaxAge = TimeSpan.FromSeconds(60),
+                    MaxAge = TimeSpan.FromDays(360),
                     SameSite = SameSiteMode.Strict,
                     Name = "ScienceAtriumCookies"
                 };
