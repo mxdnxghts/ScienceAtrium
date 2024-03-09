@@ -96,7 +96,13 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
 
 			var protector = idp.CreateProtector("customer_id");
             
-			context.Response.Cookies.Append("customer_id", protector.Protect(CustomerId.ToString()));
+			context.Response.Cookies.Append("customer_id", protector.Protect(CustomerId.ToString()),
+                new CookieOptions()
+                {
+                    SameSite = SameSiteMode.Strict,
+                    IsEssential = true,
+                    MaxAge = TimeSpan.FromDays(360),
+                });
 
             IEnumerable<KeyValuePair<string, StringValues>> query = [
                 new("customer_id", protector.Protect(CustomerId.ToString()))
