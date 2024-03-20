@@ -73,18 +73,18 @@
     private List<WorkTemplate> _waitInBasketWorkTemplates = [];
     private List<WorkTemplate> _readyToPayWorkTemplates = [];
 
-    [SupplyParameterFromQuery(Name = "customer_id")]
-    public string ProtectedCustomerId { get; set; }
+    [SupplyParameterFromQuery(Name = "user_id")]
+    public string ProtectedUserId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "user_email")]
+    public string ProtectedUserEmail { get; set; }
 
     public Guid CustomerId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        CustomerId = GetUnprotectedCustomerId();
-        _currentUser = await Mediator.Send(
-            new GetCustomerQuery(
-                new EntityFindOptions<Customer>(CustomerId)
-            .ForceDatabaseSearch()));
+        _currentUser = await UserHelper.GetUser(Mediator, ProtectedUserId, ProtectedUserEmail);
+        CustomerId = _currentUser.Id;
 
         _currentOrder = await Mediator.Send(
             new GetOrderQuery(
@@ -97,12 +97,9 @@
         _totalPriceReadyToPayWorkTemplates = CalculateTotalPriceReadyToPayWorkTemplates(_currentOrder);
     }
 
-    private Guid GetUnprotectedCustomerId()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (ProtectedCustomerId is null)
-            return Guid.Empty;
-        var protector = DataProtectionProvider.CreateProtector("customer_id");
-        return Guid.Parse(protector.Unprotect(ProtectedCustomerId));
+        //
     }
 
     private async Task PayAsync()
