@@ -1,7 +1,12 @@
 ﻿@page "/account"
 @rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Authorization
+
 @inject IMediator Mediator
 @inject IDataProtectionProvider DataProtectionProvider
+
+@attribute [Authorize(Policy = "google-oauth")]
 
 <link rel="stylesheet" href="css/profile.css" />
 
@@ -77,17 +82,18 @@
     private IEnumerable<WorkTemplateOrderStatus> _workTemplateOrderStatuses;
     private DateTime _deadlineDate = default;
 
-    [SupplyParameterFromQuery(Name = "customer_id")]
-    public string ProtectedCustomerId { get; set; }
+    [SupplyParameterFromQuery(Name = "user_id")]
+    public string ProtectedUserId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "user_email")]
+    public string ProtectedUserEmail { get; set; }
 
     public Guid CustomerId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        CustomerId = GetUnprotectedCustomerId();
-        _user = await Mediator.Send(
-            new GetCustomerQuery(
-                new EntityFindOptions<Customer>(CustomerId).ForceDatabaseSearch()));
+        _user = await UserHelper.GetUser(Mediator, ProtectedUserId, ProtectedUserEmail);
+        CustomerId = _user.Id;
 
         if (_user is null)
         {
@@ -114,12 +120,9 @@
             _deadlineDate = _orders.Select(x => x.OrderDate).Min();
     }
 
-    private Guid GetUnprotectedCustomerId()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (ProtectedCustomerId is null)
-            return Guid.Empty;
-        var protector = DataProtectionProvider.CreateProtector("customer_id");
-        return Guid.Parse(protector.Unprotect(ProtectedCustomerId));
+        //
     }
 
     private void SetDefaults()

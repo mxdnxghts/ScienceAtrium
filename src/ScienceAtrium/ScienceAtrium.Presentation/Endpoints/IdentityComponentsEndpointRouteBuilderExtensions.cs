@@ -1,6 +1,8 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -14,6 +16,7 @@ using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Presentation.Components.Account;
 using ScienceAtrium.Presentation.Components.Account.Pages.Manage;
+using ScienceAtrium.Presentation.UserAggregate;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -30,7 +33,7 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
-        var accountGroup = endpoints.MapGroup("/Account");
+        var accountGroup = endpoints.MapGroup("/account");
 
         accountGroup.MapPost("/PerformExternalLogin", async (
             HttpContext context,
@@ -56,7 +59,8 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
 		accountGroup.MapGet("/ExternalLogin", async (
             HttpContext context,
             [FromServices] SignInManager<ApplicationUser> signInManager,
-			[FromServices] IDataProtectionProvider idp,
+            [FromServices] IAuthorizationService authorizationService,
+            [FromServices] IDataProtectionProvider idp,
             [FromServices] IMediator mediator,
             [FromServices] Serilog.ILogger logger,
             [FromServices] IMapper mapper,
@@ -68,8 +72,7 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
 			{
 				context.Response.Cookies.Append(IdentityRedirectManager.StatusCookieName, $"Error from external provider: {remoteError}",
 					IdentityRedirectManager.GetStatusCookie(context));
-				context.Response.Redirect("/Login");
-                return;
+				return Results.Redirect("/Login");
 			}
 
 			var info = await signInManager.GetExternalLoginInfoAsync();
@@ -77,26 +80,25 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
 			{
 				context.Response.Cookies.Append(IdentityRedirectManager.StatusCookieName, "Error loading external login information.",
 					IdentityRedirectManager.GetStatusCookie(context));
-				context.Response.Redirect("/Login");
-				return;
+				return Results.Redirect("/Login");
 			}
 
 			if (!HttpMethods.IsGet(context.Request.Method))
-				return;
+				return Results.BadRequest();
 
 			if (action != LoginCallbackAction)
 			{
 				// We should only reach this page via the login callback, so redirect back to
 				// the login page if we get here some other way.
-				context.Response.Redirect("/Login");
-				return;
+				return Results.Redirect("/Login");
 			}
 
 			await OnLoginCallbackAsync(mediator, logger, mapper, info);
 
-			var protector = idp.CreateProtector("customer_id");
+
+			var protector = idp.CreateProtector("customer");
             
-			context.Response.Cookies.Append("customer_id", protector.Protect(CustomerId.ToString()),
+			context.Response.Cookies.Append("customer", protector.Protect(CustomerId.ToString()),
                 new CookieOptions()
                 {
                     SameSite = SameSiteMode.Strict,
@@ -105,11 +107,12 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
                 });
 
             IEnumerable<KeyValuePair<string, StringValues>> query = [
-                new("customer_id", protector.Protect(CustomerId.ToString()))
+                    new("customer_id", protector.Protect(CustomerId.ToString()))
                 ];
 
             var redirectUrl = UriHelper.BuildRelative(context.Request.PathBase, "/home", QueryString.Create(query));
-            context.Response.Redirect(redirectUrl);
+            
+            return Results.Redirect(redirectUrl);
         });
 
         accountGroup.MapPost("/Logout", async (
@@ -189,12 +192,12 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
 		string returnUrl)
     {
 		IEnumerable<KeyValuePair<string, StringValues>> query = [
-				new("ReturnUrl", returnUrl),
-				new("Action", LoginCallbackAction)];
+				new("returnUrl", returnUrl),
+				new("action", LoginCallbackAction)];
 
 		var redirectUrl = UriHelper.BuildRelative(
 			context.Request.PathBase,
-			"/Account/ExternalLogin",
+			"/account/ExternalLogin",
 			QueryString.Create(query));
         
         return signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);

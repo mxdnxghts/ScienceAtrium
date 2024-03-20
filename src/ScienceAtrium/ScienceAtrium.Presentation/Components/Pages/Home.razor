@@ -13,6 +13,8 @@
 @inject IHttpClientFactory HttpClientFactory
 @inject IDataProtectionProvider DataProtectionProvider
 
+@attribute [AllowAnonymous]
+
 <link rel="stylesheet" href="css/main.css" />
 
 <section id="main" class="main">
@@ -135,28 +137,28 @@
 				<p style="white-space: normal;">@workTemplate.Title</p>
 				<p>₽ @workTemplate.Price</p>
 				@{
-					if (CustomerId != Guid.Empty)
-					{
-						if (_currentOrder is not null && !_currentOrder.IsEmpty())
-						{
-							if (!_currentOrder.WorkTemplates.Any(x => x.Id == workTemplate.Id))
+					<AuthorizeView>
+						<Authorized>
+							@if (_currentOrder is not null && !_currentOrder.IsEmpty())
 							{
-								<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
+								if (!_currentOrder.WorkTemplates.Any(x => x.Id == workTemplate.Id))
+								{
+									<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
+								}
+								else
+								{
+									<button @onclick="async () => await RemoveWorkTemplateAsync(workTemplate)" class="btn-shop">Убрать</button>
+								}
 							}
 							else
 							{
-								<button @onclick="async () => await RemoveWorkTemplateAsync(workTemplate)" class="btn-shop">Убрать</button>
+								<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
 							}
-						}
-						else
-						{
-							<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
-						}
-					}
-					else
-					{
-						<button @onclick="SignInRedirectAsync" class="btn-shop">Войти</button>
-					}
+						</Authorized>
+						<NotAuthorized>
+							<ScienceAtrium.Presentation.Components.Account.Shared.ExternalLoginPicker />
+						</NotAuthorized>
+					</AuthorizeView>
 				}
 			</div>
 		}
@@ -203,31 +205,30 @@
 	private Order _currentOrder;
 	private Guid _workTemplateFilter = Guid.Empty;
 
-	[SupplyParameterFromQuery(Name = "customer_id")]
-	public string ProtectedCustomerId { get; set; }
+	[SupplyParameterFromQuery(Name = "user_id")]
+	public string ProtectedUserId { get; set; }
+
+	[SupplyParameterFromQuery(Name = "user_email")]
+	public string ProtectedUserEmail { get; set; }
 
 	public Guid CustomerId { get; set; }
+
 
 	protected override async Task OnInitializedAsync()
 	{
 		var workTemplates = _filteredWorkTemplates = await Mediator.Send(new GetWorkTemplateListQuery());
-		CustomerId = GetUnprotectedCustomerId();
 		_workTemplates.AddRange(workTemplates);
-		_currentUser = await Mediator.Send(
-			new GetCustomerQuery(
-				new EntityFindOptions<Customer>(CustomerId)));
+		_currentUser = await UserHelper.GetUser(Mediator, ProtectedUserId, ProtectedUserEmail);
+		CustomerId = _currentUser.Id;
 		if (_currentUser.IsEmpty())
 			return;
 
 		_currentOrder = await GetOrderAsync(_currentUser.Id);
 	}
 
-	private Guid GetUnprotectedCustomerId()
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		if (ProtectedCustomerId is null)
-			return Guid.Empty;
-		var protector = DataProtectionProvider.CreateProtector("customer_id");
-		return Guid.Parse(protector.Unprotect(ProtectedCustomerId));
+		//
 	}
 
 	private async Task ApplyFilter()
@@ -256,7 +257,7 @@
 	private async Task SignInRedirectAsync()
 	{
 		var httpClient = HttpClientFactory.CreateClient("AccountLoginClient");
-		var requestUri = "/Account/PerformExternalLoginFromQuery?ReturnUrl=&Action=LoginCallback&Provider=Google";
+		var requestUri = "/PerformExternalLoginFromQuery?ReturnUrl=&Action=LoginCallback&Provider=Google";
 		var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 		var response = await httpClient.SendAsync(httpRequestMessage);
 		if (!response.IsSuccessStatusCode)
