@@ -5,7 +5,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>641dc21a-4b79-4d29-956c-d70d7e235994</UserSecretsId>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove=".editorconfig" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\img\.DS_Store" />
@@ -22,6 +27,10 @@
     <ProjectReference Include="..\ScienceAtrium.Application\ScienceAtrium.Application.csproj" />
     <ProjectReference Include="..\ScienceAtrium.Domain\ScienceAtrium.Domain.csproj" />
     <ProjectReference Include="..\ScienceAtrium.Infrastructure\ScienceAtrium.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="UserAggregate\Constants\" />
   </ItemGroup>
 
 </Project>

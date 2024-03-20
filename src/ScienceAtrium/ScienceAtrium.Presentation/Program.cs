@@ -40,7 +40,7 @@ app.UseAuthorization();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-app.MapAdditionalIdentityEndpoints();
 app.MapRewroteEndpoints();
+app.MapAdditionalIdentityEndpoints();
 
 app.Run();
