@@ -15,7 +15,7 @@
 }
 else
 {
-    <form class="form-horizontal" action="Account/PerformExternalLogin" method="post">
+    <form class="form-horizontal" action="account/PerformExternalLogin" method="post">
         <div>
             <AntiforgeryToken />
             <input type="hidden" name="ReturnUrl" value="@ReturnUrl" />
@@ -32,8 +32,8 @@ else
 @code {
     private AuthenticationScheme[] externalLogins = [];
 
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
+
+    private string? ReturnUrl { get; set; } = "/account/ExternalLogin?returnUrl=&action=LoginCallback";
 
     protected override async Task OnInitializedAsync()
     {
