@@ -16,11 +16,18 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
+        //      serviceCollection.AddDbContext<ApplicationContext>(o
+        //          => o.UseSqlServer(configuration.GetConnectionString("MSSQL")));
+
+        //serviceCollection.AddDbContext<IdentityContext>(o
+        //	=> o.UseSqlServer(configuration.GetConnectionString("MSSQL")));
+
         serviceCollection.AddDbContext<ApplicationContext>(o
-            => o.UseSqlServer(configuration.GetConnectionString("MSSQL")));
+            => o.UseNpgsql(configuration.GetConnectionString("ScienceAtriumRelease")));
 
         serviceCollection.AddDbContext<IdentityContext>(o
-            => o.UseSqlServer(configuration.GetConnectionString("MSSQL")));
+               => o.UseNpgsql(configuration.GetConnectionString("ScienceAtriumRelease")));
+
 
         serviceCollection.AddSerilog(o =>
         {
@@ -34,6 +41,7 @@ public static class DependencyInjection
         serviceCollection.AddStackExchangeRedisCache(options =>
         {
             options.InstanceName = "ScienceAtriumCache_";
+            //options.Configuration = configuration.GetConnectionString("ScienceAtriumRedisCacheRelease");
             options.Configuration = configuration.GetConnectionString("ScienceAtriumRedisCache");
         });
 
