@@ -82,9 +82,10 @@ public static class DependencyInjection
                 new DenyAnonymousAuthorizationRequirement(),
             ];
         serviceCollection.AddAuthorizationBuilder()
-            .SetFallbackPolicy(new AuthorizationPolicyBuilder(GoogleDefaults.AuthenticationScheme)
-                .RequireAuthenticatedUser()
-                .Build())
+    //        .SetFallbackPolicy(new AuthorizationPolicyBuilder()
+    //            .AddAuthenticationSchemes(GoogleDefaults.AuthenticationScheme)
+				//.RequireAuthenticatedUser()
+				//.Build())
             .AddPolicy("google-oauth", pb =>
             {
                 pb.AddAuthenticationSchemes(GoogleDefaults.AuthenticationScheme)

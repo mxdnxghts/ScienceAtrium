@@ -3,12 +3,12 @@
 #Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
 #For more information, please see https://aka.ms/containercompat
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-nanoserver-1809 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-nanoserver-1809 AS build
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /app
 COPY ["src/ScienceAtrium/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj", "src/ScienceAtrium/ScienceAtrium.Presentation/"]
@@ -17,7 +17,7 @@ COPY ["src/ScienceAtrium/ScienceAtrium.Domain/ScienceAtrium.Domain.csproj", "src
 COPY ["src/ScienceAtrium/ScienceAtrium.Infrastructure/ScienceAtrium.Infrastructure.csproj", "src/ScienceAtrium/ScienceAtrium.Infrastructure/"]
 RUN dotnet restore "./src/ScienceAtrium/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj"
 COPY . .
-WORKDIR "/src/src/ScienceAtrium/ScienceAtrium.Presentation"
+WORKDIR "/src/ScienceAtrium/ScienceAtrium.Presentation"
 RUN dotnet build "./ScienceAtrium.Presentation.csproj" -c %BUILD_CONFIGURATION% -o /app/build
 
 FROM build AS publish

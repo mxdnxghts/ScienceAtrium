@@ -41,8 +41,8 @@ public static class DependencyInjection
         serviceCollection.AddStackExchangeRedisCache(options =>
         {
             options.InstanceName = "ScienceAtriumCache_";
-            //options.Configuration = configuration.GetConnectionString("ScienceAtriumRedisCacheRelease");
-            options.Configuration = configuration.GetConnectionString("ScienceAtriumRedisCache");
+            options.Configuration = configuration.GetConnectionString("ScienceAtriumRedisCacheRelease");
+            //options.Configuration = configuration.GetConnectionString("ScienceAtriumRedisCache");
         });
 
         serviceCollection.AddScoped<IOrderRepository<Order>, OrderRepository>();
