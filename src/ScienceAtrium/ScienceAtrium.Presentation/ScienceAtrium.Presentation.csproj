@@ -8,6 +8,7 @@
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..</DockerfileContext>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,10 +31,6 @@
     <ProjectReference Include="..\ScienceAtrium.Application\ScienceAtrium.Application.csproj" />
     <ProjectReference Include="..\ScienceAtrium.Domain\ScienceAtrium.Domain.csproj" />
     <ProjectReference Include="..\ScienceAtrium.Infrastructure\ScienceAtrium.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UserAggregate\Constants\" />
   </ItemGroup>
 
 </Project>
