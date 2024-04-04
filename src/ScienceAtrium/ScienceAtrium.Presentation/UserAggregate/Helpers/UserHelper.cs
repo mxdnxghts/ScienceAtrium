@@ -30,20 +30,23 @@ public static class UserHelper
 
         return await mediator.Send(new GetCustomerQuery(options));
     }
+
     private static Guid GetUnprotectedCustomerId(string? protectedId)
     {
-        if (protectedId is null)
+        if (protectedId is null or "")
             return Guid.Empty;
-        var protector = DataProtectionProvider.Create(UserConstants.DataProtectionApplicationName).CreateProtector(UserConstants.DataProtectorPurpose);
+        var protector = DataProtectionProvider.Create(UserConstants.DataProtectionApplicationName)
+            .CreateProtector(UserConstants.DataProtectorPurpose);
         var unprotectedUserId = protector.Unprotect(protectedId);
         return Guid.Parse(unprotectedUserId);
     }
 
     private static string GetUnprotectedUserEmail(string? protectedEmail)
     {
-        if (protectedEmail is null)
+        if (protectedEmail is null or "")
             return string.Empty;
-        var protector = DataProtectionProvider.Create(UserConstants.DataProtectionApplicationName).CreateProtector(UserConstants.DataProtectorPurpose);
+        var protector = DataProtectionProvider.Create(UserConstants.DataProtectionApplicationName)
+            .CreateProtector(UserConstants.DataProtectorPurpose);
         var unprotectedUserEmail = protector.Unprotect(protectedEmail);
         return unprotectedUserEmail;
     }
