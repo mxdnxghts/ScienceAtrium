@@ -156,7 +156,7 @@
 							}
 						</Authorized>
 						<NotAuthorized>
-							<ScienceAtrium.Presentation.Components.Account.Shared.ExternalLoginPicker />
+							
 						</NotAuthorized>
 					</AuthorizeView>
 				}
@@ -224,11 +224,7 @@
 			return;
 
 		_currentOrder = await GetOrderAsync(_currentUser.Id);
-	}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		//
+		base.StateHasChanged();
 	}
 
 	private async Task ApplyFilter()

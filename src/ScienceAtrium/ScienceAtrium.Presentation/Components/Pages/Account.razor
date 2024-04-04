@@ -118,11 +118,8 @@
 
         if (_orders.Count() > 0)
             _deadlineDate = _orders.Select(x => x.OrderDate).Min();
-    }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        //
+		base.StateHasChanged();
     }
 
     private void SetDefaults()
