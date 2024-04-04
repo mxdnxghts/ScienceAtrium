@@ -40,12 +40,14 @@ internal static class CustomRedirectionEndpointRouteBuilderExtension
 									IDataProtectionProvider idp,
 									IDistributedCache cache,
 									PathString path)
-    {
+	{
+		var protector = idp.CreateProtector(UserConstants.DataProtectorPurpose);
 		var cookieUserId = context.Request.Cookies["user_id"];
 		var cookieEmail = context.Request.Cookies["user_email"];
-		if (cookieUserId is null && cookieEmail is not null)
+		
+		if ((cookieUserId is null || protector.Unprotect(cookieUserId) == "")
+				&& cookieEmail is not null)
 		{
-			var protector = idp.CreateProtector(UserConstants.DataProtectorPurpose);
 			var claimUserId = await cache.GetRecordAsync<Guid>($"{nameof(UserRoleRequirement)}_{protector.Unprotect(cookieEmail)}");
 			if (!claimUserId.Equals(Guid.Empty))
 			{

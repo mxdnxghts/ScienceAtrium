@@ -9,7 +9,8 @@ using System.Security.Claims;
 
 namespace ScienceAtrium.Presentation.UserAggregate.Authorization;
 
-public class UserRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader, IDistributedCache _cache) : AuthorizationHandler<UserRoleRequirement>
+public class UserRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader, IDistributedCache _cache) 
+    : AuthorizationHandler<UserRoleRequirement>
 {
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
                                                          UserRoleRequirement requirement)
@@ -29,6 +30,7 @@ public class UserRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader
             context.Fail(new AuthorizationFailureReason(this, new ArgumentNullException(nameof(googleIdentity)).Message));
             return;
         }
+
         var roleClaim = googleIdentity.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Role);
         if (roleClaim?.Value != requirement.Role)
         {

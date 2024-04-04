@@ -38,6 +38,8 @@ public static class UserHelper
         var protector = DataProtectionProvider.Create(UserConstants.DataProtectionApplicationName)
             .CreateProtector(UserConstants.DataProtectorPurpose);
         var unprotectedUserId = protector.Unprotect(protectedId);
+        if (unprotectedUserId == "")
+            return Guid.Empty;
         return Guid.Parse(unprotectedUserId);
     }
 
