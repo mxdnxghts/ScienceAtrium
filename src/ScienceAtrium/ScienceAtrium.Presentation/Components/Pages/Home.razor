@@ -182,7 +182,6 @@
 	private List<WorkTemplate> _workTemplates = [];
 	private Customer _currentUser;
 	private Order _currentOrder;
-	private Guid _workTemplateFilter = Guid.Empty;
 
 	[SupplyParameterFromQuery(Name = "user_id")]
 	public string ProtectedUserId { get; set; }
@@ -194,7 +193,6 @@
     public string IsUserAuthenticated { get; set; }
 
 	public Guid CustomerId { get; set; }
-
 
 	protected override async Task OnInitializedAsync()
 	{
