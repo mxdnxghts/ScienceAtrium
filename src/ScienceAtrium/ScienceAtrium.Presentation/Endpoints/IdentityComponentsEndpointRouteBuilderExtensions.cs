@@ -19,6 +19,15 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
+        endpoints.MapPost("/logout", async (context) =>
+		{
+			foreach (var cookie in context.Request.Cookies.Keys)
+			{
+				context.Response.Cookies.Delete(cookie);
+			}
+			context.Response.Redirect("/home-redirect");
+		});
+
         return endpoints.MapGet("/sign-in", async (
             HttpContext context,
             [FromServices] SignInManager<ApplicationUser> signInManager,
