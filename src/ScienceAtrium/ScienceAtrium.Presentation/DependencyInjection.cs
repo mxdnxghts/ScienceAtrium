@@ -10,7 +10,9 @@ using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Presentation.Components.Account;
 using ScienceAtrium.Presentation.UserAggregate;
 using ScienceAtrium.Presentation.UserAggregate.Authorization;
+using ScienceAtrium.Presentation.UserAggregate.Constants;
 using ScienceAtrium.Presentation.UserAggregate.Helpers;
+using System.Security.Claims;
 
 namespace ScienceAtrium.Presentation;
 
@@ -63,7 +65,7 @@ public static class DependencyInjection
                 {
                     OnRemoteFailure = GoogleAuthenticationHelper.HandleOnRemoteFailure,
                     OnAccessDenied = GoogleAuthenticationHelper.HandleOnAccessDeniedFailure,
-                    OnCreatingTicket = GoogleAuthenticationHelper.AddRoleClaim,
+                    OnCreatingTicket = GoogleAuthenticationHelper.AddRoleClaims,
                     OnTicketReceived = GoogleAuthenticationHelper.HandleOnTicketReceived,
                 };
 			});
@@ -78,13 +80,14 @@ public static class DependencyInjection
                 new DenyAnonymousAuthorizationRequirement(), 
             ];
         serviceCollection.AddAuthorizationBuilder()
-            //.SetFallbackPolicy(new AuthorizationPolicyBuilder(GoogleDefaults.AuthenticationScheme)
-            //    .RequireAuthenticatedUser()
-            //    .Build())
             .AddPolicy("google-oauth", pb =>
             {
                 pb.AddAuthenticationSchemes(GoogleDefaults.AuthenticationScheme)
                     .AddRequirements(requirements);
+            })
+            .AddPolicy("home-page-view", pb =>
+            {
+                pb.RequireClaim(AuthenticationConstants.CanViewHomePageClaim);
             });
         serviceCollection.AddScoped<IAuthorizationHandler, UserRoleAuthorizationHandler>();
         return serviceCollection;

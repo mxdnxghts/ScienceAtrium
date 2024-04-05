@@ -21,13 +21,16 @@ public static class GoogleAuthenticationHelper
 		var userIdClaim = context.Principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Sid);
 		var userEmailClaim = context.Principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email);
 		var userNameClaim = context.Principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name);
+		var userIsAuthenticated = context.Principal.Identity?.IsAuthenticated.ToString() ?? false.ToString();
 
 		context.HttpContext.Response.Cookies.Append("user_id", protector.Protect(userIdClaim?.Value ?? ""), CookieConstants.CookieOptions);
 		context.HttpContext.Response.Cookies.Append("user_email", protector.Protect(userEmailClaim?.Value ?? ""), CookieConstants.CookieOptions);
+		context.HttpContext.Response.Cookies.Append("user_authenticated", userIsAuthenticated, CookieConstants.CookieOptions);
 
 		IList<KeyValuePair<string, StringValues>> query = [
 			new("user_email", protector.Protect(userEmailClaim.Value ?? "")),
-			new ("user_id", protector.Protect(userIdClaim?.Value ?? ""))
+			new ("user_id", protector.Protect(userIdClaim?.Value ?? "")),
+			new("user_authenticated", userIsAuthenticated)
 		];
 
 		// context.ReturnUri has a view "/smth?.." and that's why we take string before param split symbol "?"
@@ -40,7 +43,7 @@ public static class GoogleAuthenticationHelper
 		context.ReturnUri = UriHelper.BuildRelative(context.Request.PathBase, "/sign-in", QueryString.Create(query));
 	}
 
-	public static Task AddRoleClaim(OAuthCreatingTicketContext context)
+	public static Task AddRoleClaims(OAuthCreatingTicketContext context)
 	{
 		var googleIdentity = context.Principal.Identities.First(identity => identity.AuthenticationType == GoogleDefaults.AuthenticationScheme);
 
