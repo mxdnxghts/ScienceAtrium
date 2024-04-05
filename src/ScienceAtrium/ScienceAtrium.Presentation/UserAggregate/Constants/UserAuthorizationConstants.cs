@@ -1,4 +1,4 @@
-﻿namespace ScienceAtrium.Presentation.UserAggregate.Authorization;
+﻿namespace ScienceAtrium.Presentation.UserAggregate.Constants;
 
 public static class UserAuthorizationConstants
 {

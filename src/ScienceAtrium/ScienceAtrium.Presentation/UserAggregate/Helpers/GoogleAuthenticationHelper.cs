@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
-using ScienceAtrium.Presentation.UserAggregate.Authorization;
 using ScienceAtrium.Presentation.UserAggregate.Constants;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
