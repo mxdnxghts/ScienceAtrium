@@ -114,18 +114,6 @@
 
 	<h4>Каталог</h4>
 
-	<div class="sublist">
-		
-		<label for="list-subjects">Выберите предмет:</label>
-		<InputSelect @bind-Value="_workTemplateFilter" @bind-Value:after="ApplyFilter">
-			<option value="00000000-0000-0000-0000-000000000000">Все</option>
-			@foreach (var workTemplate in _filteredWorkTemplates)
-			{
-				<option value="@workTemplate.Id">@workTemplate.Title</option>
-			}
-		</InputSelect>
-	</div>
-
 	<div class="blocks-catalog">
 
 		@foreach (var workTemplate in _workTemplates)
@@ -192,7 +180,6 @@
 
 @code {
 	private List<WorkTemplate> _workTemplates = [];
-	private List<WorkTemplate> _filteredWorkTemplates = [];
 	private Customer _currentUser;
 	private Order _currentOrder;
 	private Guid _workTemplateFilter = Guid.Empty;
@@ -211,8 +198,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		var workTemplates = _filteredWorkTemplates = await Mediator.Send(new GetWorkTemplateListQuery());
-		_workTemplates.AddRange(workTemplates);
+		_workTemplates = await Mediator.Send(new GetWorkTemplateListQuery());
 		_currentUser = await UserHelper.GetUser(Mediator, ProtectedUserId, ProtectedUserEmail);
 		CustomerId = _currentUser.Id;
 		base.StateHasChanged();
@@ -221,17 +207,6 @@
 
 		_currentOrder = await GetOrderAsync(_currentUser.Id);
 		base.StateHasChanged();
-	}
-
-	private async Task ApplyFilter()
-	{
-		// TODO: implement filtration of WorkTemplates by chosen _workTemplateFilter (i.e. by Subject)
-		if (_workTemplateFilter == Guid.Empty)
-		{
-			_workTemplates = await Mediator.Send(new GetWorkTemplateListQuery());
-			return;
-		}
-		_workTemplates = _filteredWorkTemplates.Where(x => x.Id == _workTemplateFilter).ToList();
 	}
 
 	private async Task AddWorkTemplateAsync(WorkTemplate workTemplate)
