@@ -1,4 +1,11 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Google
+@using ScienceAtrium.Presentation.Components.Account.Shared
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inherits LayoutComponentBase
+@inject SignInManager<ApplicationUser> SignInManager
+
 <body>
 	<header id="header" class="header">
 
@@ -10,41 +17,28 @@
 				</div>
 				<div class="nav-menu" id="navMenu">
 					<ul>
-						<li><a href="/" class="link">Главная</a></li>
-						<li><a href="account" class="link">Профиль</a></li>
-						<li><a href="basket" class="link">Корзина</a></li>
-						<li><a href="#catalog" class="link">Каталог</a></li>
+						<li><NavLink href="home-redirect" class="link">Главная</NavLink></li>
+						<li><NavLink href="account-redirect" class="link">Профиль</NavLink></li>
+						<li><NavLink href="basket-redirect" class="link">Корзина</NavLink></li>
+						<li><NavLink href="#catalog" class="link">Каталог</NavLink></li>
 					</ul>
 				</div>
-				<div class="nav-button">
-					<button class="btn white-btn" id="loginBtn" onclick="redirectToAuth()">Вход</button>
-					<button class="btn" id="registerBtn" onclick="redirectToAuth()">Регистрация</button>
-				</div>
-				<div class="nav-menu-btn">
-					<i class="bx bx-menu" onclick="myMenuFunction()"></i>
-				</div>
+
+				<AuthorizeView>
+					<Authorized>
+						<div class="nav-button">
+							<SignOutPicker />
+						</div>
+					</Authorized>
+					<NotAuthorized>
+					</NotAuthorized>
+				</AuthorizeView>
+				
 			</nav>
 
 		</div>
 
 	</header>
-
-	<script>
-
-		function myMenuFunction() {
-			var i = document.getElementById("navMenu");
-			if (i.className === "nav-menu") {
-				i.className += " responsive";
-			} else {
-				i.className = "nav-menu";
-			}
-		}
-
-		function redirectToAuth(){
-			window.location.href = "/auth";
-		}
-
-	</script>
 
     @Body
 
@@ -59,3 +53,13 @@
 
 	</footer>
 </body>
+
+@code{
+	public const string ReturnUrl = "/home-redirect";
+
+	IEnumerable<AuthenticationScheme> _externalSchemes;
+	protected override async Task OnInitializedAsync()
+	{
+		_externalSchemes = await SignInManager.GetExternalAuthenticationSchemesAsync();
+	}
+}

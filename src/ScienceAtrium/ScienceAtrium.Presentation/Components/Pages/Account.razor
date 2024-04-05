@@ -1,6 +1,12 @@
 ﻿@page "/account"
 @rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Authorization
+
 @inject IMediator Mediator
+@inject IDataProtectionProvider DataProtectionProvider
+
+@attribute [Authorize(Policy = "google-oauth")]
 
 <link rel="stylesheet" href="css/profile.css" />
 
@@ -76,11 +82,18 @@
     private IEnumerable<WorkTemplateOrderStatus> _workTemplateOrderStatuses;
     private DateTime _deadlineDate = default;
 
+    [SupplyParameterFromQuery(Name = "user_id")]
+    public string ProtectedUserId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "user_email")]
+    public string ProtectedUserEmail { get; set; }
+
+    public Guid CustomerId { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        _user = await Mediator.Send(
-            new GetCustomerQuery(
-                new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty).TryFindDatabase()));
+        _user = await UserHelper.GetUser(Mediator, ProtectedUserId, ProtectedUserEmail);
+        CustomerId = _user.Id;
 
         if (_user is null)
         {
@@ -105,6 +118,8 @@
 
         if (_orders.Count() > 0)
             _deadlineDate = _orders.Select(x => x.OrderDate).Min();
+
+		base.StateHasChanged();
     }
 
     private void SetDefaults()
