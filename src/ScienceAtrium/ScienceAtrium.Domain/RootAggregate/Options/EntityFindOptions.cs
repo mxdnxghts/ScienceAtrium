@@ -9,7 +9,7 @@ public sealed class EntityFindOptions<TEntity>(Guid? entityId = null, Expression
 	public Expression<Func<TEntity, bool>>? Predicate { get; init; } = predicate;
 	public bool OnlyDatabaseFind => _onlyDatabaseFind;
 
-    public EntityFindOptions<TEntity> TryFindDatabase()
+    public EntityFindOptions<TEntity> ForceDatabaseSearch()
     {
         if (Predicate is not null || IsValidEntityId())
             _onlyDatabaseFind = true;

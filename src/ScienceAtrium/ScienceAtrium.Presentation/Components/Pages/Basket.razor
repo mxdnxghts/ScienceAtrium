@@ -1,10 +1,13 @@
 ﻿@page "/basket"
 @rendermode InteractiveServer
+
+@using ScienceAtrium.Domain.Exceptions
+
 @inject IMediator Mediator
 @inject Serilog.ILogger Logger
 @inject NavigationManager NavigationManager
 @inject ApplicationTransactionService ApplicationTransactionService
-@using ScienceAtrium.Domain.Exceptions
+@inject IDataProtectionProvider DataProtectionProvider
 
 <link rel="stylesheet" href="css/basket.css" />
 
@@ -30,7 +33,8 @@
                         }
                     }
 
-                    else {
+                    else 
+                    {
                         <div style="background-color: #C9C0B3;" class="ctlblock">
                             <span class="price">Nothing to show</span>
                         </div>
@@ -69,20 +73,33 @@
     private List<WorkTemplate> _waitInBasketWorkTemplates = [];
     private List<WorkTemplate> _readyToPayWorkTemplates = [];
 
+    [SupplyParameterFromQuery(Name = "user_id")]
+    public string ProtectedUserId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "user_email")]
+    public string ProtectedUserEmail { get; set; }
+
+    public Guid CustomerId { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        _currentUser = await Mediator.Send(
-            new GetCustomerQuery(
-                new EntityFindOptions<Customer>(predicate: x => x.Id != Guid.Empty)));
+        _currentUser = await UserHelper.GetUser(Mediator, ProtectedUserId, ProtectedUserEmail);
+        CustomerId = _currentUser.Id;
 
         _currentOrder = await Mediator.Send(
             new GetOrderQuery(
                 new EntityFindOptions<Order>(predicate: x => x.CustomerId == _currentUser.Id
-                                        && x.Status == OrderStatus.Delayed)));
+                                        && x.Status == OrderStatus.Delayed)
+            .ForceDatabaseSearch()));
 
         RefreshWorkTemplates(_currentOrder);
 
         _totalPriceReadyToPayWorkTemplates = CalculateTotalPriceReadyToPayWorkTemplates(_currentOrder);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        //
     }
 
     private async Task PayAsync()
@@ -101,7 +118,7 @@
 
         RefreshWorkTemplates(_currentOrder);
         await Task.Delay(1000);
-        NavigationManager.NavigateTo("/account");
+        NavigationManager.NavigateTo("/account-redirect");
     }
 
     private async Task AddWorkTemplateToListAsync(WorkTemplate workTemplate,

@@ -1,11 +1,13 @@
-﻿@page "/Account/ExternalLogin"
+﻿@page "/Account/ExternalLogin2"
 
 @using System.ComponentModel.DataAnnotations
 @using System.Security.Claims
 @using System.Text
 @using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Http.Extensions
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.Extensions.Primitives
 @using ScienceAtrium.Infrastructure.Data
 
 @inject SignInManager<ApplicationUser> SignInManager
@@ -15,6 +17,9 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 @inject ILogger<ExternalLogin> Logger
+@inject IUserRepository<Customer> UserRepository
+@inject IMediator Mediator
+@inject IMapper Mapper
 
 <PageTitle>Register</PageTitle>
 
@@ -48,6 +53,7 @@
     public const string LoginCallbackAction = "LoginCallback";
 
     private string? message;
+    private Guid CustomerId = Guid.Empty;
     private ExternalLoginInfo externalLoginInfo = default!;
 
     [CascadingParameter]
@@ -87,6 +93,11 @@
             if (Action == LoginCallbackAction)
             {
                 await OnLoginCallbackAsync();
+                IEnumerable<KeyValuePair<string, StringValues>> query = [
+                    new("CustomerId", CustomerId.ToString())];
+
+                var redirectUrl = UriHelper.BuildRelative(HttpContext.Request.PathBase, "/", QueryString.Create(query));
+                RedirectManager.RedirectTo(redirectUrl);
                 return;
             }
 
@@ -98,31 +109,43 @@
 
     private async Task OnLoginCallbackAsync()
     {
-        // Sign in the user with this external login provider if the user already has a login.
-        var result = await SignInManager.ExternalLoginSignInAsync(
-            externalLoginInfo.LoginProvider,
-            externalLoginInfo.ProviderKey,
-            isPersistent: false,
-            bypassTwoFactor: true);
+        var email = externalLoginInfo
+                .Principal
+                .Claims
+                .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value ?? throw new ArgumentNullException("Email");
 
-        if (result.Succeeded)
+        var customer = await Mediator.Send(
+            new GetCustomerQuery(
+                new EntityFindOptions<Customer>(predicate: x => x.Email == email)));
+        if (!customer.IsEmpty())
         {
-            Logger.LogInformation(
-                "{Name} logged in with {LoginProvider} provider.",
-                externalLoginInfo.Principal.Identity?.Name,
-                externalLoginInfo.LoginProvider);
-            RedirectManager.RedirectTo(ReturnUrl);
-        }
-        else if (result.IsLockedOut)
-        {
-            RedirectManager.RedirectTo("Account/Lockout");
+            CustomerId = customer.Id;
+            Logger.LogInformation($"Customer with Id {{{CustomerId}}} has logged in.");
+            return;
         }
 
-        // If the user does not have an account, then ask the user to create an account.
-        if (externalLoginInfo.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
+        var user = new Customer(Guid.NewGuid())
+            .UpdateName(externalLoginInfo
+                .Principal
+                .Claims
+                .FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value ?? throw new ArgumentNullException("Name"))
+            .UpdateEmail(email)
+            .UpdatePhoneNumber(string.Empty);
+
+        customer = Mapper.Map<Customer>(user);
+
+        var customerCreationResult = await UserRepository.CreateAsync(customer);
+        if (customerCreationResult <= 0)
         {
-            Input.Email = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email) ?? "";
+            Logger.LogError($"Didn't create new customer with Id {{{customer.Id}}}. Count of changes {{{customerCreationResult}}}");
+            return;
         }
+
+        await Mediator.Send(new UpdateCachedCustomerCommand(customer));
+
+        CustomerId = customer.Id;
+
+        Logger.LogInformation($"Created new customer with Id {{{customer.Id}}}");
     }
 
     private async Task OnValidSubmitAsync()

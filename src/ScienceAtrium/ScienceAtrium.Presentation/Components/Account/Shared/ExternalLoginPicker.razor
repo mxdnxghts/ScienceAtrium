@@ -9,21 +9,20 @@
 {
     <div>
         <p>
-            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-            about setting up this ASP.NET application to support logging in via external services</a>.
+            There are no external authentication services configured.
         </p>
     </div>
 }
 else
 {
-    <form class="form-horizontal" action="Account/PerformExternalLogin" method="post">
+    <form class="form-horizontal" action="account/PerformExternalLogin" method="post">
         <div>
             <AntiforgeryToken />
             <input type="hidden" name="ReturnUrl" value="@ReturnUrl" />
             <p>
                 @foreach (var provider in externalLogins)
                 {
-                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name">@provider.DisplayName</button>
                 }
             </p>
         </div>
@@ -33,8 +32,8 @@ else
 @code {
     private AuthenticationScheme[] externalLogins = [];
 
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
+
+    private string? ReturnUrl { get; set; } = "/account/ExternalLogin?returnUrl=&action=LoginCallback";
 
     protected override async Task OnInitializedAsync()
     {

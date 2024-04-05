@@ -55,4 +55,15 @@ internal sealed class IdentityRedirectManager(NavigationManager navigationManage
 	[DoesNotReturn]
 	public void RedirectToCurrentPageWithStatus(string message, HttpContext context)
 		=> RedirectToWithStatus(CurrentPath, message, context);
+
+	public static CookieOptions GetStatusCookie(HttpContext context)
+	{
+        return new CookieBuilder()
+        {
+            SameSite = SameSiteMode.Strict,
+            HttpOnly = true,
+            IsEssential = true,
+            MaxAge = TimeSpan.FromSeconds(5),
+        }.Build(context);
+    }
 }
