@@ -122,7 +122,7 @@
 				<img src="img/title-page.png" width="80" height="100">
 				<p style="white-space: normal;">@workTemplate.Title</p>
 				<p>₽ @workTemplate.Price</p>
-				@if(IsUserAuthenticated == true.ToString())
+				@if(_currentUser is not null && !_currentUser.IsEmpty())
 				{
 					@if (_currentOrder is not null && !_currentOrder.IsEmpty())
 					{
@@ -189,9 +189,6 @@
 	[SupplyParameterFromQuery(Name = "user_email")]
 	public string ProtectedUserEmail { get; set; }
 
-    [SupplyParameterFromQuery(Name = "user_authenticated")]
-    public string IsUserAuthenticated { get; set; }
-
 	public Guid CustomerId { get; set; }
 
 	protected override async Task OnInitializedAsync()
@@ -217,20 +214,6 @@
 	{
 		_currentOrder.RemoveWorkTemplate(x => x.Id == workTemplate.Id);
 		await Mediator.Send(new UpdateOrderCommand(_currentOrder));
-	}
-
-	private async Task SignInRedirectAsync()
-	{
-		var httpClient = HttpClientFactory.CreateClient("AccountLoginClient");
-		var requestUri = "/PerformExternalLoginFromQuery?ReturnUrl=&Action=LoginCallback&Provider=Google";
-		var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-		var response = await httpClient.SendAsync(httpRequestMessage);
-		if (!response.IsSuccessStatusCode)
-		{
-			Logger.Error("Request to \"{0}\" returned {1}", requestUri, response.StatusCode);
-			return;
-		}
-
 	}
 
 	private async Task<Customer> GetCustomerAsync()

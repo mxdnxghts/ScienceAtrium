@@ -1,6 +1,7 @@
 ﻿@page "/basket"
 @rendermode InteractiveServer
 
+@using Microsoft.AspNetCore.Authorization
 @using ScienceAtrium.Domain.Exceptions
 
 @inject IMediator Mediator
@@ -8,6 +9,8 @@
 @inject NavigationManager NavigationManager
 @inject ApplicationTransactionService ApplicationTransactionService
 @inject IDataProtectionProvider DataProtectionProvider
+
+@attribute [Authorize(Policy = "google-oauth")]
 
 <link rel="stylesheet" href="css/basket.css" />
 

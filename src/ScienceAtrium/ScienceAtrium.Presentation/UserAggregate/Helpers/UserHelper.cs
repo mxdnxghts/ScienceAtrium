@@ -13,7 +13,7 @@ public static class UserHelper
                                                string? protectedEmail,
                                                bool forceDatabaseSearch = true)
     {
-        var userId = GetUnprotectedCustomerId(protectedId);
+        var userId = GetUnprotectedUserId(protectedId);
         var userEmail = GetUnprotectedUserEmail(protectedEmail);
         EntityFindOptions<Customer> options;
         if (!userId.Equals(Guid.Empty))
@@ -31,7 +31,7 @@ public static class UserHelper
         return await mediator.Send(new GetCustomerQuery(options));
     }
 
-    private static Guid GetUnprotectedCustomerId(string? protectedId)
+    internal static Guid GetUnprotectedUserId(string? protectedId)
     {
         if (protectedId is null or "")
             return Guid.Empty;
@@ -43,7 +43,7 @@ public static class UserHelper
         return Guid.Parse(unprotectedUserId);
     }
 
-    private static string GetUnprotectedUserEmail(string? protectedEmail)
+    internal static string GetUnprotectedUserEmail(string? protectedEmail)
     {
         if (protectedEmail is null or "")
             return string.Empty;

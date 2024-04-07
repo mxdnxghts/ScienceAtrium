@@ -44,7 +44,6 @@ internal static class CustomRedirectionEndpointRouteBuilderExtension
 		var protector = idp.CreateProtector(UserConstants.DataProtectorPurpose);
 		var cookieUserId = context.Request.Cookies["user_id"];
 		var cookieEmail = context.Request.Cookies["user_email"];
-		var userIsAuthenticated = context.Request.Cookies["user_authenticated"];
 		
 		if ((cookieUserId is null || protector.Unprotect(cookieUserId) == "")
 				&& cookieEmail is not null)
@@ -61,7 +60,6 @@ internal static class CustomRedirectionEndpointRouteBuilderExtension
 		IEnumerable<KeyValuePair<string, StringValues>> query = [
 			new ("user_email", cookieEmail),
 			new ("user_id", cookieUserId),
-			new ("user_authenticated", userIsAuthenticated)
 		];
 
 		var redirectUrl = UriHelper.BuildRelative(GetOriginalPath(context.Request.PathBase), path, QueryString.Create(query));

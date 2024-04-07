@@ -12,7 +12,7 @@ namespace ScienceAtrium.Presentation.UserAggregate.Helpers;
 
 public static class GoogleAuthenticationHelper
 {
-	public static async Task HandleOnTicketReceived(TicketReceivedContext context)
+	public static Task HandleOnTicketReceived(TicketReceivedContext context)
 	{
 		var idp = DataProtectionProvider.Create(UserConstants.DataProtectionApplicationName);
 		var protector = idp.CreateProtector(UserConstants.DataProtectorPurpose);
@@ -20,16 +20,13 @@ public static class GoogleAuthenticationHelper
 		var userIdClaim = context.Principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Sid);
 		var userEmailClaim = context.Principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email);
 		var userNameClaim = context.Principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name);
-		var userIsAuthenticated = context.Principal.Identity?.IsAuthenticated.ToString() ?? false.ToString();
 
 		context.HttpContext.Response.Cookies.Append("user_id", protector.Protect(userIdClaim?.Value ?? ""), CookieConstants.CookieOptions);
 		context.HttpContext.Response.Cookies.Append("user_email", protector.Protect(userEmailClaim?.Value ?? ""), CookieConstants.CookieOptions);
-		context.HttpContext.Response.Cookies.Append("user_authenticated", userIsAuthenticated, CookieConstants.CookieOptions);
 
 		IList<KeyValuePair<string, StringValues>> query = [
 			new("user_email", protector.Protect(userEmailClaim.Value ?? "")),
 			new ("user_id", protector.Protect(userIdClaim?.Value ?? "")),
-			new("user_authenticated", userIsAuthenticated)
 		];
 
 		// context.ReturnUri has a view "/smth?.." and that's why we take string before param split symbol "?"
@@ -40,6 +37,9 @@ public static class GoogleAuthenticationHelper
 		query.Add(new ("user_name", protector.Protect(userNameClaim?.Value ?? "")));
 
 		context.ReturnUri = UriHelper.BuildRelative(context.Request.PathBase, "/sign-in", QueryString.Create(query));
+		context.Success();
+
+		return Task.CompletedTask;
 	}
 
 	public static Task AddRoleClaims(OAuthCreatingTicketContext context)
@@ -50,6 +50,8 @@ public static class GoogleAuthenticationHelper
 
 		if (!googleIdentity.Claims.Any(claim => claim.Type == ClaimTypes.Role))
 			googleIdentity.AddClaim(roleClaim);
+
+		context.Success();
 
 		return Task.CompletedTask;
 	}
