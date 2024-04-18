@@ -1,0 +1,26 @@
+﻿@page "/error"
+
+@layout EmptyLayout
+
+@using ScienceAtrium.Presentation.Components.Layout
+
+<link rel="stylesheet" href="css/error.css"/>
+
+<div class="container">
+
+	<div class="error-page">
+		<div>
+			<h1 data-h1="404">@ErrorStatus</h1>
+			<p data-p="PAGE NOT FOUND">@ErrorMessage</p>
+		</div>
+	</div>
+
+</div>
+
+@code {
+	[SupplyParameterFromQuery(Name = "error_status")]
+    public string ErrorStatus { get; set; }
+
+	[SupplyParameterFromQuery(Name = "error_msg")]
+	public string ErrorMessage { get; set; }
+}
