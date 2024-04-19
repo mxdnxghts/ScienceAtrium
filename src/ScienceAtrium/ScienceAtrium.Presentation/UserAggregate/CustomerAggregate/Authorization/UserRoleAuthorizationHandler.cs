@@ -7,9 +7,9 @@ using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Infrastructure.Extensions;
 using System.Security.Claims;
 
-namespace ScienceAtrium.Presentation.UserAggregate.Authorization;
+namespace ScienceAtrium.Presentation.UserAggregate.CustomerAggregate.Authorization;
 
-public class UserRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader, IDistributedCache _cache) 
+public class UserRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader, IDistributedCache _cache)
     : AuthorizationHandler<UserRoleRequirement>
 {
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
@@ -47,13 +47,13 @@ public class UserRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader
             return;
         }
 
-		var userId = (await _customerReader.GetAsync(
-		new EntityFindOptions<Customer>(predicate: c => c.Email == userEmailClaim.Value))).Id;
-		await _cache.SetRecordAsync($"{nameof(UserRoleRequirement)}_{userEmailClaim.Value}", userId);
+        var userId = (await _customerReader.GetAsync(
+        new EntityFindOptions<Customer>(predicate: c => c.Email == userEmailClaim.Value))).Id;
+        await _cache.SetRecordAsync($"{nameof(UserRoleRequirement)}_{userEmailClaim.Value}", userId);
 
-		if (!googleIdentity.Claims.Any(claim => claim.Type == ClaimTypes.Sid))
-			googleIdentity.AddClaim(new Claim(ClaimTypes.Sid, userId.ToString()));
+        if (!googleIdentity.Claims.Any(claim => claim.Type == ClaimTypes.Sid))
+            googleIdentity.AddClaim(new Claim(ClaimTypes.Sid, userId.ToString()));
 
-		context.Succeed(requirement);
+        context.Succeed(requirement);
     }
 }

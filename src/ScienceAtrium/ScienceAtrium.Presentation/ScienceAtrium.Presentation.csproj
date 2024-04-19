@@ -33,4 +33,8 @@
     <ProjectReference Include="..\ScienceAtrium.Infrastructure\ScienceAtrium.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UserAggregate\ExecutorAggregate\" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace ScienceAtrium.Presentation.UserAggregate.Authorization;
+namespace ScienceAtrium.Presentation.UserAggregate.CustomerAggregate.Authorization;
 
 public class UserRoleRequirement(string role) : IAuthorizationRequirement
 {

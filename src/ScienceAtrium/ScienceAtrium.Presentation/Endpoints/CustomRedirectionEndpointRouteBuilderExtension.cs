@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Primitives;
 using ScienceAtrium.Infrastructure.Extensions;
 using ScienceAtrium.Presentation.UserAggregate;
-using ScienceAtrium.Presentation.UserAggregate.Authorization;
+using ScienceAtrium.Presentation.UserAggregate.CustomerAggregate.Authorization;
 
 namespace ScienceAtrium.Presentation.Endpoints;
 

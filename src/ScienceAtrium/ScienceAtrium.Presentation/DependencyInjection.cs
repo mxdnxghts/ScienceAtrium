@@ -11,6 +11,7 @@ using ScienceAtrium.Presentation.Components.Account;
 using ScienceAtrium.Presentation.UserAggregate;
 using ScienceAtrium.Presentation.UserAggregate.Authorization;
 using ScienceAtrium.Presentation.UserAggregate.Constants;
+using ScienceAtrium.Presentation.UserAggregate.CustomerAggregate.Authorization;
 using ScienceAtrium.Presentation.UserAggregate.Helpers;
 using System.Security.Claims;
 
