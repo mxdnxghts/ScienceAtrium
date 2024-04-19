@@ -9,11 +9,9 @@ using Microsoft.AspNetCore.Identity;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Presentation.Components.Account;
 using ScienceAtrium.Presentation.UserAggregate;
-using ScienceAtrium.Presentation.UserAggregate.Authorization;
 using ScienceAtrium.Presentation.UserAggregate.Constants;
 using ScienceAtrium.Presentation.UserAggregate.CustomerAggregate.Authorization;
 using ScienceAtrium.Presentation.UserAggregate.Helpers;
-using System.Security.Claims;
 
 namespace ScienceAtrium.Presentation;
 
@@ -77,7 +75,7 @@ public static class DependencyInjection
     {
         IAuthorizationRequirement[] requirements = 
             [
-                new UserRoleRequirement(UserAuthorizationConstants.CustomerRole),
+                new CustomerRoleRequirement(UserAuthorizationConstants.CustomerRole),
                 new DenyAnonymousAuthorizationRequirement(), 
             ];
         serviceCollection.AddAuthorizationBuilder()
@@ -90,7 +88,7 @@ public static class DependencyInjection
             {
                 pb.RequireClaim(AuthenticationConstants.CanViewHomePageClaim);
             });
-        serviceCollection.AddScoped<IAuthorizationHandler, UserRoleAuthorizationHandler>();
+        serviceCollection.AddScoped<IAuthorizationHandler, CustomerRoleAuthorizationHandler>();
         return serviceCollection;
     }
 }

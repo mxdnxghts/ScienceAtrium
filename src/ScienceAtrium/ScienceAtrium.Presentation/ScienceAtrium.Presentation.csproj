@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UserAggregate\ExecutorAggregate\" />
+    <Folder Include="UserAggregate\ExecutorAggregate\Authorization\" />
   </ItemGroup>
 
 </Project>

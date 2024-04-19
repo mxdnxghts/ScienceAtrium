@@ -9,16 +9,16 @@ using System.Security.Claims;
 
 namespace ScienceAtrium.Presentation.UserAggregate.CustomerAggregate.Authorization;
 
-public class UserRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader, IDistributedCache _cache)
-    : AuthorizationHandler<UserRoleRequirement>
+public class CustomerRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader, IDistributedCache _cache)
+    : AuthorizationHandler<CustomerRoleRequirement>
 {
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
-                                                         UserRoleRequirement requirement)
+                                                         CustomerRoleRequirement requirement)
     {
         if (context.User is null || requirement is null)
         {
             context.Fail(
-                new AuthorizationFailureReason(this, $"{nameof(context.User)} or {nameof(UserRoleRequirement)} is null"));
+                new AuthorizationFailureReason(this, $"{nameof(context.User)} or {nameof(CustomerRoleRequirement)} is null"));
             return;
         }
 
@@ -35,7 +35,7 @@ public class UserRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader
         if (roleClaim?.Value != requirement.Role)
         {
             context.Fail(
-                new AuthorizationFailureReason(this, $"{nameof(UserRoleRequirement)} inconsistency"));
+                new AuthorizationFailureReason(this, $"{nameof(CustomerRoleRequirement)} inconsistency"));
             return;
         }
 
@@ -49,7 +49,7 @@ public class UserRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader
 
         var userId = (await _customerReader.GetAsync(
         new EntityFindOptions<Customer>(predicate: c => c.Email == userEmailClaim.Value))).Id;
-        await _cache.SetRecordAsync($"{nameof(UserRoleRequirement)}_{userEmailClaim.Value}", userId);
+        await _cache.SetRecordAsync($"{nameof(CustomerRoleRequirement)}_{userEmailClaim.Value}", userId);
 
         if (!googleIdentity.Claims.Any(claim => claim.Type == ClaimTypes.Sid))
             googleIdentity.AddClaim(new Claim(ClaimTypes.Sid, userId.ToString()));
