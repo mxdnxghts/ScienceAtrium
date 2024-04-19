@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>ScienceAtrium</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@200;400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet" type="text/css" href="order.css">
+	<script src="order-js.js"></script>
+</head>
+
+<body>
+	<header id="header" class="header">
+		<div class="container">
+			<nav class="nav">
+				<div class="nav-logo">
+					<p>ScienceAtrium</p>
+				</div>
+				<div class="nav-menu" id="navMenu">
+					<ul>
+						<li><a href="#" class="link">Главная</a></li>
+						<li><a href="#" class="link">Профиль</a></li>
+						<li><a href="#" class="link active">Корзина</a></li>
+						<li><a href="#" class="link">Каталог</a></li>
+					</ul>
+				</div>
+				<div class="nav-button">
+					<button class="btn white-btn" id="exitBtn" onclick="exit()">Выйти</button>
+				</div>
+				<div class="nav-menu-btn">
+					<i class="bx bx-menu" onclick="myMenuFunction()"></i>
+				</div>
+			</nav>
+		</div>
+	</header>
+
+	<script>
+		function myMenuFunction() {
+		 var i = document.getElementById("navMenu");
+		 if(i.className === "nav-menu") {
+			 i.className += " responsive";
+		 } else {
+			 i.className = "nav-menu";
+		 }
+		}
+	 </script>
+	 <script>
+		 var a = document.getElementById("exitBtn");
+		 var x = document.getElementById("exit");
+		 function exit() {
+			 x.style.left = "4px";
+			 y.style.right = "-520px";
+			 a.className += " white-btn";
+			 b.className = "btn";
+			 x.style.opacity = 1;
+			 y.style.opacity = 0;
+		 }
+
+	 </script>
+
+<section id="orders" class="orders">
+	<div class="container">
+		<div class="order-sect">
+			<div class="block-order">
+				<h1>Заказ №</h1>
+				<p class="name-order">Инструментальные средства разработки ПО</p>
+				<p class="name-order">Разработка программных модулей</p>
+				<p class="name-order">Другой предмет 1</p>
+				<span class="customer-name">Ник заказчика</span>
+				<p class="st">Статус заказа -<span class="st-spn">Обрабатывается</span></p>
+				<span class="price">₽ 8000</span>
+			</div>
+			<div class="block-order">
+				<h2>Заказ №</h2>
+				<p class="name-order">Технология разработки ПО</p>
+				<p class="name-order">Компьютерные сети</p>
+				<p class="name-order">Другой предмет 2</p>
+				<span class="customer-name">Ник заказчика</span>
+				<p class="st">Статус заказа -<span class="st-spn">Выполняется</span></p>
+				<span class="price">₽ 5500</span>
+			</div>
+			<div class="block-order">
+				<h3>Заказ №</h3>
+				<p class="name-order">Операционные системы и среды</p>
+				<p class="name-order">Поддержка и тестирование программных модулей</p>
+				<p class="name-order">Другой предмет 3</p>
+				<span class="customer-name">Ник заказчика</span>
+				<p class="st">Статус заказа -<span class="st-spn">Выполнен</span></p>
+				<span class="price">₽ 7000</span>
+			</div>
+		</div>
+	</div>
+  </section>
+
+  <footer id="footer" class="footer">
+	<h4>ScienceAtrium</h4>
+	<a href="mailto:info.scienceatrium@gmail.com" class="mailto"><img src="img/envelope.png" width="25" height="25">
+	  info.scienceatrium@gmail.com
+	</a>
+  </footer>
+</body>
+</html>

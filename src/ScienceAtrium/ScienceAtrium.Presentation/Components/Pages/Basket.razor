@@ -102,7 +102,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        //
+    //
     }
 
     private async Task PayAsync()
@@ -114,6 +114,8 @@
         catch (Exception ex)
         {
             Logger.Error(ex, ex.Message);
+            NavigationManager.NavigateTo(
+                NavigationHelper.GetErrorUri("Не удалось совершить оплату заказа", StatusCodes.Status400BadRequest));
             return;
         }
 

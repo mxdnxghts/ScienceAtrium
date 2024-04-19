@@ -15,9 +15,7 @@
 
 <body>
 	<header id="header" class="header">
-
 		<div class="container">
-
 			<nav class="nav">
 				<div class="nav-logo">
 					<p>ScienceAtrium</p>
@@ -25,8 +23,8 @@
 				<div class="nav-menu" id="navMenu">
 					<ul>
 						<li><a href="#" class="link">Главная</a></li>
-						<li><a href="#" class="link">Профиль</a></li>
-						<li><a href="#" class="link active">Корзина</a></li>
+						<li><a href="#" class="link active">Профиль</a></li>
+						<li><a href="#" class="link">Корзина</a></li>
 						<li><a href="#" class="link">Каталог</a></li>
 					</ul>
 				</div>
@@ -37,13 +35,10 @@
 					<i class="bx bx-menu" onclick="myMenuFunction()"></i>
 				</div>
 			</nav>
-
 		</div>
-			
 	</header>
 
 	<script>
-   
 		function myMenuFunction() {
 		 var i = document.getElementById("navMenu");
 		 if(i.className === "nav-menu") {
@@ -52,7 +47,6 @@
 			 i.className = "nav-menu";
 		 }
 		}
-	  
 	 </script>
 	 <script>
 		 var a = document.getElementById("exitBtn");
@@ -65,111 +59,359 @@
 			 x.style.opacity = 1;
 			 y.style.opacity = 0;
 		 }
-
 	 </script>
 
 <section id="cards" class="cards">
-
 	<container>
-
 	  <div class="row">
-
 		<div class="column">
-
 		  <div class="rec">
-
-			<div class="rec-one">
-
+			<div class="rec-one" style="background-color: #EFC87B;">
 			  <img src="img/profile.png" width="80" height="80">
 			  <p style="font-weight: 600;">Name</p>
 			  <div class="add-inf">
 				<p>Электронная почта:<span>krakozabra4000@gmail.com</span></p>
 			  </div>
-  
 			</div>
-  
-			<div class="rec-two">
-  
+			<div class="rec-two" style="background-color: #91ABA2;">
 			  <img src="img/paper.png" width="80" height="70">
 			  <p style="font-weight: 600;">Лист ожидания</p>
 			  <div class="add-inf">
 				<p>Срок выполнения до:<span>10.02.2024</span></p>
 			  </div>
-  
 			</div>
-
 		  </div>
+		</div>
 
+		<script>
+			(function(){'user strit'; document.addEventListener('click',EasyTogglerHandler);function EasyTogglerHandler(event){
+				const EY_BTN=event.target.closest('[data-easy-toggle]');if(EY_BTN){event.preventDefault();let ey_target=EY_BTN.getAttribute('data-easy-toggle');let ey_class=EY_BTN.
+				getAttribute('data-easy-class');try{document. querySelector(ey_target).classList.toggle(ey_class)}catch(ey_error){console.warn('EasyToggler.js: Блок '+ey_target+' не существует')}}if(!EY_BN) 
+				{let ey_rcoe_block_targets=document.querySelectorAll('[data-easy-rcoe]');Array.from(ey_rcoe_block_targets).forEach.call(ey_rcoe_block_targets,function(ey_rcoe_block_target){let ey_rcoe_block= 
+				ey_rcoe_block_target.getAttribute('data-easy-toggle'),ey_rcoe_block_class=ey_rcoe_block_target.getAttribute('data-easy-class');if(!event.target.closest(ey_rcoe_block))
+				{try{document.querySelector(ey_rcoe_block).classList.remove(ey_rcoe_block_class)}catch(ey_error){console.warn('EasyToggler.js : Блок '+ey_rcoe_block+' не существует')}}})}}})()
+		</script>
+
+		<div id="modalWin-one" class="modal">
+			<div class="modal-window">
+				<h3>Заказ № 09308</h3>
+				<div class="order-block">
+					<div class="ordblock">
+						<p class="name-ord">Операционные системы и среды</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Операционные системы и среды</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Операционные системы и среды</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Операционные системы и среды</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Операционные системы и среды</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Операционные системы и среды</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<p>Общая стоимость: <span>7200 ₽</span></p>
+					<p>Исполнитель: <span>@huesos</span></p>
+					<p>Сроки сдачи: <span>25.09.24</span></p>
+				</div>
+				<button data-easy-toggle="#modalWin-one" data-easy-class="show" data-easy-rcoe class="btn-close">X</button>
+			</div>
+			<div data-easy-toggle="#modalWin-one" data-easy-class="show" data-easy-rcoe class="overlay"></div>
+		</div>
+
+		<div id="modalWin-one" class="modal">
+			<div class="modal-window">
+				<h3>Заказ № 27384</h3>
+				<div class="order-block">
+					<div class="ordblock">
+						<p class="name-ord">Разработка программных модулей</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Разработка программных модулей</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Разработка программных модулей</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Разработка программных модулей</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Разработка программных модулей</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Разработка программных модулей</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<p>Общая стоимость: <span>7200 ₽</span></p>
+					<p>Исполнитель: <span>@huesos</span></p>
+					<p>Сроки сдачи: <span>25.09.24</span></p>
+				</div>
+				<button data-easy-toggle="#modalWin-two" data-easy-class="show" data-easy-rcoe class="btn-close">X</button>
+			</div>
+			<div data-easy-toggle="#modalWin-two" data-easy-class="show" data-easy-rcoe class="overlay"></div>
+		</div>
+
+		<div id="modalWin-one" class="modal">
+			<div class="modal-window">
+				<h3>Заказ № 38748</h3>
+				<div class="order-block">
+					<div class="ordblock">
+						<p class="name-ord">Технология разработки ПО</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Технология разработки ПО</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Технология разработки ПО</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Технология разработки ПО</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Технология разработки ПО</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Технология разработки ПО</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<p>Общая стоимость: <span>7200 ₽</span></p>
+					<p>Исполнитель: <span>@huesos</span></p>
+					<p>Сроки сдачи: <span>25.09.24</span></p>
+				</div>
+				<button data-easy-toggle="#modalWin-three" data-easy-class="show" data-easy-rcoe class="btn-close">X</button>
+			</div>
+			<div data-easy-toggle="#modalWin-three" data-easy-class="show" data-easy-rcoe class="overlay"></div>
+		</div>
+
+		<div id="modalWin-one" class="modal">
+			<div class="modal-window">
+				<h3>Заказ № 73832</h3>
+				<div class="order-block">
+					<div class="ordblock">
+						<p class="name-ord">Компьютерные сети</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Компьютерные сети</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Компьютерные сети</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Компьютерные сети</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Компьютерные сети</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Компьютерные сети</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<p>Общая стоимость: <span>7200 ₽</span></p>
+					<p>Исполнитель: <span>@huesos</span></p>
+					<p>Сроки сдачи: <span>25.09.24</span></p>
+				</div>
+				<button data-easy-toggle="#modalWin-four" data-easy-class="show" data-easy-rcoe class="btn-close">X</button>
+			</div>
+			<div data-easy-toggle="#modalWin-four" data-easy-class="show" data-easy-rcoe class="overlay"></div>
+		</div>
+
+		<div id="modalWin-one" class="modal">
+			<div class="modal-window">
+				<h3>Заказ № 839475</h3>
+				<div class="order-block">
+					<div class="ordblock">
+						<p class="name-ord">Инструментальные средства разработки ПО</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Инструментальные средства разработки ПО</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Инструментальные средства разработки ПО</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Инструментальные средства разработки ПО</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Инструментальные средства разработки ПО</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Инструментальные средства разработки ПО</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<p>Общая стоимость: <span>7200 ₽</span></p>
+					<p>Исполнитель: <span>@huesos</span></p>
+					<p>Сроки сдачи: <span>25.09.24</span></p>
+				</div>
+				<button data-easy-toggle="#modalWin-five" data-easy-class="show" data-easy-rcoe class="btn-close">X</button>
+			</div>
+			<div data-easy-toggle="#modalWin-five" data-easy-class="show" data-easy-rcoe class="overlay"></div>
+		</div>
+
+		<div id="modalWin-one" class="modal">
+			<div class="modal-window">
+				<h3>Заказ № 028374</h3>
+				<div class="order-block">
+					<div class="ordblock">
+						<p class="name-ord">Поддержка и тестирование программных модулей</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Поддержка и тестирование программных модулей</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Поддержка и тестирование программных модулей</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Поддержка и тестирование программных модулей</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Поддержка и тестирование программных модулей</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<div class="ordblock">
+						<p class="name-ord">Поддержка и тестирование программных модулей</p>
+						<p class="st">Статус - <span>В процессе</span></p>
+						<p>1200 ₽</p>
+					</div>
+					<p>Общая стоимость: <span>7200 ₽</span></p>
+					<p>Исполнитель: <span>@huesos</span></p>
+					<p>Сроки сдачи: <span>25.09.24</span></p>
+				</div>
+				<button data-easy-toggle="#modalWin-six" data-easy-class="show" data-easy-rcoe class="btn-close">X</button>
+			</div>
+			<div data-easy-toggle="#modalWin-six" data-easy-class="show" data-easy-rcoe class="overlay"></div>
 		</div>
 
 		<div class="column col-two" style="background-image: linear-gradient(180deg,hsl(36deg 9% 44%) 1%, hsl(41deg 9% 62%) 62%, hsl(47deg 15% 82%) 100%);">
-
 		  <h1>Покупки</h1>
-
 		  <div class="catalogblk">
-
-			<div style="background-color: #C9C0B3;" class="blockctlg">
-			  <img src="img/title-page.png" width="100" height="130">
-			  <p style="white-space: normal;">Инструментальные средства разработки ПО</p>
-			  <p>₽ 2000</p>
-			  <p class="st">Статус -</p>
+			<div class="blockctlg">
+			  <img class="title-page" src="img/title-page.png" width="100" height="130">
+			  <p style="white-space: normal;" class="numborder">Заказ № <span>09308</span></p>
+			  <p class="comment">Комментарий: <br><span>5 лаб по порядку</span></p>
+			  <p class="st">Статус - <span>В процессе</span></p>
+			  <p>7200 ₽</p>
+			  <button data-easy-toggle="#modalWin-one" data-easy-class="show" data-easy-rcoe class="but-moredetails">Подробнее</button>
 			</div>
-	  
-			<div style="background-color: #91ABA2;" class="blockctlg">
-			  <img src="img/title-page.png" width="100" height="130">
-			  <p style="white-space: normal;">Операционные системы и среды</p>
-			  <p>₽ 2000</p>
-			  <p class="st">Статус -</p>
+			<div class="blockctlg">
+			  <img class="title-page" src="img/title-page.png" width="100" height="130">
+			  <p style="white-space: normal;" class="numborder">Заказ № <span>27384</span></p>
+			  <p class="comment">Комментарий: <br><span>5 лаб по порядку</span></p>
+			  <p class="st">Статус - <span>В процессе</span></p>
+			  <p>7200 ₽</p>
+			  <button data-easy-toggle="#modalWin-two" data-easy-class="show" data-easy-rcoe class="but-moredetails">Подробнее</button>
 			</div>
-	  
-			<div style="background-color: #EFC87B;" class="blockctlg">
-			  <img src="img/title-page.png" width="100" height="130">
-			  <p style="white-space: normal;">Технология разработки ПО</p>
-			  <p>₽ 2000</p>
-			  <p class="st">Статус -</p>
+			<div class="blockctlg">
+			  <img class="title-page" src="img/title-page.png" width="100" height="130">
+			  <p style="white-space: normal;" class="numborder">Заказ № <span>38748</span></p>
+			  <p class="comment">Комментарий: <br><span>5 лаб по порядку</span></p>
+			  <p class="st">Статус - <span>В процессе</span></p>
+			  <p>7200 ₽</p>
+			  <button data-easy-toggle="#modalWin-three" data-easy-class="show" data-easy-rcoe class="but-moredetails">Подробнее</button>
 			</div>
-	  
-			<div style="background-color: #C9C0B3;" class="blockctlg">
-			  <img src="img/title-page.png" width="100" height="130">
-			  <p style="white-space: normal;">Дополнительный блок для предмета</p>
-			  <p>₽ 2000</p>
-			  <p class="st">Статус -</p>
+			<div class="blockctlg">
+				<img class="title-page" src="img/title-page.png" width="100" height="130">
+				<p style="white-space: normal;" class="numborder">Заказ № <span>73832</span></p>
+				<p class="comment">Комментарий: <br><span>5 лаб по порядку</span></p>
+				<p class="st">Статус - <span>В процессе</span></p>
+				<p>7200 ₽</p>
+				<button data-easy-toggle="#modalWin-four" data-easy-class="show" data-easy-rcoe class="but-moredetails">Подробнее</button>
 			</div>
-	  
-			<div style="background-color: #91ABA2;" class="blockctlg">
-			  <img src="img/title-page.png" width="100" height="130">
-			  <p style="white-space: normal;">Дополнительный блок для предмета</p>
-			  <p>₽ 2000</p>
-			  <p class="st">Статус -</p>
+			<div class="blockctlg">
+			  <img class="title-page" src="img/title-page.png" width="100" height="130">
+			  <p style="white-space: normal;" class="numborder">Заказ № <span>839475</span></p>
+			  <p class="comment">Комментарий: <br><span>5 лаб по порядку</span></p>
+			  <p class="st">Статус - <span>В процессе</span></p>
+			  <p>7200 ₽</p>
+			  <button data-easy-toggle="#modalWin-five" data-easy-class="show" data-easy-rcoe class="but-moredetails">Подробнее</button>
 			</div>
-	  
-			<div style="background-color: #EFC87B;" class="blockctlg">
-			  <img src="img/title-page.png" width="100" height="130">
-			  <p style="white-space: normal;">Дополнительный блок для предмета</p>
-			  <p>₽ 2000</p>
-			  <p class="st">Статус -</p>
+			<div class="blockctlg">
+			  <img class="title-page" src="img/title-page.png" width="100" height="130">
+			  <p style="white-space: normal;" class="numborder">Заказ № <span>028374</span></p>
+			  <p class="comment">Комментарий: <br><span>5 лаб по порядку</span></p>
+			  <p class="st">Статус - <span>В процессе</span></p>
+			  <p>7200 ₽</p>
+			  <button data-easy-toggle="#modalWin-six" data-easy-class="show" data-easy-rcoe class="but-moredetails">Подробнее</button>
 			</div>
-	  
 		  </div>
-
 		</div>
-
 	  </div>
-
 	</div>
-	
   </section>
 
   <footer id="footer" class="footer">
-
 	<h2>ScienceAtrium</h2>
-
 	<a href="mailto:info.scienceatrium@gmail.com" class="mailto"><img src="img/envelope.png" width="25" height="25">
 	  info.scienceatrium@gmail.com
 	</a>
-
   </footer>
-
 </body>
-
 </html>
