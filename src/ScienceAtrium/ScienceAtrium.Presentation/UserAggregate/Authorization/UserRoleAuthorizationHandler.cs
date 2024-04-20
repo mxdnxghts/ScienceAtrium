@@ -5,12 +5,11 @@ using ScienceAtrium.Domain.RootAggregate.Interfaces;
 using ScienceAtrium.Domain.RootAggregate.Options;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Infrastructure.Extensions;
-using ScienceAtrium.Presentation.UserAggregate.Authorization;
 using System.Security.Claims;
 
-namespace ScienceAtrium.Presentation.UserAggregate.CustomerAggregate.Authorization;
+namespace ScienceAtrium.Presentation.UserAggregate.Authorization;
 
-public class CustomerRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader, IDistributedCache _cache)
+public class UserRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader, IDistributedCache _cache)
     : AuthorizationHandler<UserRoleRequirement>
 {
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,

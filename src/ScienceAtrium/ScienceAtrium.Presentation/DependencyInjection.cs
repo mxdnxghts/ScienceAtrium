@@ -11,7 +11,6 @@ using ScienceAtrium.Presentation.Components.Account;
 using ScienceAtrium.Presentation.UserAggregate;
 using ScienceAtrium.Presentation.UserAggregate.Authorization;
 using ScienceAtrium.Presentation.UserAggregate.Constants;
-using ScienceAtrium.Presentation.UserAggregate.CustomerAggregate.Authorization;
 using ScienceAtrium.Presentation.UserAggregate.Helpers;
 
 namespace ScienceAtrium.Presentation;
@@ -85,7 +84,7 @@ public static class DependencyInjection
                 pb.AddAuthenticationSchemes(GoogleDefaults.AuthenticationScheme)
                     .AddRequirements(requirements);
             });
-        serviceCollection.AddScoped<IAuthorizationHandler, CustomerRoleAuthorizationHandler>();
+        serviceCollection.AddScoped<IAuthorizationHandler, UserRoleAuthorizationHandler>();
         return serviceCollection;
     }
 }
