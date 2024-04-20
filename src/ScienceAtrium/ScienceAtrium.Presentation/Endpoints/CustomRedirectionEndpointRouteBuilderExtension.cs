@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Primitives;
 using ScienceAtrium.Infrastructure.Extensions;
 using ScienceAtrium.Presentation.UserAggregate;
-using ScienceAtrium.Presentation.UserAggregate.CustomerAggregate.Authorization;
+using ScienceAtrium.Presentation.UserAggregate.Authorization;
 
 namespace ScienceAtrium.Presentation.Endpoints;
 
@@ -48,7 +48,7 @@ internal static class CustomRedirectionEndpointRouteBuilderExtension
 		if ((cookieUserId is null || protector.Unprotect(cookieUserId) == "")
 				&& cookieEmail is not null)
 		{
-			var claimUserId = await cache.GetRecordAsync<Guid>($"{nameof(CustomerRoleRequirement)}_{protector.Unprotect(cookieEmail)}");
+			var claimUserId = await cache.GetRecordAsync<Guid>($"{nameof(UserRoleRequirement)}_{protector.Unprotect(cookieEmail)}");
 			if (!claimUserId.Equals(Guid.Empty))
 			{
 				var protectedClaimUserId = protector.Protect(claimUserId.ToString());

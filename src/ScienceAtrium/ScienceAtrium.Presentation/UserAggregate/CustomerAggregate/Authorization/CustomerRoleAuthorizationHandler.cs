@@ -5,20 +5,21 @@ using ScienceAtrium.Domain.RootAggregate.Interfaces;
 using ScienceAtrium.Domain.RootAggregate.Options;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Infrastructure.Extensions;
+using ScienceAtrium.Presentation.UserAggregate.Authorization;
 using System.Security.Claims;
 
 namespace ScienceAtrium.Presentation.UserAggregate.CustomerAggregate.Authorization;
 
 public class CustomerRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader, IDistributedCache _cache)
-    : AuthorizationHandler<CustomerRoleRequirement>
+    : AuthorizationHandler<UserRoleRequirement>
 {
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
-                                                         CustomerRoleRequirement requirement)
+                                                         UserRoleRequirement requirement)
     {
         if (context.User is null || requirement is null)
         {
             context.Fail(
-                new AuthorizationFailureReason(this, $"{nameof(context.User)} or {nameof(CustomerRoleRequirement)} is null"));
+                new AuthorizationFailureReason(this, $"{nameof(context.User)} or {nameof(UserRoleRequirement)} is null"));
             return;
         }
 
@@ -35,7 +36,7 @@ public class CustomerRoleAuthorizationHandler(IReaderAsync<Customer> _customerRe
         if (roleClaim?.Value != requirement.Role)
         {
             context.Fail(
-                new AuthorizationFailureReason(this, $"{nameof(CustomerRoleRequirement)} inconsistency"));
+                new AuthorizationFailureReason(this, $"{nameof(UserRoleRequirement)} inconsistency"));
             return;
         }
 
@@ -49,7 +50,7 @@ public class CustomerRoleAuthorizationHandler(IReaderAsync<Customer> _customerRe
 
         var userId = (await _customerReader.GetAsync(
         new EntityFindOptions<Customer>(predicate: c => c.Email == userEmailClaim.Value))).Id;
-        await _cache.SetRecordAsync($"{nameof(CustomerRoleRequirement)}_{userEmailClaim.Value}", userId);
+        await _cache.SetRecordAsync($"{nameof(UserRoleRequirement)}_{userEmailClaim.Value}", userId);
 
         if (!googleIdentity.Claims.Any(claim => claim.Type == ClaimTypes.Sid))
             googleIdentity.AddClaim(new Claim(ClaimTypes.Sid, userId.ToString()));

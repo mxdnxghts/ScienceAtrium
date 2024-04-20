@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Presentation.Components.Account;
 using ScienceAtrium.Presentation.UserAggregate;
+using ScienceAtrium.Presentation.UserAggregate.Authorization;
 using ScienceAtrium.Presentation.UserAggregate.Constants;
 using ScienceAtrium.Presentation.UserAggregate.CustomerAggregate.Authorization;
 using ScienceAtrium.Presentation.UserAggregate.Helpers;
@@ -75,7 +76,7 @@ public static class DependencyInjection
     {
         IAuthorizationRequirement[] requirements = 
             [
-                new CustomerRoleRequirement(UserAuthorizationConstants.CustomerRole),
+                new UserRoleRequirement(UserAuthorizationConstants.CustomerRole),
                 new DenyAnonymousAuthorizationRequirement(), 
             ];
         serviceCollection.AddAuthorizationBuilder()
