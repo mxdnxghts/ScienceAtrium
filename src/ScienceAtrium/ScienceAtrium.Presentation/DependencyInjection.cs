@@ -84,10 +84,6 @@ public static class DependencyInjection
             {
                 pb.AddAuthenticationSchemes(GoogleDefaults.AuthenticationScheme)
                     .AddRequirements(requirements);
-            })
-            .AddPolicy("home-page-view", pb =>
-            {
-                pb.RequireClaim(AuthenticationConstants.CanViewHomePageClaim);
             });
         serviceCollection.AddScoped<IAuthorizationHandler, CustomerRoleAuthorizationHandler>();
         return serviceCollection;
