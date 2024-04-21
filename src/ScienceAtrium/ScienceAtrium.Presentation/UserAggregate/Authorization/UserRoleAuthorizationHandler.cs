@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.Google;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Distributed;
 using ScienceAtrium.Domain.RootAggregate.Interfaces;
 using ScienceAtrium.Domain.RootAggregate.Options;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
 using ScienceAtrium.Infrastructure.Extensions;
-using System.Security.Claims;
 
 namespace ScienceAtrium.Presentation.UserAggregate.Authorization;
 
@@ -31,11 +31,11 @@ public class UserRoleAuthorizationHandler(IReaderAsync<Customer> _customerReader
             return;
         }
 
-        var roleClaim = googleIdentity.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Role);
-        if (roleClaim?.Value != requirement.Role)
+		var roleClaim = googleIdentity.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Role);
+		if (!requirement.Roles.Exists(r => r == roleClaim?.Value))
         {
             context.Fail(
-                new AuthorizationFailureReason(this, $"{nameof(UserRoleRequirement)} inconsistency"));
+                new AuthorizationFailureReason(this, $"User doesn't have access"));
             return;
         }
 

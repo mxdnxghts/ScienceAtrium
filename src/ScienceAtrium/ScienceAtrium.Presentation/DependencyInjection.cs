@@ -48,6 +48,8 @@ public static class DependencyInjection
         serviceCollection.AddScoped<IdentityRedirectManager>();
         serviceCollection.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
+        GoogleAuthenticationHelper.Configuration = configuration;
+
         serviceCollection
             .AddAuthentication(o =>
             {
@@ -64,7 +66,7 @@ public static class DependencyInjection
                 {
                     OnRemoteFailure = GoogleAuthenticationHelper.HandleOnRemoteFailure,
                     OnAccessDenied = GoogleAuthenticationHelper.HandleOnAccessDeniedFailure,
-                    OnCreatingTicket = GoogleAuthenticationHelper.AddRoleClaims,
+                    OnCreatingTicket = GoogleAuthenticationHelper.HandleOnCreatingTicket,
                     OnTicketReceived = GoogleAuthenticationHelper.HandleOnTicketReceived,
                 };
 			});
@@ -75,7 +77,7 @@ public static class DependencyInjection
     {
         IAuthorizationRequirement[] requirements = 
             [
-                new UserRoleRequirement(UserAuthorizationConstants.CustomerRole),
+                new UserRoleRequirement(UserAuthorizationConstants.AllowedRoles),
                 new DenyAnonymousAuthorizationRequirement(), 
             ];
         serviceCollection.AddAuthorizationBuilder()
