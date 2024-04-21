@@ -79,8 +79,8 @@ public static class DependencyInjection
 
         serviceCollection.AddAuthorizationBuilder()
             .AddPolicy("google-oauth", policies["google-oauth"])
-            .AddPolicy("executor", policies["executor"])
-            .AddPolicy("admin", policies["admin"]);
+            .AddPolicy("executor-policy", policies["executor-policy"])
+            .AddPolicy("admin-policy", policies["admin-policy"]);
 
         serviceCollection.AddScoped<IAuthorizationHandler, UserRoleAuthorizationHandler>();
         return serviceCollection;
@@ -111,8 +111,8 @@ public static class DependencyInjection
         return new Dictionary<string, AuthorizationPolicy>
         {
             { "google-oauth", googlePolicy },
-            { "executor", executorPanelPolicy },
-            { "admin", adminPolicy }
+            { "executor-policy", executorPanelPolicy },
+            { "admin-policy", adminPolicy }
         };
 	}
 }
