@@ -80,13 +80,39 @@ public static class DependencyInjection
                 new UserRoleRequirement(UserAuthorizationConstants.AllowedRoles),
                 new DenyAnonymousAuthorizationRequirement(), 
             ];
+
+        var policies = GetAuthorizationPolicies(requirements);
+
         serviceCollection.AddAuthorizationBuilder()
-            .AddPolicy("google-oauth", pb =>
-            {
-                pb.AddAuthenticationSchemes(GoogleDefaults.AuthenticationScheme)
-                    .AddRequirements(requirements);
-            });
+            .AddPolicy("google-oauth", policies["google-oauth"])
+            .AddPolicy("executor", policies["executor"])
+            .AddPolicy("admin", policies["admin"]);
+
         serviceCollection.AddScoped<IAuthorizationHandler, UserRoleAuthorizationHandler>();
         return serviceCollection;
     }
+
+    private static Dictionary<string, AuthorizationPolicy> GetAuthorizationPolicies(IAuthorizationRequirement[] authorizationRequirements)
+    {
+        var pb = new AuthorizationPolicyBuilder();
+
+		var googlePolicy = pb
+            .AddAuthenticationSchemes(GoogleDefaults.AuthenticationScheme)
+            .AddRequirements(authorizationRequirements)
+            .Build();
+        var executorPanelPolicy = pb
+            .Combine(googlePolicy)
+            .AddRequirements()
+            .Build();
+        var adminPolicy = pb
+            .Combine(executorPanelPolicy)
+            .Build();
+
+        return new Dictionary<string, AuthorizationPolicy>
+        {
+            { "google-oauth", googlePolicy },
+            { "executor", executorPanelPolicy },
+            { "admin", adminPolicy }
+        };
+	}
 }
