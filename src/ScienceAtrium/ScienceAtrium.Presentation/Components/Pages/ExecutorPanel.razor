@@ -1,6 +1,11 @@
 ﻿@page "/executor-panel"
+@using ScienceAtrium.Application.UserAggregate.ExecutorAggregate.Commands
+@using ScienceAtrium.Application.UserAggregate.Queries
+@rendermode InteractiveServer 
 
 @inject IMediator Mediator
+@inject NavigationManager NavigationManager
+@inject Serilog.ILogger Logger
 
 @attribute [Authorize(Policy = "executor-policy")]
 
@@ -18,7 +23,7 @@
 					<p class="st">Статус - <span>@OrderHelper.GetTranslatedStatus(order.Status)</span></p>
 					<p>Сроки сдачи: <span>@order.OrderDate.ToShortDateString()</span></p>
 					<p>Цена: <span>@order.TotalCost ₽</span></p>
-					<button>Взять</button>
+					<button @onclick="async () => await TakeOrderAsync(order)">Взять</button>
 				</div>
 			}
 		</div>
@@ -27,10 +32,44 @@
 
 @code {
 	private IEnumerable<Order> _orders;
+	private Executor _executor;
+
+	[SupplyParameterFromQuery(Name = "user_id")]
+	public string ProtectedUserId { get; set; }
+
+	[SupplyParameterFromQuery(Name = "user_email")]
+	public string ProtectedUserEmail { get; set; }
+
 
 	protected override async Task OnInitializedAsync()
 	{
-		_orders ??= await Mediator.Send(new GetOrderListQuery(o => o.Status == OrderStatus.Pending
+		_executor = await FindExecutorAsync(ProtectedUserId, ProtectedUserEmail);
+		await RefreshAvailableOrdersAsync();
+	}
+
+	private async Task TakeOrderAsync(Order order)
+	{
+		try
+		{
+			await Mediator.Send(new TakeOrderCommand(_executor, order));
+		}
+		catch (Exception e)
+		{
+			Logger.Error(e, "");
+			NavigationManager.NavigateTo(NavigationHelper.GetErrorUri(e.Message, StatusCodes.Status400BadRequest));
+		}
+		await RefreshAvailableOrdersAsync();
+	}
+
+	private async Task RefreshAvailableOrdersAsync()
+	{
+		_orders = await Mediator.Send(new GetOrderListQuery(o => o.Status == OrderStatus.Pending
 			&& o.OrderDate >= DateTime.UtcNow));
+	}
+
+	private async Task<Executor> FindExecutorAsync(string? protectedId, string? protectedEmail)
+	{
+		var executor = await UserHelper.GetExecutorAsync(Mediator, protectedId, protectedEmail);
+		return executor;
 	}
 }
