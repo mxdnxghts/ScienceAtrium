@@ -7,7 +7,6 @@ using ScienceAtrium.Domain.RootAggregate.Options;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Infrastructure.Extensions;
 using Serilog;
-using System.Linq.Expressions;
 
 namespace ScienceAtrium.Infrastructure.OrderAggregate;
 public sealed class OrderRepository(ApplicationContext _context, IDistributedCache _cache, ILogger _logger) 
@@ -26,9 +25,10 @@ public sealed class OrderRepository(ApplicationContext _context, IDistributedCac
 		if (Exist(new EntityFindOptions<Order>(entity.Id)))
 			throw new EntityNotFoundException();
 
-        UpdateState(entity, EntityState.Added);
+		if (!UpdateState(entity, EntityState.Added))
+			return -1;
 
-        return _context.TrySaveChanges(_logger);
+		return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> CreateAsync(Order entity, CancellationToken cancellationToken = default)
@@ -39,7 +39,8 @@ public sealed class OrderRepository(ApplicationContext _context, IDistributedCac
 		if (await ExistAsync(new EntityFindOptions<Order>(entity.Id), cancellationToken: cancellationToken))
 			throw new EntityNotFoundException();
 
-        UpdateState(entity, EntityState.Added);
+		if (!UpdateState(entity, EntityState.Added))
+			return -1;
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
@@ -49,9 +50,10 @@ public sealed class OrderRepository(ApplicationContext _context, IDistributedCac
         if (!FitsConditions(entity))
             throw new ValidationException();
 
-        UpdateState(entity, EntityState.Deleted);
+		if (!UpdateState(entity, EntityState.Deleted))
+			return -1;
 
-        return _context.TrySaveChanges(_logger);
+		return _context.TrySaveChanges(_logger);
     }
 
     public async Task<int> DeleteAsync(Order entity, CancellationToken cancellationToken = default)
@@ -59,7 +61,8 @@ public sealed class OrderRepository(ApplicationContext _context, IDistributedCac
         if (!await FitsConditionsAsync(entity, cancellationToken))
             throw new ValidationException();
 
-        UpdateState(entity, EntityState.Deleted);
+        if (!UpdateState(entity, EntityState.Deleted))
+			return -1;
 
         return await _context.TrySaveChangesAsync(_logger, cancellationToken: cancellationToken);
     }
@@ -67,6 +70,7 @@ public sealed class OrderRepository(ApplicationContext _context, IDistributedCac
     public void Dispose()
     {
         _context?.Dispose();
+		_logger.Information($"{nameof(OrderRepository)} has been disposed.");
     }
 
     public bool Exist(EntityFindOptions<Order> entityFindOptions)
@@ -222,7 +226,7 @@ public sealed class OrderRepository(ApplicationContext _context, IDistributedCac
 		}
         catch (Exception ex)
         {
-            _logger.Error(ex.Message + ex.StackTrace);
+            _logger.Error(ex, "Exception caught in {0}", nameof(OrderRepository));
             _context.ChangeTracker.Clear();
             return false;
         }   
