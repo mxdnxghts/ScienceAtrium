@@ -2,6 +2,9 @@
 using ScienceAtrium.Infrastructure.Extensions;
 using System.Text;
 using ScienceAtrium.Domain.RootAggregate;
+using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
+using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
+using ScienceAtrium.Domain.UserAggregate;
 
 namespace Infrastructure.IntegrationTests.Extensions;
 
@@ -52,4 +55,34 @@ public static class TestExtension
             applicationContext.Set<TUntrackedEntity>().AttachRange(untrackedEntities);
         applicationContext.TrySaveChanges(null);
     }
+
+	public static Customer? GetNewCustomer()
+	{
+		return new Customer(Guid.NewGuid())
+			.UpdateName(GetRandomName(Setup.Names))
+			.UpdateEmail(GetRandomEmail(Setup.Names))
+			.UpdatePhoneNumber(GetRandomPhoneNumber())
+			.UpdateUserType(UserType.Customer) as Customer;
+	}
+
+	public static Executor? GetNewExecutor()
+	{
+		return new Executor(Guid.NewGuid())
+			.UpdateName(GetRandomName(Setup.Names))
+			.UpdateEmail(GetRandomEmail(Setup.Names))
+			.UpdatePhoneNumber(GetRandomPhoneNumber())
+			.UpdateUserType(UserType.Executor) as Executor;
+	}
+
+	public static (Customer[], Executor[]) GetNewUsers(int usersCount)
+	{
+		var customers = new Customer[usersCount];
+		var executors = new Executor[usersCount];
+		for (int i = 0; i < usersCount; i++)
+		{
+			customers[i] = GetNewCustomer();
+			executors[i] = GetNewExecutor();
+		}
+		return (customers, executors);
+	}
 }
