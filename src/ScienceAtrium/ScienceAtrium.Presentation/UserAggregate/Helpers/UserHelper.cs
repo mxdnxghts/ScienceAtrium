@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Application.UserAggregate.CustomerAggregate.Queries;
-using ScienceAtrium.Application.UserAggregate.Queries;
+using ScienceAtrium.Application.UserAggregate.ExecutorAggregate.Queries;
 using ScienceAtrium.Domain.RootAggregate.Options;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
@@ -57,7 +57,7 @@ public static class UserHelper
         if (forceDatabaseSearch)
             options.ForceDatabaseSearch();
 
-        return await mediator.Send(new GetUserQuery<Executor>(options));
+        return await mediator.Send(new GetExecutorQuery(options));
     }
 
     public static async Task<string> GetUserTypeAsync(string email, string connectionString)
