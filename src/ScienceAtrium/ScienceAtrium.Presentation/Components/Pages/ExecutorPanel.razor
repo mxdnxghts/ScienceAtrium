@@ -62,8 +62,9 @@
 
 	private async Task RefreshAvailableOrdersAsync()
 	{
-		_orders = await Mediator.Send(new GetOrderListQuery(o => o.Status == OrderStatus.Pending
-			&& o.OrderDate >= DateTime.UtcNow));
+		_orders = await Mediator.Send(new GetOrderListQuery(o => 
+			o.Status == OrderStatus.Pending
+			&& (o.ExecutorId == null || o.ExecutorId.Equals(Guid.Empty))));
 	}
 
 	private async Task<Executor> FindExecutorAsync(string? protectedId, string? protectedEmail)
