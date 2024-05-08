@@ -1,8 +1,6 @@
 ﻿@page "/account"
 @rendermode InteractiveServer
 
-@using Microsoft.AspNetCore.Authorization
-
 @inject IMediator Mediator
 @inject IDataProtectionProvider DataProtectionProvider
 
@@ -118,7 +116,7 @@
                             <img class="title-page" src="img/title-page.png" width="100" height="130">
                             <p style="white-space: normal;" class="numborder">Заказ № <span>@GetOrderNumber(order)</span></p>
                             <p class="comment">Комментарий: <br><span>5 лаб по порядку</span></p>
-                            <p class="st">Статус - <span>@GetTranslatedStatus(order.Status)</span></p>
+                            <p class="st">Статус - <span>@OrderHelper.GetTranslatedStatus(order.Status)</span></p>
                             <p>@order.TotalCost ₽</p>
                             <button data-easy-toggle="#modalWin-one" data-easy-class="show" data-easy-rcoe class="but-moredetails">Подробнее</button>
                         </div>
@@ -204,29 +202,6 @@
                 Status = currentOrder.Status,
             };
         }
-    }
-
-    private string GetTranslatedStatus(OrderStatus orderStatus)
-    {
-        if (orderStatus == OrderStatus.PaymentWait)
-            return "Ожидание оплаты";
-
-        if (orderStatus == OrderStatus.Pending)
-            return "В обработке";
-
-        if (orderStatus == OrderStatus.Fulfilled)
-            return "Завершен";
-
-        if (orderStatus == OrderStatus.Cancelled)
-            return "Отменен";
-
-        if (orderStatus == OrderStatus.Delayed)
-            return "Отложен";
-
-        if (orderStatus == OrderStatus.Expired)
-            return "Нарушены сроки";
-
-        return "???";
     }
 
     private string GetOrderNumber(Order order)

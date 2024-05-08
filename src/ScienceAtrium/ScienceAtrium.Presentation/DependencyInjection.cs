@@ -75,18 +75,44 @@ public static class DependencyInjection
 
     private static IServiceCollection AddAppAuthorization(this IServiceCollection serviceCollection)
     {
-        IAuthorizationRequirement[] requirements = 
-            [
-                new UserRoleRequirement(UserAuthorizationConstants.AllowedRoles),
-                new DenyAnonymousAuthorizationRequirement(), 
-            ];
+        var policies = GetAuthorizationPolicies();
+
         serviceCollection.AddAuthorizationBuilder()
-            .AddPolicy("google-oauth", pb =>
-            {
-                pb.AddAuthenticationSchemes(GoogleDefaults.AuthenticationScheme)
-                    .AddRequirements(requirements);
-            });
+            .AddPolicy("google-oauth", policies["google-oauth"])
+            .AddPolicy("executor-policy", policies["executor-policy"])
+            .AddPolicy("admin-policy", policies["admin-policy"]);
+
         serviceCollection.AddScoped<IAuthorizationHandler, UserRoleAuthorizationHandler>();
         return serviceCollection;
     }
+
+    private static Dictionary<string, AuthorizationPolicy> GetAuthorizationPolicies()
+    {
+        var pb = new AuthorizationPolicyBuilder();
+        var defaultPolicy = pb
+            .AddAuthenticationSchemes(GoogleDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            .Build();
+
+		var googlePolicy = pb
+            .Combine(defaultPolicy)
+            .AddRequirements(new UserRoleRequirement(UserAuthorizationConstants.AllowedRoles))
+            .Build();
+        var executorPanelPolicy = pb
+            .Combine(defaultPolicy)
+            .AddRequirements(new UserRoleRequirement(
+                [UserAuthorizationConstants.ExecutorRole, UserAuthorizationConstants.AdminRole]))
+            .Build();
+        var adminPolicy = pb
+            .Combine(defaultPolicy)
+            .AddRequirements(new UserRoleRequirement([UserAuthorizationConstants.AdminRole]))
+            .Build();
+
+        return new Dictionary<string, AuthorizationPolicy>
+        {
+            { "google-oauth", googlePolicy },
+            { "executor-policy", executorPanelPolicy },
+            { "admin-policy", adminPolicy }
+        };
+	}
 }

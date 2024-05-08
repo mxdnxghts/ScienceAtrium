@@ -1,0 +1,75 @@
+﻿@page "/executor-panel"
+@using ScienceAtrium.Application.UserAggregate.ExecutorAggregate.Commands
+@rendermode InteractiveServer 
+
+@inject IMediator Mediator
+@inject NavigationManager NavigationManager
+@inject Serilog.ILogger Logger
+
+@attribute [Authorize(Policy = "executor-policy")]
+
+<link rel="stylesheet" type="text/css" href="css/executor-panel.css">
+
+
+<section id="executor-panel" class="executor-panel">
+	<div class="container">
+		<div class="executor-panel-sect">
+			@foreach (var order in _orders ?? Array.Empty<Order>())
+			{
+				<div class="block-executor-panel">
+					<h1>Заказ № @order.Id.GetHashCode()</h1>
+					<p>Заказчик: <span>@order.Customer?.Name</span></p>
+					<p class="st">Статус - <span>@OrderHelper.GetTranslatedStatus(order.Status)</span></p>
+					<p>Сроки сдачи: <span>@order.OrderDate.ToShortDateString()</span></p>
+					<p>Цена: <span>@order.TotalCost ₽</span></p>
+					<button @onclick="async () => await TakeOrderAsync(order)">Взять</button>
+				</div>
+			}
+		</div>
+	</div>
+</section>
+
+@code {
+	private IEnumerable<Order> _orders;
+	private Executor _executor;
+
+	[SupplyParameterFromQuery(Name = "user_id")]
+	public string ProtectedUserId { get; set; }
+
+	[SupplyParameterFromQuery(Name = "user_email")]
+	public string ProtectedUserEmail { get; set; }
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		_executor = await FindExecutorAsync(ProtectedUserId, ProtectedUserEmail);
+		await RefreshAvailableOrdersAsync();
+	}
+
+	private async Task TakeOrderAsync(Order order)
+	{
+		try
+		{
+			await Mediator.Send(new TakeOrderCommand(_executor, order));
+		}
+		catch (Exception e)
+		{
+			Logger.Error(e, "");
+			NavigationManager.NavigateTo(NavigationHelper.GetErrorUri(e.Message, StatusCodes.Status400BadRequest));
+		}
+		await RefreshAvailableOrdersAsync();
+	}
+
+	private async Task RefreshAvailableOrdersAsync()
+	{
+		_orders = await Mediator.Send(new GetOrderListQuery(o => 
+			o.Status == OrderStatus.Pending
+			&& (o.ExecutorId == null || o.ExecutorId.Equals(Guid.Empty))));
+	}
+
+	private async Task<Executor> FindExecutorAsync(string? protectedId, string? protectedEmail)
+	{
+		var executor = await UserHelper.GetExecutorAsync(Mediator, protectedId, protectedEmail);
+		return executor;
+	}
+}

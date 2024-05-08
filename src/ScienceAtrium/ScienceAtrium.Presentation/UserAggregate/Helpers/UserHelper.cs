@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Application.UserAggregate.CustomerAggregate.Queries;
+using ScienceAtrium.Application.UserAggregate.ExecutorAggregate.Queries;
 using ScienceAtrium.Domain.RootAggregate.Options;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
+using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Presentation.UserAggregate.Constants;
 
@@ -33,6 +35,29 @@ public static class UserHelper
             options.ForceDatabaseSearch();
 
         return await mediator.Send(new GetCustomerQuery(options));
+    }
+
+    public static async Task<Executor> GetExecutorAsync(IMediator mediator,
+                                               string? protectedId,
+                                               string? protectedEmail,
+                                               bool forceDatabaseSearch = true)
+    {
+        var userId = GetUnprotectedUserId(protectedId);
+        var userEmail = GetUnprotectedUserEmail(protectedEmail);
+        EntityFindOptions<Executor> options;
+        if (!userId.Equals(Guid.Empty))
+        {
+            options = new EntityFindOptions<Executor>(userId);
+        }
+        else
+        {
+            options = new EntityFindOptions<Executor>(predicate: c => c.Email == userEmail);
+        }
+
+        if (forceDatabaseSearch)
+            options.ForceDatabaseSearch();
+
+        return await mediator.Send(new GetExecutorQuery(options));
     }
 
     public static async Task<string> GetUserTypeAsync(string email, string connectionString)
