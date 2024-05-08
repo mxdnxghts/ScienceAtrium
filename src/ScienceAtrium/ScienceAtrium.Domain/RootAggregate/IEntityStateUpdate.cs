@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 namespace ScienceAtrium.Domain.RootAggregate;
-public interface IEntityStateUpdate<TEntity, TResult>where TEntity : Entity
+
+public interface IEntityStateUpdate<TEntity, TResult> where TEntity : Entity
 {
 	/// <summary>
 	/// do all changes of  <paramref name="entity"/>  and its nested entities that need to save
@@ -10,10 +11,11 @@ public interface IEntityStateUpdate<TEntity, TResult>where TEntity : Entity
 	/// <param name="entityState"></param>
 	/// <returns></returns>
 	TResult UpdateState(TEntity entity, EntityState entityState);/// <summary>
-	/// Update state of <paramref name="entity"/>
-	/// </summary>
-	/// <param name="entity"></param>
-	/// <param name="entityState"></param>
-	/// <returns></returns>
+
+																 /// Update state of <paramref name="entity"/>
+																 /// </summary>
+																 /// <param name="entity"></param>
+																 /// <param name="entityState"></param>
+																 /// <returns></returns>
 	TResult UpdateEntity(TEntity entity, EntityState entityState);
 }

@@ -1,10 +1,11 @@
 ﻿namespace ScienceAtrium.Domain.OrderAggregate;
+
 public enum OrderStatus
 {
-    Delayed,
-    PaymentWait,
-    Pending,
-    Fulfilled,
-    Cancelled,
-    Expired
+	Delayed,
+	PaymentWait,
+	Pending,
+	Fulfilled,
+	Cancelled,
+	Expired
 }

@@ -20,10 +20,10 @@ public interface IReaderAsync<TEntity> where TEntity : Entity
 	/// <returns></returns>
 	Task<bool> ExistAsync(EntityFindOptions<TEntity> entityFindOptions, CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// checks if the passed entity meets the conditions
-    /// </summary>
-    /// <param name="entity">inherited model type</param>
-    /// <returns></returns>
-    Task<bool> FitsConditionsAsync(TEntity? entity, CancellationToken cancellationToken = default);
+	/// <summary>
+	/// checks if the passed entity meets the conditions
+	/// </summary>
+	/// <param name="entity">inherited model type</param>
+	/// <returns></returns>
+	Task<bool> FitsConditionsAsync(TEntity? entity, CancellationToken cancellationToken = default);
 }
