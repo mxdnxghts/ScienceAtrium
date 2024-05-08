@@ -1,18 +1,22 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Security.Claims;
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
+using ScienceAtrium.Infrastructure.Constants;
 using ScienceAtrium.Presentation.UserAggregate.Constants;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
 
 namespace ScienceAtrium.Presentation.UserAggregate.Helpers;
 
 public static class GoogleAuthenticationHelper
 {
-	public static Task HandleOnTicketReceived(TicketReceivedContext context)
+	public static IConfiguration Configuration { get; set; } = null!;
+
+    public static Task HandleOnTicketReceived(TicketReceivedContext context)
 	{
 		var idp = DataProtectionProvider.Create(UserConstants.DataProtectionApplicationName);
 		var protector = idp.CreateProtector(UserConstants.DataProtectorPurpose);
@@ -42,18 +46,26 @@ public static class GoogleAuthenticationHelper
 		return Task.CompletedTask;
 	}
 
-	public static Task AddRoleClaims(OAuthCreatingTicketContext context)
+	public static async Task HandleOnCreatingTicket(OAuthCreatingTicketContext context)
 	{
 		var googleIdentity = context.Principal.Identities.First(identity => identity.AuthenticationType == GoogleDefaults.AuthenticationScheme);
 
-		var roleClaim = new Claim(ClaimTypes.Role, UserAuthorizationConstants.CustomerRole);
+		var userEmail = googleIdentity.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value;
+
+#if DEBUG
+		var userRole = await UserHelper.GetUserTypeAsync(userEmail,
+			Configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString));
+#else
+		var userRole = await UserHelper.GetUserTypeAsync(userEmail,
+			Configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString);
+#endif
+
+		var roleClaim = new Claim(ClaimTypes.Role, userRole);
 
 		if (!googleIdentity.Claims.Any(claim => claim.Type == ClaimTypes.Role))
 			googleIdentity.AddClaim(roleClaim);
 
 		context.Success();
-
-		return Task.CompletedTask;
 	}
 	
 	public static async Task HandleOnRemoteFailure(RemoteFailureContext context)

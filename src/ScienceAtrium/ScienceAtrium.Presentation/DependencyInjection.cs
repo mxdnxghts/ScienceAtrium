@@ -12,7 +12,6 @@ using ScienceAtrium.Presentation.UserAggregate;
 using ScienceAtrium.Presentation.UserAggregate.Authorization;
 using ScienceAtrium.Presentation.UserAggregate.Constants;
 using ScienceAtrium.Presentation.UserAggregate.Helpers;
-using System.Security.Claims;
 
 namespace ScienceAtrium.Presentation;
 
@@ -49,6 +48,8 @@ public static class DependencyInjection
         serviceCollection.AddScoped<IdentityRedirectManager>();
         serviceCollection.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
+        GoogleAuthenticationHelper.Configuration = configuration;
+
         serviceCollection
             .AddAuthentication(o =>
             {
@@ -65,7 +66,7 @@ public static class DependencyInjection
                 {
                     OnRemoteFailure = GoogleAuthenticationHelper.HandleOnRemoteFailure,
                     OnAccessDenied = GoogleAuthenticationHelper.HandleOnAccessDeniedFailure,
-                    OnCreatingTicket = GoogleAuthenticationHelper.AddRoleClaims,
+                    OnCreatingTicket = GoogleAuthenticationHelper.HandleOnCreatingTicket,
                     OnTicketReceived = GoogleAuthenticationHelper.HandleOnTicketReceived,
                 };
 			});
@@ -74,22 +75,44 @@ public static class DependencyInjection
 
     private static IServiceCollection AddAppAuthorization(this IServiceCollection serviceCollection)
     {
-        IAuthorizationRequirement[] requirements = 
-            [
-                new UserRoleRequirement(UserAuthorizationConstants.CustomerRole),
-                new DenyAnonymousAuthorizationRequirement(), 
-            ];
+        var policies = GetAuthorizationPolicies();
+
         serviceCollection.AddAuthorizationBuilder()
-            .AddPolicy("google-oauth", pb =>
-            {
-                pb.AddAuthenticationSchemes(GoogleDefaults.AuthenticationScheme)
-                    .AddRequirements(requirements);
-            })
-            .AddPolicy("home-page-view", pb =>
-            {
-                pb.RequireClaim(AuthenticationConstants.CanViewHomePageClaim);
-            });
+            .AddPolicy("google-oauth", policies["google-oauth"])
+            .AddPolicy("executor-policy", policies["executor-policy"])
+            .AddPolicy("admin-policy", policies["admin-policy"]);
+
         serviceCollection.AddScoped<IAuthorizationHandler, UserRoleAuthorizationHandler>();
         return serviceCollection;
     }
+
+    private static Dictionary<string, AuthorizationPolicy> GetAuthorizationPolicies()
+    {
+        var pb = new AuthorizationPolicyBuilder();
+        var defaultPolicy = pb
+            .AddAuthenticationSchemes(GoogleDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            .Build();
+
+		var googlePolicy = pb
+            .Combine(defaultPolicy)
+            .AddRequirements(new UserRoleRequirement(UserAuthorizationConstants.AllowedRoles))
+            .Build();
+        var executorPanelPolicy = pb
+            .Combine(defaultPolicy)
+            .AddRequirements(new UserRoleRequirement(
+                [UserAuthorizationConstants.ExecutorRole, UserAuthorizationConstants.AdminRole]))
+            .Build();
+        var adminPolicy = pb
+            .Combine(defaultPolicy)
+            .AddRequirements(new UserRoleRequirement([UserAuthorizationConstants.AdminRole]))
+            .Build();
+
+        return new Dictionary<string, AuthorizationPolicy>
+        {
+            { "google-oauth", googlePolicy },
+            { "executor-policy", executorPanelPolicy },
+            { "admin-policy", adminPolicy }
+        };
+	}
 }

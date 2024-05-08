@@ -2,7 +2,4 @@
 
 namespace ScienceAtrium.Presentation.UserAggregate.Authorization;
 
-public class UserRoleRequirement(string role) : IAuthorizationRequirement
-{
-    public string Role { get; } = role;
-}
+public record UserRoleRequirement(List<string> Roles) : IAuthorizationRequirement;

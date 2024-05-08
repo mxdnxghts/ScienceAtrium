@@ -148,14 +148,11 @@ public class Order : Entity
     }
 
     public Order UpdateCustomer(IReader<Customer> reader, Customer customer)
-    {
-        if (!customer.IsValid(reader))
-        {
-            Debug.Fail(DebugExceptions.HasIncorrectValue(nameof(Customer)));
-            return this;
-        }
+	{
+		if (customer?.IsValid(reader) != true)
+			return this;
 
-        Customer = customer;
+		Customer = customer;
         CustomerId = customer.Id;
         return this;
     }

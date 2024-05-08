@@ -1,8 +1,14 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.EntityFrameworkCore;
 using ScienceAtrium.Application.UserAggregate.CustomerAggregate.Queries;
+using ScienceAtrium.Application.UserAggregate.ExecutorAggregate.Queries;
 using ScienceAtrium.Domain.RootAggregate.Options;
+using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.UserAggregate.CustomerAggregate;
+using ScienceAtrium.Domain.UserAggregate.ExecutorAggregate;
+using ScienceAtrium.Infrastructure.Data;
+using ScienceAtrium.Presentation.UserAggregate.Constants;
 
 namespace ScienceAtrium.Presentation.UserAggregate.Helpers;
 
@@ -30,6 +36,57 @@ public static class UserHelper
 
         return await mediator.Send(new GetCustomerQuery(options));
     }
+
+    public static async Task<Executor> GetExecutorAsync(IMediator mediator,
+                                               string? protectedId,
+                                               string? protectedEmail,
+                                               bool forceDatabaseSearch = true)
+    {
+        var userId = GetUnprotectedUserId(protectedId);
+        var userEmail = GetUnprotectedUserEmail(protectedEmail);
+        EntityFindOptions<Executor> options;
+        if (!userId.Equals(Guid.Empty))
+        {
+            options = new EntityFindOptions<Executor>(userId);
+        }
+        else
+        {
+            options = new EntityFindOptions<Executor>(predicate: c => c.Email == userEmail);
+        }
+
+        if (forceDatabaseSearch)
+            options.ForceDatabaseSearch();
+
+        return await mediator.Send(new GetExecutorQuery(options));
+    }
+
+    public static async Task<string> GetUserTypeAsync(string email, string connectionString)
+    {
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(connectionString))
+            return string.Empty;
+#if DEBUG
+        var options = new DbContextOptionsBuilder<ApplicationContext>()
+            .UseSqlServer(connectionString)
+            .Options;
+#else
+        var options = new DbContextOptionsBuilder<ApplicationContext>()
+			.UseNpgsql(connectionString)
+			.Options;
+#endif
+
+		await using var context = new ApplicationContext(options);
+
+        var userType = (await context.Users.FirstOrDefaultAsync(u => u.Email == email))?.UserType
+            ?? UserType.Customer;
+
+        if (userType.Equals(UserType.Customer))
+            return UserAuthorizationConstants.CustomerRole;
+        else if (userType.Equals(UserType.Executor))
+            return UserAuthorizationConstants.ExecutorRole;
+        else
+            return string.Empty;
+
+	}
 
     internal static Guid GetUnprotectedUserId(string? protectedId)
     {

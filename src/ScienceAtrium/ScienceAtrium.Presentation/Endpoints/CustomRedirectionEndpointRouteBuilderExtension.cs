@@ -33,6 +33,12 @@ internal static class CustomRedirectionEndpointRouteBuilderExtension
 			[FromServices] IDistributedCache cache)
 			=> await DefaultRedirect(context, idp, cache, "/basket"));
 
+		home.MapGet("/executor-panel-redirect", async (
+			HttpContext context,
+			[FromServices] IDataProtectionProvider idp,
+			[FromServices] IDistributedCache cache)
+			=> await DefaultRedirect(context, idp, cache, "/executor-panel"));
+
 		return home;
 	}
 
