@@ -59,7 +59,7 @@ public static class GoogleAuthenticationHelper
             Configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString));
 #else
 		var userRole = await UserHelper.GetUserTypeAsync(userEmail,
-			Configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString);
+			Configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString));
 #endif
 
         var roleClaim = new Claim(ClaimTypes.Role, userRole);
