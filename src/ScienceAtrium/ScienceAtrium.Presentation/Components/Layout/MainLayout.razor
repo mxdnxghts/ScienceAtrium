@@ -17,9 +17,16 @@
 				</div>
 				<div class="nav-menu" id="navMenu">
 					<ul>
-						<li><NavLink href="home-redirect" class="link">Главная</NavLink></li>
-						<li><NavLink href="account-redirect" class="link">Профиль</NavLink></li>
-						<li><NavLink href="basket-redirect" class="link">Корзина</NavLink></li>
+						<AuthorizeView>
+							<Authorized>
+								<li><NavLink href="home-redirect" class="link">Главная</NavLink></li>
+								<li><NavLink href="account-redirect" class="link">Профиль</NavLink></li>
+								<li><NavLink href="basket-redirect" class="link">Корзина</NavLink></li>
+							</Authorized>
+							<NotAuthorized>
+								<li><NavLink href="preview" class="link">Главная</NavLink></li>
+							</NotAuthorized>
+						</AuthorizeView>
 						<ExecutorAuthorizeView>
 							<Authorized>
 								<li><NavLink href="executor-panel-redirect" class="link">Панель</NavLink></li>
