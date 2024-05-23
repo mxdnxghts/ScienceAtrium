@@ -1,8 +1,11 @@
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using ScienceAtrium.Application.UserAggregate.CustomerAggregate.Commands;
 using ScienceAtrium.Application.UserAggregate.CustomerAggregate.Queries;
 using ScienceAtrium.Domain.RootAggregate.Options;
@@ -14,7 +17,6 @@ namespace Microsoft.AspNetCore.Routing;
 
 internal static class IdentityComponentsEndpointRouteBuilderExtensions
 {
-    // These endpoints are required by the Identity Razor components defined in the /Components/Account/Pages directory of this project.
     public static IEndpointConventionBuilder MapAdditionalIdentityEndpoints(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
@@ -25,10 +27,10 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
 			{
 				context.Response.Cookies.Delete(cookie);
 			}
-			context.Response.Redirect("/home-redirect");
+			context.Response.Redirect("/preview");
 		});
 
-        return endpoints.MapGet("/sign-in", async (
+		return endpoints.MapGet("/sign-in", async (
             HttpContext context,
             [FromServices] SignInManager<ApplicationUser> signInManager,
             [FromServices] IMediator mediator,
