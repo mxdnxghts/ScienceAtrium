@@ -1,0 +1,123 @@
+﻿@using Microsoft.AspNetCore.Authentication.Google
+@using Microsoft.AspNetCore.Authorization
+@using ScienceAtrium.Presentation.Components.Account
+
+@inject IMediator Mediator
+@inject Serilog.ILogger Logger
+@inject IdentityRedirectManager NavigationManager
+@inject IReader<Customer> CustomerReader
+@inject IMapper Mapper
+@inject IHttpClientFactory HttpClientFactory
+@inject IDataProtectionProvider DataProtectionProvider
+
+@* @attribute [Authorize(Policy = "default_policy")] *@
+
+<section id="catalog" class="catalog">
+
+	<h4 class="wow animate__animated animate__fadeIn">Каталог</h4>
+
+	<div class="blocks-catalog">
+		@foreach (var workTemplate in _workTemplates)
+		{
+			<div style="background-color: #91ABA2;" class="ctlblock">
+				<img src="img/title-page.png" width="80" height="100">
+				<p style="white-space: normal;">@workTemplate.Title</p>
+				<p>₽ @workTemplate.Price</p>
+				@if (_currentUser is not null && !_currentUser.IsEmpty())
+				{
+					@if (_currentOrder is not null && !_currentOrder.IsEmpty())
+					{
+						if (!_currentOrder.WorkTemplates.Any(x => x.Id == workTemplate.Id))
+						{
+							<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
+						}
+						else
+						{
+							<button @onclick="async () => await RemoveWorkTemplateAsync(workTemplate)" class="btn-shop">Убрать</button>
+						}
+					}
+					else
+					{
+						<button @onclick="async () => await AddWorkTemplateAsync(workTemplate)" class="btn-shop">Заказать</button>
+					}
+				}
+			</div>
+		}
+
+	</div>
+
+</section>
+
+
+@code {
+	private List<WorkTemplate> _workTemplates = [];
+	private Customer _currentUser;
+	private Order _currentOrder;
+
+	[SupplyParameterFromQuery(Name = "user_id")]
+	public string ProtectedUserId { get; set; }
+
+	[SupplyParameterFromQuery(Name = "user_email")]
+	public string ProtectedUserEmail { get; set; }
+
+	public Guid CustomerId { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		_workTemplates = await Mediator.Send(new GetWorkTemplateListQuery());
+		_currentUser = await UserHelper.GetUser(Mediator, ProtectedUserId, ProtectedUserEmail);
+		CustomerId = _currentUser.Id;
+		base.StateHasChanged();
+		if (_currentUser.IsEmpty())
+			return;
+
+		_currentOrder = await GetOrderAsync(_currentUser.Id);
+		base.StateHasChanged();
+	}
+
+	private async Task AddWorkTemplateAsync(WorkTemplate workTemplate)
+	{
+		_currentOrder.AddWorkTemplate(workTemplate);
+		await UpdateOrderAsync(_currentOrder, _currentUser.Id);
+	}
+
+	private async Task RemoveWorkTemplateAsync(WorkTemplate workTemplate)
+	{
+		_currentOrder.RemoveWorkTemplate(x => x.Id == workTemplate.Id);
+		await Mediator.Send(new UpdateOrderCommand(_currentOrder));
+	}
+
+	private async Task<Customer> GetCustomerAsync()
+	{
+		return await Mediator.Send(
+			new GetCustomerQuery(
+				new EntityFindOptions<Customer>(CustomerId)));
+	}
+
+	private async Task<Order> GetOrderAsync(Guid customerId)
+	{
+		var order = await Mediator.Send(
+			new GetOrderQuery(
+				new EntityFindOptions<Order>(predicate: x => x.CustomerId == _currentUser.Id
+										&& x.Status == OrderStatus.Delayed)));
+		if (order.Equals(Order.Default))
+			return new Order(Guid.NewGuid()).UpdateCustomer(CustomerReader, _currentUser);
+		return order;
+	}
+
+	private async Task UpdateOrderAsync(Order order, Guid customerId)
+	{
+		var dbOrder = await Mediator.Send(
+			new GetOrderQuery(
+				new EntityFindOptions<Order>(predicate: x => x.CustomerId == _currentUser.Id
+										&& x.Status == OrderStatus.Delayed)));
+
+		if (dbOrder.IsEmpty())
+		{
+			await Mediator.Send(new CreateOrderCommand(order));
+			return;
+		}
+
+		await Mediator.Send(new UpdateOrderCommand(order));
+	}
+}
