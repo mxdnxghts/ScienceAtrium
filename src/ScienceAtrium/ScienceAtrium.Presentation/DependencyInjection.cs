@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using ScienceAtrium.Infrastructure.Data;
 using ScienceAtrium.Presentation.Components.Account;
+using ScienceAtrium.Presentation.Helpers;
 using ScienceAtrium.Presentation.UserAggregate;
 using ScienceAtrium.Presentation.UserAggregate.Authorization;
 using ScienceAtrium.Presentation.UserAggregate.Constants;
-using ScienceAtrium.Presentation.UserAggregate.Helpers;
 
 namespace ScienceAtrium.Presentation;
 
@@ -78,9 +78,9 @@ public static class DependencyInjection
         var policies = GetAuthorizationPolicies();
 
         serviceCollection.AddAuthorizationBuilder()
-            .AddPolicy("google-oauth", policies["google-oauth"])
-            .AddPolicy("executor-policy", policies["executor-policy"])
-            .AddPolicy("admin-policy", policies["admin-policy"]);
+            .AddPolicy("default_policy", policies["default_policy"])
+            .AddPolicy("executor_policy", policies["executor_policy"])
+            .AddPolicy("admin_policy", policies["admin_policy"]);
 
         serviceCollection.AddScoped<IAuthorizationHandler, UserRoleAuthorizationHandler>();
         return serviceCollection;
@@ -89,7 +89,7 @@ public static class DependencyInjection
     private static Dictionary<string, AuthorizationPolicy> GetAuthorizationPolicies()
     {
         var pb = new AuthorizationPolicyBuilder();
-        var defaultPolicy = pb
+		var defaultPolicy = pb
             .AddAuthenticationSchemes(GoogleDefaults.AuthenticationScheme)
             .RequireAuthenticatedUser()
             .Build();
@@ -110,9 +110,9 @@ public static class DependencyInjection
 
         return new Dictionary<string, AuthorizationPolicy>
         {
-            { "google-oauth", googlePolicy },
-            { "executor-policy", executorPanelPolicy },
-            { "admin-policy", adminPolicy }
+            { "default_policy", googlePolicy },
+            { "executor_policy", executorPanelPolicy },
+            { "admin_policy", adminPolicy }
         };
 	}
 }
