@@ -1,0 +1,18 @@
+﻿@page "/home"
+@rendermode InteractiveServer
+
+@attribute [Authorize(Policy = "default_policy")]
+
+<link rel="stylesheet" href="css/main.css" />
+
+<AnnotationView />
+
+<AvailableWorksView />
+
+<WorkStagesView />
+
+<CatalogView />
+
+<GuaranteesView />
+
+@code{}

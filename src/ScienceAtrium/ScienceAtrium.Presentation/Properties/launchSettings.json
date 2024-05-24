@@ -11,7 +11,7 @@
     },
     "https": {
       "commandName": "Project",
-      "launchUrl": "https://localhost:7176/home-redirect",
+      "launchUrl": "https://localhost:7176/preview",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
