@@ -18,16 +18,16 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         //serviceCollection.AddDbContext<ApplicationContext>(o
-        //    => o.UseSqlServer(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
+        //    => o.UseNpgsql(configuration.GetConnectionString("ScienceAtriumOrder")));
 
         //serviceCollection.AddDbContext<IdentityContext>(o
-        //    => o.UseSqlServer(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
+        //    => o.UseNpgsql(configuration.GetConnectionString("ScienceAtriumOrder")));
 
         serviceCollection.AddDbContext<ApplicationContext>(o
-            => o.UseNpgsql(configuration.GetConnectionString("ConnectionConfigurationConstants.ProductionConnectionString")));
+            => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString)));
 
         serviceCollection.AddDbContext<IdentityContext>(o
-               => o.UseNpgsql(configuration.GetConnectionString("ConnectionConfigurationConstants.ProductionConnectionString")));
+               => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString)));
 
 
         serviceCollection.AddSerilog(o =>
