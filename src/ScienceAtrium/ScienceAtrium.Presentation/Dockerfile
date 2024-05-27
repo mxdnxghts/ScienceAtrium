@@ -17,8 +17,11 @@ COPY ["src/ScienceAtrium/ScienceAtrium.Domain/ScienceAtrium.Domain.csproj", "src
 COPY ["src/ScienceAtrium/ScienceAtrium.Infrastructure/ScienceAtrium.Infrastructure.csproj", "src/ScienceAtrium/ScienceAtrium.Infrastructure/"]
 RUN dotnet restore "./src/ScienceAtrium/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj"
 COPY . .
-WORKDIR "/src/src/ScienceAtrium/ScienceAtrium.Presentation"
-RUN dotnet build "./ScienceAtrium.Presentation.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+WORKDIR "/src/src/ScienceAtrium"
+RUN dotnet build "./ScienceAtrium.Domain/ScienceAtrium.Domain.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+RUN dotnet build "./ScienceAtrium.Infrastructure/ScienceAtrium.Infrastructure.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+RUN dotnet build "./ScienceAtrium.Application/ScienceAtrium.Application.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+RUN dotnet build "./ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj" -c %BUILD_CONFIGURATION% -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
