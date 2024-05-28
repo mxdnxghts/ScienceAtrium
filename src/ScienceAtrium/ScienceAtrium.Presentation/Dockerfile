@@ -11,10 +11,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0-preview AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/src/ScienceAtrium/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj", "src/src/ScienceAtrium/ScienceAtrium.Presentation/"]
-COPY ["src/src/ScienceAtrium/ScienceAtrium.Application/ScienceAtrium.Application.csproj", "src/src/ScienceAtrium/ScienceAtrium.Application/"]
-COPY ["src/src/ScienceAtrium/ScienceAtrium.Domain/ScienceAtrium.Domain.csproj", "src/src/ScienceAtrium/ScienceAtrium.Domain/"]
-COPY ["src/src/ScienceAtrium/ScienceAtrium.Infrastructure/ScienceAtrium.Infrastructure.csproj", "src/src/ScienceAtrium/ScienceAtrium.Infrastructure/"]
+COPY ["src/ScienceAtrium/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj", "src/ScienceAtrium/ScienceAtrium.Presentation/"]
+COPY ["src/ScienceAtrium/ScienceAtrium.Application/ScienceAtrium.Application.csproj", "src/ScienceAtrium/ScienceAtrium.Application/"]
+COPY ["src/ScienceAtrium/ScienceAtrium.Domain/ScienceAtrium.Domain.csproj", "src/ScienceAtrium/ScienceAtrium.Domain/"]
+COPY ["src/ScienceAtrium/ScienceAtrium.Infrastructure/ScienceAtrium.Infrastructure.csproj", "src/ScienceAtrium/ScienceAtrium.Infrastructure/"]
 RUN dotnet restore "./src/ScienceAtrium/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj"
 COPY . .
 WORKDIR "/src/src/ScienceAtrium/ScienceAtrium.Presentation"
