@@ -16,7 +16,7 @@ COPY ["ScienceAtrium/ScienceAtrium.Application/ScienceAtrium.Application.csproj"
 COPY ["ScienceAtrium/ScienceAtrium.Domain/ScienceAtrium.Domain.csproj", "ScienceAtrium/ScienceAtrium.Domain/"]
 COPY ["ScienceAtrium/ScienceAtrium.Infrastructure/ScienceAtrium.Infrastructure.csproj", "ScienceAtrium/ScienceAtrium.Infrastructure/"]
 RUN dotnet restore "./src/ScienceAtrium/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj"
-COPY . .
+
 WORKDIR "/src/ScienceAtrium/ScienceAtrium.Presentation"
 RUN dotnet build "./ScienceAtrium.Presentation.csproj" -c %BUILD_CONFIGURATION% -o /app/build
 
