@@ -11,10 +11,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0-preview AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["./ScienceAtrium.Presentation.csproj", "/"]
-COPY ["../ScienceAtrium.Application/ScienceAtrium.Application.csproj", "../ScienceAtrium.Application/"]
-COPY ["../ScienceAtrium.Domain/ScienceAtrium.Domain.csproj", "../ScienceAtrium.Domain/"]
-COPY ["../ScienceAtrium.Infrastructure/ScienceAtrium.Infrastructure.csproj", "../ScienceAtrium.Infrastructure/"]
+COPY ["src/ScienceAtrium/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj", "src/ScienceAtrium/ScienceAtrium.Presentation/"]
+COPY ["src/ScienceAtrium/ScienceAtrium.Application/ScienceAtrium.Application.csproj", "src/ScienceAtrium/ScienceAtrium.Application/"]
+COPY ["src/ScienceAtrium/ScienceAtrium.Domain/ScienceAtrium.Domain.csproj", "src/ScienceAtrium/ScienceAtrium.Domain/"]
+COPY ["src/ScienceAtrium/ScienceAtrium.Infrastructure/ScienceAtrium.Infrastructure.csproj", "src/ScienceAtrium/ScienceAtrium.Infrastructure/"]
 RUN dotnet restore "./src/ScienceAtrium/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj"
 COPY . .
 WORKDIR "/src/ScienceAtrium/ScienceAtrium.Presentation"
@@ -28,3 +28,5 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "ScienceAtrium.Presentation.dll"]
+
+CMD docker build -f Dockerfile
