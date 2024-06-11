@@ -17,18 +17,20 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        //serviceCollection.AddDbContext<ApplicationContext>(o
-        //    => o.UseNpgsql(configuration.GetConnectionString("ScienceAtriumOrder")));
+#if DEBUG
+        serviceCollection.AddDbContext<ApplicationContext>(o
+            => o.UseNpgsql(configuration.GetConnectionString("ScienceAtriumOrder")));
 
-        //serviceCollection.AddDbContext<IdentityContext>(o
-        //    => o.UseNpgsql(configuration.GetConnectionString("ScienceAtriumOrder")));
+        serviceCollection.AddDbContext<IdentityContext>(o
+            => o.UseNpgsql(configuration.GetConnectionString("ScienceAtriumOrder")));
+#else
 
         serviceCollection.AddDbContext<ApplicationContext>(o
             => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString)));
 
         serviceCollection.AddDbContext<IdentityContext>(o
                => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString)));
-
+#endif
 
         serviceCollection.AddSerilog(o =>
         {
@@ -42,8 +44,11 @@ public static class DependencyInjection
         serviceCollection.AddStackExchangeRedisCache(options =>
         {
             options.InstanceName = "ScienceAtriumCache_";
-            //options.Configuration = configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionStringRedis);
-			options.Configuration = configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionStringRedis);
+#if DEBUG
+            options.Configuration = configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionStringRedis);
+#else
+            options.Configuration = configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionStringRedis);
+#endif
 		});
 
         serviceCollection.AddScoped<IOrderRepository<Order>, OrderRepository>();
