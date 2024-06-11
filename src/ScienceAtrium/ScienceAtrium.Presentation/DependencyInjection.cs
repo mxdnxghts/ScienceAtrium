@@ -49,7 +49,7 @@ public static class DependencyInjection
         serviceCollection.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
         GoogleAuthenticationHelper.Configuration = configuration;
-
+        
         serviceCollection
             .AddAuthentication(o =>
             {
@@ -58,8 +58,10 @@ public static class DependencyInjection
             })
             .AddGoogle(googleOptions =>
             {
-                googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-                googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+                //googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+                //googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+                googleOptions.ClientId = Environment.GetEnvironmentVariable("ClientId");
+                googleOptions.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
                 googleOptions.SaveTokens = true;
 
                 googleOptions.Events = new OAuthEvents
