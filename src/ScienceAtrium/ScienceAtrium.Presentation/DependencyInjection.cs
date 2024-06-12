@@ -58,10 +58,13 @@ public static class DependencyInjection
             })
             .AddGoogle(googleOptions =>
             {
-                //googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-                //googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+#if DEBUG
+                googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+                googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+#else
                 googleOptions.ClientId = Environment.GetEnvironmentVariable("ClientId");
                 googleOptions.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
+#endif
                 googleOptions.SaveTokens = true;
 
                 googleOptions.Events = new OAuthEvents
