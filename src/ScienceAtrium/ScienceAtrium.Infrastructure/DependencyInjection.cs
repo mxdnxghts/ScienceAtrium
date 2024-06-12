@@ -17,18 +17,20 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
+#if DEBUG
         serviceCollection.AddDbContext<ApplicationContext>(o
-            => o.UseSqlServer(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
+            => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
 
         serviceCollection.AddDbContext<IdentityContext>(o
-            => o.UseSqlServer(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
+            => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
+#else
 
-        //serviceCollection.AddDbContext<ApplicationContext>(o
-        //    => o.UseNpgsql(configuration.GetConnectionString("ConnectionConfigurationConstants.ProductionConnectionString")));
+        serviceCollection.AddDbContext<ApplicationContext>(o
+            => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString)));
 
-        //serviceCollection.AddDbContext<IdentityContext>(o
-        //       => o.UseNpgsql(configuration.GetConnectionString("ConnectionConfigurationConstants.ProductionConnectionString")));
-
+        serviceCollection.AddDbContext<IdentityContext>(o
+               => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString)));
+#endif
 
         serviceCollection.AddSerilog(o =>
         {
@@ -42,8 +44,11 @@ public static class DependencyInjection
         serviceCollection.AddStackExchangeRedisCache(options =>
         {
             options.InstanceName = "ScienceAtriumCache_";
+#if DEBUG
             options.Configuration = configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionStringRedis);
-			//options.Configuration = configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionStringRedis);
+#else
+            options.Configuration = configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionStringRedis);
+#endif
 		});
 
         serviceCollection.AddScoped<IOrderRepository<Order>, OrderRepository>();

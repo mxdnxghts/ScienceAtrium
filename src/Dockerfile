@@ -1,7 +1,9 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
+#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
+#For more information, please see https://aka.ms/containercompat
+
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-preview AS base
-USER app
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
@@ -15,14 +17,16 @@ COPY ["src/ScienceAtrium/ScienceAtrium.Domain/ScienceAtrium.Domain.csproj", "src
 COPY ["src/ScienceAtrium/ScienceAtrium.Infrastructure/ScienceAtrium.Infrastructure.csproj", "src/ScienceAtrium/ScienceAtrium.Infrastructure/"]
 RUN dotnet restore "./src/ScienceAtrium/ScienceAtrium.Presentation/ScienceAtrium.Presentation.csproj"
 COPY . .
-WORKDIR "/src/src/ScienceAtrium/ScienceAtrium.Presentation"
-RUN dotnet build "ScienceAtrium.Presentation.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/ScienceAtrium/ScienceAtrium.Presentation"
+RUN dotnet build "./ScienceAtrium.Presentation.csproj" -c %BUILD_CONFIGURATION% -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "ScienceAtrium.Presentation.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./ScienceAtrium.Presentation.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "ScienceAtrium.Presentation.dll"]
+
+CMD docker build -f Dockerfile

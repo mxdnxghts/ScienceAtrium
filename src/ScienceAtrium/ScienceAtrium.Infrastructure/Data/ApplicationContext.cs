@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ScienceAtrium.Domain.OrderAggregate;
 using ScienceAtrium.Domain.UserAggregate;
 using ScienceAtrium.Domain.WorkTemplateAggregate;
@@ -8,8 +9,14 @@ namespace ScienceAtrium.Infrastructure.Data;
 
 public class ApplicationContext : DbContext
 {
+    private static bool _isInitialized = false;
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
     {
+        if (!_isInitialized)
+        {
+            Database.EnsureCreated();
+            _isInitialized = true;
+        }
     }
 
     public DbSet<User> Users { get; set; }
@@ -21,7 +28,7 @@ public class ApplicationContext : DbContext
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
         optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-        optionsBuilder.LogTo(Console.WriteLine);
+        optionsBuilder.LogTo(Console.WriteLine, LogLevel.Warning);
 		base.OnConfiguring(optionsBuilder);
 	}
 
