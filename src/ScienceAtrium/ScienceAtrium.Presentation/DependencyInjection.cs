@@ -42,7 +42,11 @@ public static class DependencyInjection
         serviceCollection.AddCascadingAuthenticationState();
         serviceCollection.AddDataProtection()
             .SetApplicationName(UserConstants.DataProtectionApplicationName)
-            .SetDefaultKeyLifetime(TimeSpan.FromDays(60));
+            .SetDefaultKeyLifetime(TimeSpan.FromDays(60))
+#if !DEBUG
+            .PersistKeysToFileSystem(new DirectoryInfo(@"/etc/secrets/"))
+#endif
+            ;
             
         serviceCollection.AddScoped<IdentityUserAccessor>();
         serviceCollection.AddScoped<IdentityRedirectManager>();
@@ -66,7 +70,6 @@ public static class DependencyInjection
                 googleOptions.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
 #endif
                 googleOptions.SaveTokens = true;
-
                 googleOptions.Events = new OAuthEvents
                 {
                     OnRemoteFailure = GoogleAuthenticationHelper.HandleOnRemoteFailure,

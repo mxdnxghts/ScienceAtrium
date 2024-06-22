@@ -19,10 +19,10 @@ public static class DependencyInjection
     {
 #if DEBUG
         serviceCollection.AddDbContext<ApplicationContext>(o
-            => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
+            => o.UseSqlServer(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
 
         serviceCollection.AddDbContext<IdentityContext>(o
-            => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
+            => o.UseSqlServer(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
 #else
 
         serviceCollection.AddDbContext<ApplicationContext>(o
