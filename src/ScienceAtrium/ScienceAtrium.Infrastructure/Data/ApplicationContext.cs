@@ -9,14 +9,11 @@ namespace ScienceAtrium.Infrastructure.Data;
 
 public class ApplicationContext : DbContext
 {
-    private static bool _isInitialized = false;
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
     {
-        if (!_isInitialized)
-        {
-            Database.EnsureCreated();
-            _isInitialized = true;
-        }
+#if !DEBUG
+        Database.EnsureCreated();
+#endif
     }
 
     public DbSet<User> Users { get; set; }
