@@ -42,11 +42,7 @@ public static class DependencyInjection
         serviceCollection.AddCascadingAuthenticationState();
         serviceCollection.AddDataProtection()
             .SetApplicationName(UserConstants.DataProtectionApplicationName)
-            .SetDefaultKeyLifetime(TimeSpan.FromDays(60))
-#if !DEBUG
-            .PersistKeysToFileSystem(new DirectoryInfo(@"/etc/secrets/"))
-#endif
-            ;
+            .SetDefaultKeyLifetime(TimeSpan.FromDays(60));
             
         serviceCollection.AddScoped<IdentityUserAccessor>();
         serviceCollection.AddScoped<IdentityRedirectManager>();
