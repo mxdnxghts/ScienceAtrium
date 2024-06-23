@@ -68,7 +68,11 @@ internal static class CustomRedirectionEndpointRouteBuilderExtension
 			new ("user_id", cookieUserId),
 		];
 
-		var redirectUrl = UriHelper.BuildRelative(GetOriginalPath(context.Request.PathBase), path, QueryString.Create(query));
+        var redirectUrl = UriHelper.BuildAbsolute("https",
+                                                     context.Request.Host,
+                                                     GetOriginalPath(context.Request.PathBase),
+                                                     path,
+                                                     QueryString.Create(query));
 		context.Response.Redirect(redirectUrl);
 	}
 
