@@ -11,7 +11,7 @@ namespace ScienceAtrium.Presentation.Endpoints;
 
 internal static class CustomRedirectionEndpointRouteBuilderExtension
 {
-	public static IEndpointConventionBuilder MapRewroteEndpoints(this IEndpointRouteBuilder endpoints)
+	public static IEndpointConventionBuilder MapRedirectionEndpoints(this IEndpointRouteBuilder endpoints)
 	{
 		var home = endpoints.MapGroup("/");
 		
