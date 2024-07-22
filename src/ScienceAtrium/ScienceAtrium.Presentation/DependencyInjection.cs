@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
@@ -49,32 +49,38 @@ public static class DependencyInjection
         serviceCollection.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
         GoogleAuthenticationHelper.Configuration = configuration;
-        
+
         serviceCollection
             .AddAuthentication(o =>
             {
                 o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 o.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
             })
-            .AddGoogle(googleOptions =>
-            {
+            .AddGoogleAuthentication(configuration)
+            ;
+        return serviceCollection;
+    }
+
+    private static AuthenticationBuilder AddGoogleAuthentication(this AuthenticationBuilder builder, IConfiguration configuration)
+    {
+        return builder.AddGoogle(googleOptions =>
+        {
 #if DEBUG
-                googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-                googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+            googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+            googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
 #else
                 googleOptions.ClientId = Environment.GetEnvironmentVariable("ClientId");
                 googleOptions.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
 #endif
-                googleOptions.SaveTokens = true;
-                googleOptions.Events = new OAuthEvents
-                {
-                    OnRemoteFailure = GoogleAuthenticationHelper.HandleOnRemoteFailure,
-                    OnAccessDenied = GoogleAuthenticationHelper.HandleOnAccessDeniedFailure,
-                    OnCreatingTicket = GoogleAuthenticationHelper.HandleOnCreatingTicket,
-                    OnTicketReceived = GoogleAuthenticationHelper.HandleOnTicketReceived,
-                };
-			});
-        return serviceCollection;
+            googleOptions.SaveTokens = true;
+            googleOptions.Events = new OAuthEvents
+            {
+                OnRemoteFailure = GoogleAuthenticationHelper.HandleOnRemoteFailure,
+                OnAccessDenied = GoogleAuthenticationHelper.HandleOnAccessDeniedFailure,
+                OnCreatingTicket = GoogleAuthenticationHelper.HandleOnCreatingTicket,
+                OnTicketReceived = GoogleAuthenticationHelper.HandleOnTicketReceived,
+            };
+        });
     }
 
     private static IServiceCollection AddAppAuthorization(this IServiceCollection serviceCollection)
