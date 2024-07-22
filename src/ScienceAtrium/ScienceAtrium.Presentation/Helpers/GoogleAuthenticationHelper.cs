@@ -42,7 +42,7 @@ public static class GoogleAuthenticationHelper
         query.Add(new("return_uri", returnUri));
         query.Add(new("user_name", protector.Protect(userNameClaim?.Value ?? "")));
 
-        context.ReturnUri = UriHelper.BuildRelative(context.Request.PathBase, "/sign-in", QueryString.Create(query));
+        context.ReturnUri = UriHelper.BuildAbsolute("https", context.Request.Host, context.Request.PathBase, "/sign-in", QueryString.Create(query));
         context.Success();
 
         return Task.CompletedTask;

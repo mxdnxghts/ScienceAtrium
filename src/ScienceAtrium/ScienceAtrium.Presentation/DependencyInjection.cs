@@ -66,7 +66,6 @@ public static class DependencyInjection
                 googleOptions.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret");
 #endif
                 googleOptions.SaveTokens = true;
-
                 googleOptions.Events = new OAuthEvents
                 {
                     OnRemoteFailure = GoogleAuthenticationHelper.HandleOnRemoteFailure,

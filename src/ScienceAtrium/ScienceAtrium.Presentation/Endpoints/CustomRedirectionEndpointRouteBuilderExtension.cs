@@ -11,7 +11,7 @@ namespace ScienceAtrium.Presentation.Endpoints;
 
 internal static class CustomRedirectionEndpointRouteBuilderExtension
 {
-	public static IEndpointConventionBuilder MapRewroteEndpoints(this IEndpointRouteBuilder endpoints)
+	public static IEndpointConventionBuilder MapRedirectionEndpoints(this IEndpointRouteBuilder endpoints)
 	{
 		var home = endpoints.MapGroup("/");
 		
@@ -68,7 +68,11 @@ internal static class CustomRedirectionEndpointRouteBuilderExtension
 			new ("user_id", cookieUserId),
 		];
 
-		var redirectUrl = UriHelper.BuildRelative(GetOriginalPath(context.Request.PathBase), path, QueryString.Create(query));
+        var redirectUrl = UriHelper.BuildAbsolute("https",
+                                                     context.Request.Host,
+                                                     GetOriginalPath(context.Request.PathBase),
+                                                     path,
+                                                     QueryString.Create(query));
 		context.Response.Redirect(redirectUrl);
 	}
 
