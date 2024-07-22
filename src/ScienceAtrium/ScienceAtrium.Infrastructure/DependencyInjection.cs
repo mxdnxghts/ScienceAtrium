@@ -34,11 +34,13 @@ public static class DependencyInjection
 
         serviceCollection.AddSerilog(o =>
         {
-            o.MinimumLevel.Warning().WriteTo.Console()
-                .WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogInfo").Value);
+            o.MinimumLevel.Warning().WriteTo.Console();
 
+#if !DEBUG
+            o.MinimumLevel.Warning().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogInfo").Value);
             o.MinimumLevel.Information().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogInfo").Value);
             o.MinimumLevel.Error().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogError").Value);
+#endif
         });
 
         serviceCollection.AddStackExchangeRedisCache(options =>
