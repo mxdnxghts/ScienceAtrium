@@ -11,7 +11,7 @@ namespace ScienceAtrium.Presentation.Endpoints;
 
 internal static class CustomRedirectionEndpointRouteBuilderExtension
 {
-	public static IEndpointConventionBuilder MapRewroteEndpoints(this IEndpointRouteBuilder endpoints)
+	public static IEndpointConventionBuilder MapRedirectionEndpoints(this IEndpointRouteBuilder endpoints)
 	{
 		var home = endpoints.MapGroup("/");
 		
@@ -19,30 +19,30 @@ internal static class CustomRedirectionEndpointRouteBuilderExtension
             HttpContext context,
             [FromServices] IDataProtectionProvider idp,
 			[FromServices] IDistributedCache cache)
-            => await DefaultRedirect(context, idp, cache, "/home"));
+            => await RedirectTo(context, idp, cache, "/home"));
 
 		home.MapGet("/account-redirect", async (
 			HttpContext context,
 			[FromServices] IDataProtectionProvider idp,
 			[FromServices] IDistributedCache cache)
-			=> await DefaultRedirect(context, idp, cache, "/account"));
+			=> await RedirectTo(context, idp, cache, "/account"));
 
 		home.MapGet("/basket-redirect", async (
 			HttpContext context,
 			[FromServices] IDataProtectionProvider idp,
 			[FromServices] IDistributedCache cache)
-			=> await DefaultRedirect(context, idp, cache, "/basket"));
+			=> await RedirectTo(context, idp, cache, "/basket"));
 
 		home.MapGet("/executor-panel-redirect", async (
 			HttpContext context,
 			[FromServices] IDataProtectionProvider idp,
 			[FromServices] IDistributedCache cache)
-			=> await DefaultRedirect(context, idp, cache, "/executor-panel"));
+			=> await RedirectTo(context, idp, cache, "/executor-panel"));
 
 		return home;
 	}
 
-	public static async Task DefaultRedirect(HttpContext context,
+	public static async Task RedirectTo(HttpContext context,
 									IDataProtectionProvider idp,
 									IDistributedCache cache,
 									PathString path)
@@ -68,7 +68,11 @@ internal static class CustomRedirectionEndpointRouteBuilderExtension
 			new ("user_id", cookieUserId),
 		];
 
-		var redirectUrl = UriHelper.BuildRelative(GetOriginalPath(context.Request.PathBase), path, QueryString.Create(query));
+        var redirectUrl = UriHelper.BuildAbsolute("https",
+                                                     context.Request.Host,
+                                                     GetOriginalPath(context.Request.PathBase),
+                                                     path,
+                                                     QueryString.Create(query));
 		context.Response.Redirect(redirectUrl);
 	}
 

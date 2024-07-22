@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /sql/ScienceAtriumDb
 /src/ScienceAtrium/DatabaseMaintainService
+/src/ScienceAtrium/ScienceAtrium.Presentation/appsettings.json
+/src/ScienceAtrium/ScienceAtrium.Presentation/appsettings.json

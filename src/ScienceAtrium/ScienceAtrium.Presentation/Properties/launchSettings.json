@@ -11,7 +11,8 @@
     },
     "https": {
       "commandName": "Project",
-      "launchUrl": "https://localhost:7176/preview",
+      "launchBrowser": true,
+      "launchUrl": "https://localhost:7176/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
@@ -31,7 +32,7 @@
     },
     "https withtout browser": {
       "commandName": "Project",
-      "launchUrl": "https://localhost:7176/preview",
+      "launchUrl": "https://localhost:7176/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
@@ -42,7 +43,7 @@
     "Container (Dockerfile)": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/preview",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HTTPS_PORTS": "8081",

@@ -19,26 +19,28 @@ public static class DependencyInjection
     {
 #if DEBUG
         serviceCollection.AddDbContext<ApplicationContext>(o
-            => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
+            => o.UseSqlServer(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
 
         serviceCollection.AddDbContext<IdentityContext>(o
-            => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
+            => o.UseSqlServer(configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionString)));
 #else
 
         serviceCollection.AddDbContext<ApplicationContext>(o
-            => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString)));
+            => o.UseNpgsql(Environment.GetEnvironmentVariable(ConnectionConfigurationConstants.ProductionConnectionString)));
 
         serviceCollection.AddDbContext<IdentityContext>(o
-               => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString)));
+               => o.UseNpgsql(Environment.GetEnvironmentVariable(ConnectionConfigurationConstants.ProductionConnectionString)));
 #endif
 
         serviceCollection.AddSerilog(o =>
         {
-            o.MinimumLevel.Warning().WriteTo.Console()
-                .WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogInfo").Value);
+            o.MinimumLevel.Warning().WriteTo.Console();
 
+#if DEBUG
+            o.MinimumLevel.Warning().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogInfo").Value);
             o.MinimumLevel.Information().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogInfo").Value);
             o.MinimumLevel.Error().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogError").Value);
+#endif
         });
 
         serviceCollection.AddStackExchangeRedisCache(options =>
@@ -47,7 +49,7 @@ public static class DependencyInjection
 #if DEBUG
             options.Configuration = configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionStringRedis);
 #else
-            options.Configuration = configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionStringRedis);
+            options.Configuration = Environment.GetEnvironmentVariable(ConnectionConfigurationConstants.ProductionConnectionStringRedis);
 #endif
 		});
 
