@@ -36,7 +36,7 @@ public static class DependencyInjection
         {
             o.MinimumLevel.Warning().WriteTo.Console();
 
-#if !DEBUG
+#if DEBUG
             o.MinimumLevel.Warning().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogInfo").Value);
             o.MinimumLevel.Information().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogInfo").Value);
             o.MinimumLevel.Error().WriteTo.File(configuration.GetRequiredSection("Logging:Path:SerilogError").Value);
