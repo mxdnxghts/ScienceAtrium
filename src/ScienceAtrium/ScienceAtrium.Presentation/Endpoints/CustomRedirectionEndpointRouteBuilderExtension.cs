@@ -19,30 +19,30 @@ internal static class CustomRedirectionEndpointRouteBuilderExtension
             HttpContext context,
             [FromServices] IDataProtectionProvider idp,
 			[FromServices] IDistributedCache cache)
-            => await DefaultRedirect(context, idp, cache, "/home"));
+            => await RedirectTo(context, idp, cache, "/home"));
 
 		home.MapGet("/account-redirect", async (
 			HttpContext context,
 			[FromServices] IDataProtectionProvider idp,
 			[FromServices] IDistributedCache cache)
-			=> await DefaultRedirect(context, idp, cache, "/account"));
+			=> await RedirectTo(context, idp, cache, "/account"));
 
 		home.MapGet("/basket-redirect", async (
 			HttpContext context,
 			[FromServices] IDataProtectionProvider idp,
 			[FromServices] IDistributedCache cache)
-			=> await DefaultRedirect(context, idp, cache, "/basket"));
+			=> await RedirectTo(context, idp, cache, "/basket"));
 
 		home.MapGet("/executor-panel-redirect", async (
 			HttpContext context,
 			[FromServices] IDataProtectionProvider idp,
 			[FromServices] IDistributedCache cache)
-			=> await DefaultRedirect(context, idp, cache, "/executor-panel"));
+			=> await RedirectTo(context, idp, cache, "/executor-panel"));
 
 		return home;
 	}
 
-	public static async Task DefaultRedirect(HttpContext context,
+	public static async Task RedirectTo(HttpContext context,
 									IDataProtectionProvider idp,
 									IDistributedCache cache,
 									PathString path)

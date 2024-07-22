@@ -26,10 +26,10 @@ public static class DependencyInjection
 #else
 
         serviceCollection.AddDbContext<ApplicationContext>(o
-            => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString)));
+            => o.UseNpgsql(Environment.GetEnvironmentVariable(ConnectionConfigurationConstants.ProductionConnectionString)));
 
         serviceCollection.AddDbContext<IdentityContext>(o
-               => o.UseNpgsql(configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionString)));
+               => o.UseNpgsql(Environment.GetEnvironmentVariable(ConnectionConfigurationConstants.ProductionConnectionString)));
 #endif
 
         serviceCollection.AddSerilog(o =>
@@ -47,7 +47,7 @@ public static class DependencyInjection
 #if DEBUG
             options.Configuration = configuration.GetConnectionString(ConnectionConfigurationConstants.DevelopmentConnectionStringRedis);
 #else
-            options.Configuration = configuration.GetConnectionString(ConnectionConfigurationConstants.ProductionConnectionStringRedis);
+            options.Configuration = Environment.GetEnvironmentVariable(ConnectionConfigurationConstants.ProductionConnectionStringRedis);
 #endif
 		});
 

@@ -1,11 +1,8 @@
 using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using ScienceAtrium.Application.UserAggregate.CustomerAggregate.Commands;
 using ScienceAtrium.Application.UserAggregate.CustomerAggregate.Queries;
 using ScienceAtrium.Domain.RootAggregate.Options;
